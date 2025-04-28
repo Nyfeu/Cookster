@@ -174,21 +174,17 @@ form.sign-in-form {
   width: 115%;
   transition: transform 1.1s ease-in-out;
   transition-delay: 0.4s;
+  padding-top: 3em;
 }
 
 .log-img {
-  padding-left: 2em;
-}
-
-.reg-img {
-  padding-top: 3em;
+  padding-left: 3em;
 }
 
 .panel {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  justify-content: space-around;
   text-align: center;
   z-index: 6;
 }
