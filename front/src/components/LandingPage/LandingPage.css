@@ -1,0 +1,22 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
+
+.btn-custom {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: white;
+}
+
+.btn-custom:hover {
+    background-color: var(--primary-color);
+    border-color: var(--secondary-color);
+    color: black;
+}
+
+.container-home {
+    min-height: 93vh;
+    margin-top: 7vh;;
+}
+
+.container-page {
+    background-color: white;
+}
