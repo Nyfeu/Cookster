@@ -4,6 +4,8 @@ if (process.env.NODE_ENV !== 'production') {
   
   const express = require('express')
   const app = express()
+  const initializeGoogleStrategy = require('./google-auth')
+  initializeGoogleStrategy()
   const bcrypt = require('bcrypt')
   const passport = require('passport')
   const flash = require('express-flash')
@@ -32,8 +34,12 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(methodOverride('_method'))
   
   app.get('/', checkAuthenticated, (req, res) => {
-    res.render('index.ejs', { name: req.user.name })
-  })
+    const name = req.user.name || req.user.displayName || 'User';
+    res.render('index.ejs', { name: typeof name === 'object' ? `${name.givenName} ${name.familyName}` : name });
+  });
+  
+  
+  
   
   app.get('/login', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs')
@@ -63,6 +69,19 @@ if (process.env.NODE_ENV !== 'production') {
       res.redirect('/register')
     }
   })
+
+  app.get('/auth/google',
+    passport.authenticate('google', { scope: ['email', 'profile'] })
+  );
+  
+  app.get('/auth/google/callback', 
+    passport.authenticate('google', {
+      successRedirect: '/',
+      failureRedirect: '/login',
+      failureFlash: true
+    })
+  );
+  
   
   app.delete('/logout', (req, res, next) => {
     req.logOut((err) => {
