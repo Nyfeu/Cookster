@@ -37,7 +37,7 @@ input {
   transform: translate(-50%, -50%);
   left: 75%;
   width: 50%;
-  transition: 1s 0.7s ease-in-out;
+  transition: 1s 0.35s ease-in-out;
   display: grid;
   grid-template-columns: 1fr;
   z-index: 5;
