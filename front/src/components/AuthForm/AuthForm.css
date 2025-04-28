@@ -17,9 +17,14 @@ input {
   background-color: #fff;
   height: 93vh;
   overflow: hidden;
+  margin-top: 7vh;
 }
 
 .content {
+  padding-top: 2em;
+}
+
+.left-panel {
   padding-top: 2em;
 }
 
@@ -133,7 +138,7 @@ form.sign-in-form {
 }
 
 .social-icon:hover {
-  color: var(--secondary-color);
+  color: var(--primary-color);
   border-color: var(--secondary-color);
 }
 
@@ -377,6 +382,14 @@ form.sign-in-form {
 
   .panel .content {
     padding: 0.5rem 1rem;
+  }
+
+  .left-panel {
+    padding-top: 0px;
+  }
+
+  .right-panel {
+    padding-bottom: 0px;
   }
 
   .container-puro {
