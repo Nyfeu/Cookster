@@ -5,7 +5,7 @@ const SignInForm = (props) => {
     return (
         <>
             <form action="#" className="sign-in-form">
-                <h2 className="title">Acesse</h2>
+                <h2 className="title mb-3">Acesse</h2>
                 <div className="input-field">
                     <i className="fas fa-user"></i>
                     <input type="text" placeholder={props.username_placeholder}/>
@@ -14,7 +14,7 @@ const SignInForm = (props) => {
                     <i className="fas fa-lock"></i>
                     <input type="password" placeholder={props.password_placeholder}/>
                 </div>
-                <input type="submit" className="btn solid" />
+                <input type="submit" className="btn btn-success btn-submit rounded-pill px-4 py-2 my-2" />
                 <p className="social-text">{props.text}</p>
                 <SocialMediaIcons />
             </form>

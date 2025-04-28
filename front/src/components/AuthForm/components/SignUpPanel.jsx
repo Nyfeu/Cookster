@@ -6,7 +6,7 @@ const SignUpPanel = (props) => {
             <div className="content">
                 <h3>{props.title}</h3>
                 <p>{props.text}</p>
-                <button onClick={props.sign_in} className="btn transparent" id="sign-in-btn">
+                <button onClick={props.sign_in} className="btn btn-outline-light rounded-pill px-4 py-2" id="sign-in-btn">
                     Acesse
                 </button>
             </div>
