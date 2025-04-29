@@ -6,6 +6,9 @@ if (process.env.NODE_ENV !== 'production') {
   const app = express()
   const initializeGoogleStrategy = require('./google-auth')
   initializeGoogleStrategy()
+  const initializeFacebookStrategy = require('./facebook-auth')
+  initializeFacebookStrategy()
+
   const bcrypt = require('bcrypt')
   const passport = require('passport')
   const flash = require('express-flash')
@@ -76,6 +79,18 @@ if (process.env.NODE_ENV !== 'production') {
   
   app.get('/auth/google/callback', 
     passport.authenticate('google', {
+      successRedirect: '/',
+      failureRedirect: '/login',
+      failureFlash: true
+    })
+  );
+  
+  app.get('/auth/facebook',
+    passport.authenticate('facebook', { scope: ['email'] })
+  );
+  
+  app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {
       successRedirect: '/',
       failureRedirect: '/login',
       failureFlash: true
