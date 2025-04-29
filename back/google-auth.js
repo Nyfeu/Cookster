@@ -1,5 +1,5 @@
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth2').Strategy;
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth2').Strategy
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -11,8 +11,8 @@ function initializeGoogleStrategy() {
     callbackURL: "http://localhost:3000/auth/google/callback",
     passReqToCallback: true,
   }, (request, accessToken, refreshToken, profile, done) => {
-    return done(null, profile);
-  }));
+    return done(null, profile)
+  }))
 }
 
 module.exports = initializeGoogleStrategy;

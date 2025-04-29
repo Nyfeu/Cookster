@@ -8,7 +8,6 @@ if (process.env.NODE_ENV !== 'production') {
   initializeGoogleStrategy()
   const initializeFacebookStrategy = require('./facebook-auth')
   initializeFacebookStrategy()
-
   const bcrypt = require('bcrypt')
   const passport = require('passport')
   const flash = require('express-flash')
@@ -37,9 +36,9 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(methodOverride('_method'))
   
   app.get('/', checkAuthenticated, (req, res) => {
-    const name = req.user.name || req.user.displayName || 'User';
-    res.render('index.ejs', { name: typeof name === 'object' ? `${name.givenName} ${name.familyName}` : name });
-  });
+    const name = req.user.name || req.user.displayName || 'User'
+    res.render('index.ejs', { name: typeof name === 'object' ? `${name.givenName} ${name.familyName}` : name })
+  })
   
   
   
@@ -75,7 +74,7 @@ if (process.env.NODE_ENV !== 'production') {
 
   app.get('/auth/google',
     passport.authenticate('google', { scope: ['email', 'profile'] })
-  );
+  )
   
   app.get('/auth/google/callback', 
     passport.authenticate('google', {
@@ -87,7 +86,7 @@ if (process.env.NODE_ENV !== 'production') {
   
   app.get('/auth/facebook',
     passport.authenticate('facebook', { scope: ['email'] })
-  );
+  )
   
   app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
@@ -95,7 +94,7 @@ if (process.env.NODE_ENV !== 'production') {
       failureRedirect: '/login',
       failureFlash: true
     })
-  );
+  )
   
   
   app.delete('/logout', (req, res, next) => {
@@ -104,8 +103,8 @@ if (process.env.NODE_ENV !== 'production') {
         return next(err);
       }
       res.redirect('/login');
-    });
-  });
+    })
+  })
   
   function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
