@@ -5,7 +5,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  min-height: 100vh;
+  min-height: 93vh;
   font-family: "Poppins", sans-serif;
   background-color: var(--accent-color);
 }
