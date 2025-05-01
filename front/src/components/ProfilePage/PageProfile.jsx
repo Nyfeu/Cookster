@@ -19,11 +19,8 @@ class PageProfile extends Component {
     render() {
         return (
             <div className="header__wrapper">
-                <header className='navbar'>
-                    <div className="navbar__content">
-                        <NavBar />
-                    </div>
-                </header>
+                <NavBar />
+                <div className='banner'></div>
                 <div className="cols__container">
                     <PainelInfos 
                         username = {this.state.username}
