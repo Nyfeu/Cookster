@@ -18,10 +18,14 @@
     "express": "^5.1.0",
     "express-flash": "^0.0.2",
     "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
     "method-override": "^3.0.0",
     "passport": "^0.7.0",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth2": "^0.2.0",
-    "passport-local": "^1.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "passport-local": "^1.0.0",
+    "passport-oauth2": "^1.8.0",
+    "passport-twitter": "^1.0.4"
   }
 }
