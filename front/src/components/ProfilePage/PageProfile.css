@@ -149,6 +149,22 @@ a {
     justify-content: center;
   }
 
+  .gear-icon {
+    color: var(--text-color);
+    font-size: 24px;
+    padding: 8px;
+    margin-top: 10px;
+    margin-right: 10px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+  
+  .gear-icon:hover {
+    transform: scale(1.2);
+    filter: brightness(0.8);
+  }
+
 .header__wrapper .cols__container .right__col button {
   background: var(--secondary-color);
   color: #fff;
@@ -238,7 +254,23 @@ a {
   .header__wrapper .cols__container .right__col .seguir {
     margin-top: 15px;
     justify-content: flex-end;
+    align-items: center;
+  }
 
+  .gear-icon {
+    color: var(--text-color);
+    font-size: 24px;
+    padding: 8px;
+    margin-top: 10px;
+    margin-right: 10px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+  
+  .gear-icon:hover {
+    transform: scale(1.2);
+    filter: brightness(0.8);
   }
 }
 
@@ -255,5 +287,21 @@ a {
   .header__wrapper .cols__container .right__col .seguir {
     margin-top: 15px;
     justify-content: flex-end;
+  }
+
+  .gear-icon {
+    color: var(--text-color);
+    font-size: 24px;
+    padding: 8px;
+    margin-top: 10px;
+    margin-right: 10px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+  
+  .gear-icon:hover {
+    transform: scale(1.2);
+    filter: brightness(0.8);
   }
 }
