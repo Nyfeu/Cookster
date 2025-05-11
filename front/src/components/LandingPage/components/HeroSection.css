@@ -22,3 +22,10 @@
 .container {
     width: 100%;
 }
+
+.hero-wave svg {
+  display: block;
+  width: 100%;
+  height: 15vh;
+  transform: rotate(180deg);
+}
