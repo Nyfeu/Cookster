@@ -14,7 +14,7 @@ input {
 .container-puro {
   position: relative;
   width: 100%;
-  background-color: #fff;
+  background-color: var(--background-color);
   height: 93vh;
   overflow: hidden;
   margin-top: 7vh;
@@ -78,7 +78,7 @@ form.sign-in-form {
 .input-field {
   max-width: 380px;
   width: 100%;
-  background-color: #f0f0f0;
+  background-color: var(--primary-color);
   margin: 10px 0;
   height: 55px;
   border-radius: 55px;
@@ -103,11 +103,11 @@ form.sign-in-form {
   line-height: 1;
   font-weight: 600;
   font-size: 1.1rem;
-  color: #333;
+  color: #fff;
 }
 
 .input-field input::placeholder {
-  color: #aaa;
+  color: #fff;
   font-weight: 500;
 }
 
@@ -129,21 +129,22 @@ form.sign-in-form {
   justify-content: center;
   align-items: center;
   margin: 0 0.45rem;
-  color: #333;
+  color: var(--accent-color);
   border-radius: 50%;
-  border: 1px solid #333;
+  border: 1px solid var(--accent-color);
   text-decoration: none;
   font-size: 1.1rem;
   transition: 0.3s;
 }
 
 .social-icon:hover {
-  color: var(--primary-color);
+  color: var(--secondary-color);
   border-color: var(--secondary-color);
 }
 
 .btn-submit {
   background-color: var(--secondary-color);
+  border: none;
 }
 
 .container-puro:before {
@@ -154,7 +155,7 @@ form.sign-in-form {
   top: -10%;
   right: 48%;
   transform: translateY(-50%);
-  background-image: linear-gradient(-45deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+  background-image: linear-gradient(-45deg, var(--accent-color) 0%, var(--text-color) 100%);
   transition: 1.8s ease-in-out;
   border-radius: 50%;
   z-index: 6;
@@ -168,7 +169,7 @@ form.sign-in-form {
 }
 
 .log-img {
-  padding-left: 3em;
+  width: 125%;
 }
 
 .panel {
@@ -182,6 +183,7 @@ form.sign-in-form {
 .left-panel {
   pointer-events: all;
   padding: 3rem 17% 2rem 12%;
+  align-items: center;
 }
 
 .right-panel {
