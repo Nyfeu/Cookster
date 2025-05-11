@@ -1,0 +1,24 @@
+.hero-banner {
+  background-color: #fef6ee; /* tom claro semelhante ao da imagem */
+  border-radius: 10px;
+}
+
+.hero-text h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.hero-text p {
+  font-size: 1rem;
+  color: #555;
+}
+
+.hero-image img {
+  max-width: 350px;
+  height: auto;
+}
+
+.container {
+    width: 100%;
+}
