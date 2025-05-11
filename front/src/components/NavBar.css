@@ -40,3 +40,15 @@
 .navbar-brand:hover {
     color: var(--accent-color);
 }
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:hover {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
