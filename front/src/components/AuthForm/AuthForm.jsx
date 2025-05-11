@@ -14,6 +14,21 @@ export default class AuthForm extends Component {
 
     constructor(props) {
         super(props);
+        const mode = props.sign_in_mode;
+        this.state = {
+            sign_in: mode === 'sign_in' // Corrigido para refletir o modo corretamente
+        };
+    }
+
+    componentDidMount() {
+        const { sign_in_mode } = this.props;
+        this.setState({ sign_in: sign_in_mode === 'sign_in' });
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.sign_in_mode !== this.props.sign_in_mode) {
+            this.setState({ sign_in: this.props.sign_in_mode === 'sign_in' });
+        }
     }
 
     sign_in = () => {
@@ -32,7 +47,7 @@ export default class AuthForm extends Component {
         return (
             <>
                 <div className={"d-flex flex-column"}>
-                    <NavBar/>
+                    <NavBar />
                     <div className={`container-puro ${this.state.sign_in ? 'sign-up-mode' : ''}`}>
                         <div className="forms-container">
                             <div className="signin-signup">
