@@ -22,7 +22,7 @@ const HeroSection = () => {
                 </div>
 
             </section>
-            <div class="hero-wave">
+            <div className="hero-wave">
                 <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
                     <path
                         fill="#fef6ee"

@@ -29,3 +29,7 @@
   height: 15vh;
   transform: rotate(180deg);
 }
+
+.hero-wave {
+    background-color: var(--accent-color);
+}
