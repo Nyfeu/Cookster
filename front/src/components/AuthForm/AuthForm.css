@@ -15,9 +15,8 @@ input {
   position: relative;
   width: 100%;
   background-color: var(--background-color);
-  height: 93vh;
+  height: 94vh;
   overflow: hidden;
-  margin-top: 7vh;
 }
 
 .content {
