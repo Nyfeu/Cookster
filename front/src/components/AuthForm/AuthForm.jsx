@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 import './AuthForm.css'
 import SignUpForm from './components/SignUpForm';
 import SignInForm from './components/SignInForm';
@@ -22,12 +22,12 @@ export default class AuthForm extends Component {
 
     componentDidMount() {
         const { sign_in_mode } = this.props;
-        this.setState({ sign_in: sign_in_mode === 'sign_in' });
+        this.setState({ sign_in: sign_in_mode !== 'sign_in' });
     }
 
     componentDidUpdate(prevProps) {
         if (prevProps.sign_in_mode !== this.props.sign_in_mode) {
-            this.setState({ sign_in: this.props.sign_in_mode === 'sign_in' });
+            this.setState({ sign_in: this.props.sign_in_mode !== 'sign_in' });
         }
     }
 

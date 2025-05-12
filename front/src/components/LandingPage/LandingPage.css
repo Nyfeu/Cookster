@@ -8,15 +8,27 @@
 
 .btn-custom:hover {
     background-color: var(--primary-color);
-    border-color: var(--secondary-color);
+    border-color: var(--primary-color);
     color: black;
 }
 
 .container-home {
-    min-height: 93vh;
-    margin-top: 7vh;;
+    height: 94vh;
 }
 
 .container-page {
     background-color: white;
+}
+
+#hero-section {
+    background-image: linear-gradient(-45deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+}
+
+#features {
+    padding: 5em 0;
+}
+
+#social-media-footer {
+    background-color: var(--secondary-color);
+    color: white;
 }
