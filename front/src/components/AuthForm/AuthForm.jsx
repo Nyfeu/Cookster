@@ -52,7 +52,7 @@ export default class AuthForm extends Component {
                         <div className="forms-container">
                             <div className="signin-signup">
                                 <SignInForm
-                                    username_placeholder="Nome de usuário"
+                                    email_placeholder="Email"
                                     password_placeholder="Senha"
                                     text="Ou acesse com suas redes sociais"
                                 />
