@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 import './AuthForm.css'
 import SignUpForm from './components/SignUpForm';
 import SignInForm from './components/SignInForm';
