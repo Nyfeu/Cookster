@@ -1,5 +1,6 @@
 import React from "react";
 import "./HeroSection.css";
+import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
     return (
@@ -12,7 +13,7 @@ const HeroSection = () => {
                             Gerencie sua despensa, descubra receitas incríveis e compartilhe <br /> momentos que começam na sua cozinha.
                         </p>
                         <div>
-                            <button className="btn btn-custom text-white">Comece agora</button>
+                            <Link className="btn btn-custom text-white mt-3" to="/register" state={{ mode: 'sign_up' }}>Comece agora</Link>
                             <button className="btn btn-link text-dark">Explorar receitas</button>
                         </div>
                     </div>

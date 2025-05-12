@@ -1,5 +1,6 @@
 import React from "react";
 import "./CallToAction.css";
+import { Link } from 'react-router-dom';
 
 const CallToAction = () => {
     return (
@@ -23,7 +24,7 @@ const CallToAction = () => {
                             Descubra como o Cookster pode mudar sua relação com os <br></br>ingredientes, simplificar o dia a dia e fazer <br></br>cada refeição valer a pena.
                         </p>
                         <div>
-                            <button className="btn btn-custom text-white mt-3">Pronto para transformar sua cozinha?</button>
+                            <Link className="btn btn-custom text-white mt-3" to="/register" state={{ mode: 'sign_up' }}>Pronto para transformar sua cozinha?</Link>
                         </div>
                     </div>
                 </div>
