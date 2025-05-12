@@ -29,7 +29,7 @@ const NavBar = () => {
                 <div className="d-flex align-items-center gap-3">
                     <Link className="btn btn-outline-primary" to="/login" state={{ mode: 'sign_in' }}>Entrar</Link>
                     <Link className="btn btn-primary" to="/register" state={{ mode: 'sign_up' }}>Registrar-se</Link>
-                    <Link to="/profile">
+                    <Link to="/user">
                         <FaUserCircle style={{ color: "var(--background-color)" }} size={28} color="var(--background-color)" />
                     </Link>
                 </div>
