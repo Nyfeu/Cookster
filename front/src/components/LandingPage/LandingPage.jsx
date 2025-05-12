@@ -1,10 +1,9 @@
-import React from 'react'
 import NavBar from '../NavBar'
-import SocialMediaIcons from '../AuthForm/components/SocialMediaIcons'
 import './LandingPage.css'
 import HeroSection from './components/HeroSection'
 import FeaturesSection from './components/FeatureSection'
 import FooterSection from './components/FooterSection'
+import CallToAction from './components/CallToAction'
 
 const LandingPage = () => {
     return (
@@ -17,6 +16,7 @@ const LandingPage = () => {
                     {/* Seções da Landing Page */}
                     <HeroSection />
                     <FeaturesSection />
+                    <CallToAction />
                     <FooterSection />
 
                 </div>

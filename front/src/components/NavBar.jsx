@@ -25,9 +25,6 @@ const NavBar = () => {
                     <li className="nav-item">
                         <Link className="nav-link" to="/funcionalidades">Funcionalidades</Link>
                     </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/como-usar">Como usar</Link>
-                    </li>
                 </ul>
                 <div className="d-flex align-items-center gap-3">
                     <Link className="btn btn-outline-primary" to="/login" state={{ mode: 'sign_in' }}>Entrar</Link>
