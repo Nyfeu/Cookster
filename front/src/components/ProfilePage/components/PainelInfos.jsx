@@ -1,10 +1,19 @@
 import React from 'react'
+import { Image } from 'primereact/image';
 
 const PainelInfos = (props) => {
     return (
         <div className="left__col">
             <div className="img__container">
-                <img src="user.jpeg" alt="Anna Smith" />
+                <Image
+                    src="user.jpeg"
+                    zoomSrc="user.jpeg"
+                    alt="Image"
+                    width="120"
+                    height="120"
+                    preview
+                    className="custom-avatar"
+                />
 
             </div>
             <h2>{props.username}</h2>
@@ -13,7 +22,7 @@ const PainelInfos = (props) => {
 
             <ul className="about">
                 <li><span>{props.seguidores}</span>Seguidores</li>
-                <div></div>              
+                <div></div>
                 <li><span>{props.seguindo}</span>Seguindo</li>
                 <div className='p-2'></div>
                 <li><span >{props.posts}</span>Posts</li>

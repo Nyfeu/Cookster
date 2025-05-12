@@ -10,7 +10,7 @@ const SignInPanel = (props) => {
                     Registre-se
                 </button>
             </div>
-            <img src="log.svg" className="image log-img" alt="" />
+            <img src="log.png" className="image log-img" alt="" />
         </div>
     )
 }

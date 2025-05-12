@@ -6,6 +6,7 @@ import NavBar from '../NavBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 
+
 class PageProfile extends Component {
 
     state = {
@@ -15,7 +16,8 @@ class PageProfile extends Component {
         seguidores: 4073,
         seguindo: 322,
         posts: 200,
-        descricao: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam erat volutpat. Morbi imperdiet, mauris ac auctor dictum, nisl ligula egestas nulla."
+        descricao: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam erat volutpat. Morbi imperdiet, mauris ac auctor dictum, nisl ligula egestas nulla.",
+        token: "x"
     }
 
     render() {
@@ -37,7 +39,14 @@ class PageProfile extends Component {
                     <div className="right__col">
                     <div className="seguir">
                     <FontAwesomeIcon icon={faGear} className="gear-icon" />
-                    <button>Seguir</button>
+                    <button>
+                        {
+                        (this.state.token === 'x')?
+                       "Editar Perfil"
+                        :
+                        "Seguir"
+                        }
+                    </button>
                     </div>
                         <nav>
                             <ul>
