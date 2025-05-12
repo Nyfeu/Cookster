@@ -3,6 +3,8 @@ import './PageProfile.css'; // Caminho do CSS
 import PainelReceitas from './components/PainelReceitas';
 import PainelInfos from './components/PainelInfos';
 import NavBar from '../NavBar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
 
 class PageProfile extends Component {
 
@@ -34,6 +36,7 @@ class PageProfile extends Component {
 
                     <div className="right__col">
                     <div className="seguir">
+                    <FontAwesomeIcon icon={faGear} className="gear-icon" />
                     <button>Seguir</button>
                     </div>
                         <nav>
