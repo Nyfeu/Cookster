@@ -9,6 +9,14 @@ const passport = require('passport')
 const flash = require('express-flash')
 const initializePassport = require('./passport-config')
 const jwt = require('jsonwebtoken')
+const cors = require('cors')
+
+// Permitir acesso do front-end
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}))
 
 const users = []
 
@@ -163,4 +171,4 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
   res.status(200).json({ message: 'Logout simbólico com JWT. Basta remover o token no frontend.' })
 })
 
-app.listen(3000, () => console.log('Servidor rodando na porta 3000'))
+app.listen(3000, () => console.log('mss-autenticacao (localhost:3000): [OK]'))
