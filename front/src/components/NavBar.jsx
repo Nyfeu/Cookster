@@ -20,16 +20,18 @@ const NavBar = () => {
                         <Link className="nav-link" to="/">Home</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/sobre">Sobre</Link>
+                        <Link className="nav-link" to="/#cta">Sobre</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/funcionalidades">Funcionalidades</Link>
+                        <Link className="nav-link" to="/#features">Funcionalidades</Link>
                     </li>
                 </ul>
                 <div className="d-flex align-items-center gap-3">
                     <Link className="btn btn-outline-primary" to="/login" state={{ mode: 'sign_in' }}>Entrar</Link>
                     <Link className="btn btn-primary" to="/register" state={{ mode: 'sign_up' }}>Registrar-se</Link>
-                    <FaUserCircle style={{ color: "var(--background-color)" }} size={28} color="#555" />
+                    <Link to="/profile">
+                        <FaUserCircle style={{ color: "var(--background-color)" }} size={28} color="var(--background-color)" />
+                    </Link>
                 </div>
             </div>
         </nav>
