@@ -1,0 +1,140 @@
+.container {
+  font-family: sans-serif;
+  padding: 0 1rem;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f8f8f8;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.navbar nav button {
+  margin: 0 0.5rem;
+  background: none;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.profile-icon {
+  font-size: 1.5rem;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  background-color: #fff3e0;
+}
+
+.hero-buttons button {
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.btn-orange {
+  background-color: #ff7043;
+  color: white;
+}
+
+.btn-light {
+  background-color: #fbe9e7;
+  color: #333;
+}
+
+.despensa {
+  background-color: #e0f2f1;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.btn-yellow {
+  background-color: #ffd54f;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.ingredientes {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ingrediente {
+  font-size: 2rem;
+}
+
+.feed {
+  padding: 2rem;
+}
+
+.carousel {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  overflow-x: auto;
+}
+
+.card {
+  background-color: #e8f5e9;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 200px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.actions button {
+  margin: 0.25rem;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.username {
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.arrow {
+  background: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  border: none;
+}
+
+footer {
+  background-color: #eeeeee;
+  padding: 1rem;
+  text-align: center;
+}
+
+.btn-green {
+  background-color: #a5d6a7;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
