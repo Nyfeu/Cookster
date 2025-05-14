@@ -1,8 +1,11 @@
-.container {
-  font-family: sans-serif;
+.body {
+  font-family: 'Inter', sans-serif;
   padding: 0 1rem;
   margin: 0 auto;
   max-width: 1200px;
+  box-sizing: border-box;
+  background-color: #faf9f6;
+  color: #333
 }
 
 .navbar {
@@ -32,10 +35,15 @@
 
 .hero {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   padding: 2rem;
   background-color: #fff3e0;
+  gap: 1rem;
+  text-align: center;
+  border-radius:20px;
+  box-shadow: 0 8px 10px rgba(0,0,0,0.08);
 }
 
 .hero-buttons button {
@@ -50,17 +58,33 @@
 .btn-orange {
   background-color: #ff7043;
   color: white;
+  border-radius: 99px
+}
+
+.btn-orange:hover {
+  background-color: #f4511e;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
 }
 
 .btn-light {
   background-color: #fbe9e7;
   color: #333;
+  border-radius: 99px
+}
+
+.btn-light:hover {
+  background-color: #ffece9;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
 }
 
 .despensa {
   background-color: #e0f2f1;
+  box-shadow: 0 8px 10px rgba(0,0,0,0.08);
   padding: 1.5rem;
   text-align: center;
+  border-radius:20px;
 }
 
 .btn-yellow {
@@ -70,7 +94,13 @@
   margin-bottom: 1rem;
   cursor: pointer;
   font-weight: bold;
-  border-radius: 5px;
+  border-radius: 9px;
+}
+
+.btn-yellow:hover {
+  background-color: #ffca28;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
 }
 
 .ingredientes {
@@ -85,23 +115,53 @@
 }
 
 .feed {
-  padding: 2rem;
+  padding: 2rem 1rem;
+  overflow: visible;
 }
 
 .carousel {
   display: flex;
+  flex-wrap: nowrap;         
   align-items: center;
   gap: 1rem;
-  overflow-x: auto;
+  overflow-x: hidden;
+  scroll-snap-type: none;
+  scroll-behavior: smooth;
 }
 
-.card {
-  background-color: #e8f5e9;
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  overflow: visible;
+}
+
+.recipe-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 10px rgba(0,0,0,0.05);
   padding: 1rem;
-  border-radius: 8px;
   width: 200px;
-  text-align: center;
+  min-width: 220px;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  scroll-snap-align: start;
+  margin-bottom: 1rem;
+}
+
+.recipe-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
 }
 
 .actions button {
@@ -110,6 +170,12 @@
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
+}
+
+.actions button:hover {
+  color: #ff7043;
+  transform: scale(1.2);
+  transition: all 0.2s ease;
 }
 
 .username {
@@ -128,6 +194,7 @@ footer {
   background-color: #eeeeee;
   padding: 1rem;
   text-align: center;
+  border-radius: 20px;
 }
 
 .btn-green {
@@ -137,4 +204,65 @@ footer {
   font-weight: bold;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.btn-green:hover {
+  background-color: #81c784;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .hero-text h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero-buttons button {
+    margin: 0.5rem 0;
+    width: 100%;
+  }
+
+  .ingredientes {
+    flex-wrap: wrap;
+  }
+
+  .carousel {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .card {
+    width: 80vw;
+  }
+}
+
+@media (max-width: 600px) {
+  .carousel {
+    flex-direction: column;
+    overflow-x: hidden;
+    align-items: stretch;
+  }
+
+  .card {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar nav button {
+    font-size: 0.8rem;
+  }
+
+  .btn-orange,
+  .btn-light,
+  .btn-yellow,
+  .btn-green {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .arrow {
+    font-size: 1.2rem;
+  }
 }
