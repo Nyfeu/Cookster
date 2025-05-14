@@ -6,16 +6,20 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg,
-  rgba(230, 247, 237, 0.9) 20%,
-  rgba(154, 201, 173, 0.9) 100%);
+  background: rgba(232, 152, 65, 0.9);
   color: #333;
-  line-height: 1.6;
+  line-height: 1.3;
 }
 
 
 .nav {
-  margin-bottom: 20px;
+  width: 100%;
+  height: 100%; 
+}
+
+.navbar {
+  width: 100%;
+  height: 100%;
 }
 
 
@@ -23,7 +27,7 @@ body {
   display: flex;
   flex-direction: row;
   padding: 2rem;
-  max-width: 1200px;
+  /* max-width: 1200px; */
   margin: 0 auto;
 }
 
@@ -38,7 +42,7 @@ body {
   flex-wrap: wrap;
   gap: 2rem;
   align-items: center;
-  background-color: var(--accent-color);
+  background-color: var(--background-color);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -85,7 +89,12 @@ body {
 }
 
 .recipe-icons h5 {
+  margin-top: 5px;
   color: var(--secondary-color);
+}
+
+.recipe-icons p{
+  font-weight: 500;
 }
 
 
@@ -101,6 +110,10 @@ body {
   text-decoration: underline;
 }
 
+.recipe-tags  {
+  font-weight: 500;
+}
+
 
 .recipe-content {
   display: grid;
@@ -111,13 +124,13 @@ body {
 .recipe-content article h4 {
   font-size: 1.25rem;
   margin-bottom: 1rem;
-  color: var(--secondary-color);
+  color: var(--text-color);
 }
 
 
 .single-instruction {
   margin-bottom: 1.5rem;
-  background: var(--accent-color);
+  background: var(--background-color);
   padding: 1rem;
   border-left: 4px solid var(--text-color);
   border-radius: 6px;
@@ -129,16 +142,17 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
+  
 }
 
 .single-instruction header p {
   font-weight: bold;
-  color: var(--secondary-color);
+  color: var(--text-color);
 }
 
 
 .second-column>div {
-  background: var(--accent-color);
+  background: var(--background-color);
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 6px;
@@ -169,7 +183,8 @@ body {
 .tool-list p,
 .ingredient-list p {
   display: flex;
-  align-items: center;          
+  align-items: center;
+  justify-content: start;  
   gap: 0.5rem;                  
 }
 

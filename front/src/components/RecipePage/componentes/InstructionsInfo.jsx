@@ -3,7 +3,7 @@ import React from 'react'
 const InstructionsInfo = () => {
   return (
     <>
-    <h4>Instruções</h4>
+
     <div className="single-instruction">
       <header>
         <p>Passo 1</p>

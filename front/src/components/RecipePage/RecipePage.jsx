@@ -13,8 +13,8 @@ export default class RecipePage extends Component {
             <div className="nav">
             <NavBar />
             </div>
-
         <main className="page">
+          
           <div className="recipe-page">
             <section className="recipe-hero">
               <RecipeInfo />
