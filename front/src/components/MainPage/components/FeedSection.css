@@ -1,0 +1,24 @@
+.feed-section {
+  background-color: white;
+  padding: 4rem 0;
+}
+
+.feed-section h2 {
+  color: var(--text-color);
+}
+
+.recipe-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 10px rgba(0,0,0,0.05);
+  padding: 1rem;
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.recipe-image {
+  height: 120px;
+  background-color: var(--accent-color);
+  border-radius: 6px;
+  color: white;
+}

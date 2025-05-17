@@ -1,19 +1,23 @@
 import React from "react";
 import NavBar from "../NavBar";
-import Hero from "./components/Hero";
-import Despensa from "./components/Despensa";
-import Feed from "./components/Feed";
-import Footer from "./components/Footer";
+import HeroSection from "./components/HeroSection";
+import DespensaSection from "./components/DespensaSection";
+import FeedSection from "./components/FeedSection";
+import FooterSection from "./components/FooterSection";
 import "./MainPage.css";
 
 export default function MainPage() {
   return (
-    <div className="container" style={{ paddingTop: '7vh' }}>
+    <div className="container-page">
+      
       <NavBar />
-      <Hero />
-      <Despensa />
-      <Feed />
-      <Footer />
+      <div className="container-fluid" style={{ padding: '80px 0 0 0' }}>
+        
+        <HeroSection />
+        <DespensaSection />
+        <FeedSection />
+        <FooterSection />
+      </div>
     </div>
   );
 }

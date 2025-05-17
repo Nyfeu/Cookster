@@ -1,0 +1,19 @@
+.hero-banner {
+  background-color: var(--background-color);
+  padding: 5rem 0;
+}
+
+.hero-banner h1 {
+  color: var(--text-color);
+  font-weight: 700;
+}
+
+.hero-banner .btn-custom {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.hero-banner .btn-custom:hover {
+  background-color: var(--primary-color);
+  color: white;
+}

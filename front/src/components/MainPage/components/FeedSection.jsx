@@ -1,0 +1,42 @@
+import React, { useRef } from "react";
+import './FeedSection.css'
+
+export default function FeedSection() {
+  const carouselRef = useRef(null);
+
+  const scrollLeft = () => {
+    carouselRef.current.scrollBy({ left: -240, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    carouselRef.current.scrollBy({ left: 240, behavior: "smooth" });
+  };
+
+  return (
+    <section className="py-5 bg-white text-center">
+      <div className="px-3">
+        <h2 className="text-color fw-bold mb-5">Feed de Receitas</h2>
+        <div className="d-flex align-items-center justify-content-center gap-3">
+          <button className="arrow btn btn-custom" onClick={scrollLeft}>←</button>
+          <div className="carousel" ref={carouselRef}>
+            {[1, 2, 3, 4, 5].map((_, index) => (
+              <div className="recipe-card" key={index}>
+                <div className="recipe-image bg-secondary text-white d-flex align-items-center justify-content-center rounded mb-3" style={{ height: '120px' }}>📷</div>
+                <h5 className="fw-bold">Título da Receita</h5>
+                <p className="text-muted small">Descrição da publicação</p>
+                <div className="actions d-flex justify-content-center gap-2">
+                  <button className="btn btn-sm btn-outline-secondary">❤️</button>
+                  <button className="btn btn-sm btn-outline-secondary">💬</button>
+                  <button className="btn btn-sm btn-outline-secondary">🔖</button>
+                  <button className="btn btn-sm btn-outline-secondary">🔗</button>
+                </div>
+                <div className="username mt-2 text-muted small">@Username</div>
+              </div>
+            ))}
+          </div>
+          <button className="arrow btn btn-custom" onClick={scrollRight}>→</button>
+        </div>
+      </div>
+    </section>
+  );
+}
