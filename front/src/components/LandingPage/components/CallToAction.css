@@ -1,5 +1,5 @@
 .cta-banner {
-  background-color: #fef6ee; /* tom claro semelhante ao da imagem */
+  background-color: var(--background-color); 
   border-radius: 10px;
 }
 

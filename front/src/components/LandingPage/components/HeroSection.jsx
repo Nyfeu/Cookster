@@ -26,7 +26,7 @@ const HeroSection = () => {
             <div className="hero-wave">
                 <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
                     <path
-                        fill="#fef6ee"
+                        fill="var(--background-color)"
                         d="M0,160 C300,80 1140,320 1440,240 L1440,320 L0,320 Z"
                     ></path>
                 </svg>
