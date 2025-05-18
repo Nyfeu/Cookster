@@ -77,6 +77,36 @@ uvicorn script:app --host 0.0.0.0 --port 8000 --workers 4
 GET /sugestoes?termo={termo}
 ```
 
+```mermaid
+sequenceDiagram
+    participant Usuário as WebClient
+    participant API as FastAPI
+    participant ChromaDB
+    participant Modelo as Sentence Transformer
+
+    Usuário->>API: GET /sugestoes?termo=nesc
+    activate API
+
+    API->>API: Valida termo (min 2 caracteres)
+    alt Termo inválido
+        API-->>Usuário: Erro 400
+    else
+        API->>Modelo: model.encode(termo)
+        activate Modelo
+        Modelo-->>API: Embedding (vetor)
+        deactivate Modelo
+
+        API->>ChromaDB: Query com embedding
+        activate ChromaDB
+        ChromaDB-->>API: 5 resultados mais próximos
+        deactivate ChromaDB
+
+        API->>API: Processa resultados
+        API-->>Usuário: Resposta JSON
+    end
+    deactivate API
+```
+
 **Parâmetros:**
 - `termo`: Texto para busca (mín. 2 caracteres)
 
