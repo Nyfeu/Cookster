@@ -8,16 +8,22 @@ import "./MainPage.css";
 
 export default function MainPage() {
   return (
-    <div className="container-page">
-      
-      <NavBar />
-      <div className="container-fluid" style={{ padding: '80px 0 0 0' }}>
+    <>
+      <div className="container-page">
+
+        <NavBar />
+        <div className="container-fluid container-home p-0 d-flex flex-column">
+
+          <HeroSection />
+          <DespensaSection />
+          <FeedSection />
+          <FooterSection />
+
+        </div>
         
-        <HeroSection />
-        <DespensaSection />
-        <FeedSection />
-        <FooterSection />
+
       </div>
-    </div>
+
+    </>
   );
 }

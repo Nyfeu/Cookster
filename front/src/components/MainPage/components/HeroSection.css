@@ -1,19 +1,29 @@
-.hero-banner {
-  background-color: var(--background-color);
+.hero-section {
+  background: var(--background-color);
+  /* background: linear-gradient(180deg, var(--background-color) 0%, var(--transition-color) 100%); */
   padding: 5rem 0;
 }
 
-.hero-banner h1 {
-  color: var(--text-color);
-  font-weight: 700;
+.hero-section h1 {
+  color: var(--primary-color);
 }
 
-.hero-banner .btn-custom {
+.hero-section .btn-custom {
   background-color: var(--secondary-color);
   color: white;
 }
 
-.hero-banner .btn-custom:hover {
+.hero-section .btn-custom:hover {
   background-color: var(--primary-color);
   color: white;
+}
+
+.btn-outline-primary {
+  border-width: 3px; /* Aumenta a espessura de todos os botões outline-primary */
+  font-weight: bold;
+}
+
+.hero-image img {
+  max-width: 350px;
+  height: auto;
 }

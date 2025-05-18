@@ -1,6 +1,6 @@
 import './FooterSection.css'
 
-export default function FooterSection() {
+const FooterSection = () => {
     return (
         <footer class="px-5 custom-footer">
             <div class="d-flex flex-column align-items-center text-center gap-2 flex-sm-row justify-content-between py-1 my-3">
@@ -16,4 +16,4 @@ export default function FooterSection() {
     )
 }
 
-
+export default FooterSection

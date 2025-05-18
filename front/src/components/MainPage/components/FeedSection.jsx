@@ -13,7 +13,7 @@ export default function FeedSection() {
   };
 
   return (
-    <section className="py-5 bg-white text-center">
+    <section className="feed-section py-5 text-center">
       <div className="px-3">
         <h2 className="text-color fw-bold mb-5">Feed de Receitas</h2>
         <div className="d-flex align-items-center justify-content-center gap-3">
