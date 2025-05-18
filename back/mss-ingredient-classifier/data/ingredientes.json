@@ -1,0 +1,154 @@
+[
+    {
+        "nome": "Achocolatado em Pó",
+        "sinonimos": ["Nescau", "Toddy", "chocolate em pó", "Ovomaltine", "Nesquik"]
+    },
+    {
+        "nome": "Leite",
+        "sinonimos": ["leite integral", "leite desnatado", "leite vegetal", "leite de vaca", "lácteo"]
+    },
+    {
+        "nome": "Chocolate em Barra",
+        "sinonimos": ["chocolate meio amargo", "chocolate ao leite", "barra de chocolate", "chocolate 70%", "Chocobell"]
+    },
+    {
+        "nome": "Farinha de Trigo",
+        "sinonimos": ["farinha branca", "trigo moído", "farinha refinada", "farinha multiuso", "farinha peneirada"]
+    },
+    {
+        "nome": "Ovo",
+        "sinonimos": ["ovo de galinha", "ovo caipira", "ovo orgânico", "ovo grande", "ovo médio"]
+    },
+    {
+        "nome": "Açúcar",
+        "sinonimos": ["açúcar refinado", "açúcar cristal", "açúcar demerara", "açúcar mascavo", "adoçante"]
+    },
+    {
+        "nome": "Manteiga",
+        "sinonimos": ["manteiga sem sal", "manteiga com sal", "manteiga derretida", "manteiga gelada", "manteiga clarificada"]
+    },
+    {
+        "nome": "Leite Condensado",
+        "sinonimos": ["leite moça", "leite condensado light", "leite condensado cozido", "leite condensado caseiro"]
+    },
+    {
+        "nome": "Creme de Leite",
+        "sinonimos": ["creme de leite fresco", "creme de leite enlatado", "creme de leite light", "nata"]
+    },
+    {
+        "nome": "Queijo Mussarela",
+        "sinonimos": ["mussarela ralada", "queijo derretido", "queijo prato", "queijo fresco", "queijo minas"]
+    },
+    {
+        "nome": "Carne Moída",
+        "sinonimos": ["carne de hambúrguer", "carne acém moído", "carne patinho moído", "carne suína moída"]
+    },
+    {
+        "nome": "Peito de Frango",
+        "sinonimos": ["frango desfiado", "filé de frango", "frango grelhado", "frango cozido", "frango assado"]
+    },
+    {
+        "nome": "Batata",
+        "sinonimos": ["batata inglesa", "batata asterix", "batata doce", "batata baroa", "batata salsa"]
+    },
+    {
+        "nome": "Cebola",
+        "sinonimos": ["cebola roxa", "cebola caramelizada", "cebola picada", "cebola em cubos", "ceola"]
+    },
+    {
+        "nome": "Alho",
+        "sinonimos": ["alho picado", "alho amassado", "alho frito", "alho granulado", "alho poró"]
+    },
+    {
+        "nome": "Tomate",
+        "sinonimos": ["tomate italiano", "tomate cereja", "tomate pelado", "tomate seco", "tomate caqui"]
+    },
+    {
+        "nome": "Pão de Forma",
+        "sinonimos": ["pão de sanduíche", "pão integral", "pão branco", "pão seven grain", "pão sem glúten"]
+    },
+    {
+        "nome": "Macarrão",
+        "sinonimos": ["espaguete", "penne", "parafuso", "talharim", "macarrão instantâneo"]
+    },
+    {
+        "nome": "Arroz",
+        "sinonimos": ["arroz branco", "arroz integral", "arroz arbóreo", "arroz japonês", "arroz parboilizado"]
+    },
+    {
+        "nome": "Feijão",
+        "sinonimos": ["feijão carioca", "feijão preto", "feijão branco", "feijão fradinho", "feijão verde"]
+    },
+    {
+        "nome": "Óleo de Cozinha",
+        "sinonimos": ["óleo de soja", "óleo de girassol", "óleo de milho", "óleo vegetal", "azeite"]
+    },
+    {
+        "nome": "Vinagre",
+        "sinonimos": ["vinagre branco", "vinagre balsâmico", "vinagre de maçã", "vinagre de vinho", "vinagrete"]
+    },
+    {
+        "nome": "Maionese",
+        "sinonimos": ["maionese light", "maionese caseira", "maionese de azeite", "maionese vegana"]
+    },
+    {
+        "nome": "Mostarda",
+        "sinonimos": ["mostarda dijon", "mostarda amarela", "mostarda em grão", "mostarda picante"]
+    },
+    {
+        "nome": "Ketchup",
+        "sinonimos": ["catchup", "molho de tomate industrializado", "ketchup light", "ketchup caseiro"]
+    },
+    {
+        "nome": "Molho Shoyu",
+        "sinonimos": ["shoyu", "molho de soja", "shoyu light", "molho teriyaki", "tamari"]
+    },
+    {
+        "nome": "Fermento Biológico",
+        "sinonimos": ["fermento fresco", "fermento seco", "levain", "fermento natural", "levadura"]
+    },
+    {
+        "nome": "Canela em Pó",
+        "sinonimos": ["canela moída", "canela do ceilão", "canela em rama moída", "canela cheirosa"]
+    },
+    {
+        "nome": "Coco Ralado",
+        "sinonimos": ["coco seco ralado", "coco fresco ralado", "coco industrializado", "flocos de coco"]
+    },
+    {
+        "nome": "Amendoim",
+        "sinonimos": ["amendoim torrado", "amendoim japonês", "pasta de amendoim", "paçoca", "amendoim doce"]
+    },
+    {
+        "nome": "Castanha de Caju",
+        "sinonimos": ["caju torrado", "castanha sem sal", "caju caramelizado", "manteiga de caju"]
+    },
+    {
+        "nome": "Chia",
+        "sinonimos": ["semente de chia", "chia preta", "chia branca", "chia orgânica"]
+    },
+    {
+        "nome": "Aveia",
+        "sinonimos": ["aveia em flocos", "aveia instantânea", "farinha de aveia", "aveia sem glúten"]
+    },
+    {
+        "nome": "Mel",
+        "sinonimos": ["mel de abelha", "mel orgânico", "mel silvestre", "mel de eucalipto", "mel artificial"]
+    },
+    {
+        "nome": "Gelatina",
+        "sinonimos": ["gelatina incolor", "gelatina em pó", "gelatina diet", "ágar-ágar", "grenetina"]
+    },
+    {
+        "nome": "Corante Alimentício",
+        "sinonimos": ["corante vermelho", "corante natural", "corante em gel", "corante líquido"]
+    },
+    {
+        "nome": "Extrato de Baunilha",
+        "sinonimos": ["essência de baunilha", "baunilha líquida", "vainilla", "fava de baunilha"]
+    },
+    {
+        "nome": "Café",
+        "sinonimos": ["café moído", "café solúvel", "café em grãos", "café espresso", "café descafeinado"]
+    }
+]

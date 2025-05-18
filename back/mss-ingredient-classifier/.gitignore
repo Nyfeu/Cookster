@@ -1,0 +1,38 @@
+# .gitignore
+
+# Ambiente virtual
+.venv/
+venv/
+env/
+
+# Arquivos de ambiente
+.env
+.env.local
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*.pyc
+.pytest_cache/
+
+# Dados do ChromaDB
+data/chroma/
+chroma_data/
+
+# Configurações do editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos temporários
+*.tmp
+*.bak
+
+# Logs
+*.log
+logs/
+
+# Arquivos de desenvolvimento
+.DS_Store
+Thumbs.db
