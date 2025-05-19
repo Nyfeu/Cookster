@@ -23,3 +23,16 @@
   border-radius: 6px;
   color: white;
 }
+
+.carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  flex-wrap: nowrap;
+}
+
+.carousel::-webkit-scrollbar {
+  display: none; /* Esconde a barra de rolagem no Chrome/Safari */
+}

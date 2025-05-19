@@ -1,5 +1,11 @@
 .container-page {
     background-color: white;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.container-home {
+    height: 94vh;
 }
 
 /* .navbar {

@@ -1,11 +1,10 @@
 .despensa-section {
-  /* background: var(--transition-color); */
   background: linear-gradient(to bottom, var(--background-color) 10%, var(--transition-color) 85%);
   padding: 5rem 0;
 }
 
 .despensa-section h2 {
-  color: var(--accent-color);
+  color: var(--primary-color);
 }
 
 .despensa-section .btn-custom {

@@ -1,7 +1,7 @@
 .hero-section {
   background: var(--background-color);
   /* background: linear-gradient(180deg, var(--background-color) 0%, var(--transition-color) 100%); */
-  padding: 5rem 0;
+   
 }
 
 .hero-section h1 {
