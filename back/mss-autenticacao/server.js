@@ -74,6 +74,17 @@ app.get('/dashboard', checkAuthenticated, (req, res) => {
   })
 })
 
+app.get('/profile', checkAuthenticated, (req, res) => {
+  res.json({
+    message: 'Você está autenticado e acessou sua página privada.',
+    user: req.user 
+  })
+})
+
+app.get('/register', (req, res) => {
+  res.json(users)
+})
+
 
 // Login local
 app.post('/login', checkNotAuthenticated, (req, res, next) => {

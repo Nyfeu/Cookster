@@ -4,6 +4,7 @@
     background-color: var(--secondary-color);
     border-color: var(--secondary-color);
     color: white;
+    align-items: center;
 }
 
 .btn-custom:hover {

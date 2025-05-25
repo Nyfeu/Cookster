@@ -12,7 +12,7 @@ function App() {
         <Route path="/" element={<LandingPage/>}/>
         <Route path="/login" element={<AuthForm sign_in_mode='sign_in'/>} />
         <Route path="/register" element={<AuthForm sign_in_mode='sign_up'/>} />
-        <Route path="/user" element={<PageProfile/>} />
+        <Route path="/profile" element={<PageProfile/>} />
       </Routes>
     </Router>
   )

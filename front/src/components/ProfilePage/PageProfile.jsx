@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import './PageProfile.css'; // Caminho do CSS
+import { useEffect, useState } from "react";
+import './PageProfile.css';
 import PainelReceitas from './components/PainelReceitas';
 import PainelInfos from './components/PainelInfos';
 import NavBar from '../NavBar';
@@ -7,58 +8,97 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 
 
-class PageProfile extends Component {
+const PageProfile = (props) => {
 
-    state = {
-        username : "Anna Smith",
-        bio : "UX/UI Designer",
-        email : "anna@example.com",
-        seguidores: 4073,
-        seguindo: 322,
-        posts: 200,
-        descricao: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam erat volutpat. Morbi imperdiet, mauris ac auctor dictum, nisl ligula egestas nulla.",
-        token: "x"
-    }
 
-    render() {
-        return (
-            <div className="header__wrapper">
-                <NavBar />
-                <div className='banner'></div>
-                <div className="cols__container">
-                    <PainelInfos 
-                        username = {this.state.username}
-                        bio = {this.state.bio}
-                        email = {this.state.email}
-                        seguidores = {this.state.seguidores}
-                        seguindo = {this.state.seguindo}
-                        posts = {this.state.posts}
-                        descricao = {this.state.descricao}
-                        />
+    const [username, setUsername] = useState();
 
-                    <div className="right__col">
+    const [bio, setBio] = useState("UX/UI Designer");
+    const [email, setEmail] = useState(null);
+    const [seguidores, setSeguidores] = useState(4073);
+    const [seguindo, setSeguindo] = useState(322);
+    const [posts, setPosts] = useState(200);
+    const [descricao, setDescricao] = useState(
+        "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam erat volutpat. Morbi imperdiet, mauris ac auctor dictum, nisl ligula egestas nulla."
+    );
+    const [token, setToken] = useState();
+
+    const [error, setError] = useState(null)
+    const [user, setUser] = useState()
+
+    useEffect(() => {
+        fetch('http://localhost:3000/register', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+            .then(async res => {
+                const data = await res.json()
+
+                if (!res.ok) throw new Error(data.error)
+                setUser(data[0])
+            })
+            .catch(err => {
+                console.error('ERRO NO FETCH:', err.message)
+                setError(err.message)
+            })
+
+    }, [])
+
+    useEffect(() => {
+        if (user) {
+            setUsername(user.name)
+            setEmail(user.email)
+            setToken(localStorage.getItem('token')) 
+        }
+    }, [user])
+
+    if (error) return <div>{error}</div>
+    if (!user) return (
+        <div className="center-container"> 
+            Carregando...
+        </div>
+    )
+
+
+    return (
+        <div className="header__wrapper">
+            <NavBar />
+            <div className='banner'></div>
+            <div className="cols__container">
+                <PainelInfos
+                    username={username}
+                    bio={bio}
+                    email={email}
+                    seguidores={seguidores}
+                    seguindo={seguindo}
+                    posts={posts}
+                    descricao={descricao}
+                />
+
+                <div className="right__col">
                     <div className="seguir">
-                    <FontAwesomeIcon icon={faGear} className="gear-icon" />
-                    <button>
-                        {
-                        (this.state.token === 'x')?
-                       "Editar Perfil"
-                        :
-                        "Seguir"
-                        }
-                    </button>
+                        <FontAwesomeIcon icon={faGear} className="gear-icon" />
+                        <button>
+                            {
+                                (token) ?
+                                    "Editar Perfil"
+                                    :
+                                    "Seguir"
+                            }
+                        </button>
                     </div>
-                        <nav>
-                            <ul>
-                                <li><a href="#">Receitas</a></li>
-                            </ul>
-                        </nav>
-                        <PainelReceitas />
-                    </div>
+                    <nav>
+                        <ul>
+                            <li><a href="#">Receitas</a></li>
+                        </ul>
+                    </nav>
+                    <PainelReceitas />
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
 }
+
 
 export default PageProfile;

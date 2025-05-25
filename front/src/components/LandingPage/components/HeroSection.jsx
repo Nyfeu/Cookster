@@ -14,7 +14,7 @@ const HeroSection = () => {
                         </p>
                         <div>
                             <Link className="btn btn-custom text-white mt-3" to="/register" state={{ mode: 'sign_up' }}>Comece agora</Link>
-                            <button className="btn btn-link text-dark">Explorar receitas</button>
+                            <button className="btn btn-link text-dark ">Explorar receitas</button>
                         </div>
                     </div>
                     <div className="hero-image text-center mx-5">
