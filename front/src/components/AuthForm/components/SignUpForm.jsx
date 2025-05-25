@@ -19,8 +19,6 @@ const SignUpForm = (props) => {
                     <input type="password" placeholder={props.password_placeholder} />
                 </div>
                 <input type="submit" className="btn btn-success btn-submit rounded-pill px-4 py-2 my-2"/>
-                <p className="social-text">{props.text}</p>
-                <SocialMediaIcons />
             </form>
         </>
     )

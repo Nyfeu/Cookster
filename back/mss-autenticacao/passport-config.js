@@ -4,12 +4,12 @@ const FacebookStrategy = require('passport-facebook').Strategy
 const bcrypt = require('bcrypt')
 
 // Array de usuários em memória (vou substituir por um BD depois)
-const users = []
+//const users = []
 
 function initialize(passport, getUserByEmail, getUserById) {
   
   const authenticateUser = async (email, password, done) => {
-    const user = getUserByEmail(email)
+    const user = await getUserByEmail(email)
     if (!user) {
       return done(null, false, { message: 'Usuário não encontrado' })
     }

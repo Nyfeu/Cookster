@@ -5,23 +5,29 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const app = express()
 const bcrypt = require('bcrypt')
+const mongoose = require('mongoose')
 const passport = require('passport')
 const flash = require('express-flash')
 const initializePassport = require('./passport-config')
 const jwt = require('jsonwebtoken')
+//Models
+const User = require('./models/User')
 
-const users = []
+//const users = []
 
 initializePassport(
   passport,
-  email => users.find(user => user.email === email),
-  id => users.find(user => user.id === id)
+  async email => await User.findOne({ email }),
+  async id => await User.findOne({ id})
 )
 
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(flash())
 app.use(passport.initialize())
+
+
+
 
 function checkAuthenticated(req, res, next) {
   const authHeader = req.headers.authorization
@@ -103,27 +109,29 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     })
   }
 
-  const existingUser = users.find(user => user.email === email)
-  if (existingUser) {
+  const existingUser = await User.findOne({ email: email})
+  if(existingUser) {
     return res.status(409).json({ error: 'Email já cadastrado' })
   }
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10)
-    const newUser = {
+
+    const user = new User({
       id: Date.now().toString(),
       name,
       email,
       password: hashedPassword
-    }
-    users.push(newUser)
+    })
 
+    await user.save()
+    
     return res.status(201).json({
       message: 'Usuário cadastrado com sucesso',
       user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email
+        id: user.id,
+        name: user.name,
+        email: user.email
       }
     })
   } catch (err) {
@@ -163,4 +171,13 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
   res.status(200).json({ message: 'Logout simbólico com JWT. Basta remover o token no frontend.' })
 })
 
-app.listen(3000, () => console.log('Servidor rodando na porta 3000'))
+//CREDENCIAIS DO BANCO DE DADOS
+const dbUser = process.env.DB_USER
+const dbPassword = process.env.DB_PASS
+
+mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
+  .then(() => {
+    app.listen(3000, () => console.log('Servidor rodando na porta 3000'))
+    console.log('Conectado ao MongoDB')
+  })
+  .catch(err => console.log(err))
