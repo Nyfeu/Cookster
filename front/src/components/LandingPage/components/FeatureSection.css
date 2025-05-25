@@ -1,0 +1,7 @@
+#features {
+    background-color: var(--accent-color);
+}
+
+.text-feature {
+    color: var(--background-color);
+}

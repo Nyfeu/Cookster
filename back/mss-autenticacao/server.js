@@ -10,8 +10,14 @@ const passport = require('passport')
 const flash = require('express-flash')
 const initializePassport = require('./passport-config')
 const jwt = require('jsonwebtoken')
-//Models
-const User = require('./models/User')
+const cors = require('cors')
+
+// Permitir acesso do front-end
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}))
 
 //const users = []
 
@@ -171,13 +177,4 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
   res.status(200).json({ message: 'Logout simbólico com JWT. Basta remover o token no frontend.' })
 })
 
-//CREDENCIAIS DO BANCO DE DADOS
-const dbUser = process.env.DB_USER
-const dbPassword = process.env.DB_PASS
-
-mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
-  .then(() => {
-    app.listen(3000, () => console.log('Servidor rodando na porta 3000'))
-    console.log('Conectado ao MongoDB')
-  })
-  .catch(err => console.log(err))
+app.listen(3000, () => console.log('mss-autenticacao (localhost:3000): [OK]'))
