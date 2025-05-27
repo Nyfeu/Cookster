@@ -123,7 +123,7 @@ npm run devStart
 ```
 
 O gateway estará disponível em:
-```http
+```plain-text
 http://localhost:2000
 ```
 
