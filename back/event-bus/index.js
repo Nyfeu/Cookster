@@ -12,6 +12,14 @@ const subscribers = [];
 const failures = new Map();
 const MAX_FAILURES = 3;
 
+// Lista de eventos gerados
+const base = [
+    events = []
+];
+
+// Enumeração de eventos
+const EventType = {}
+
 // Endpoint para registro de serviços
 app.post('/register', (req, res) => {
 
@@ -37,7 +45,11 @@ app.post('/register', (req, res) => {
 // Endpoint para receber eventos e redistribuir
 app.post('/events', async (req, res) => {
 
+    // Verifica se o corpo da requisição contém um evento
     const event = req.body;
+
+    // Adiciona o evento à lista de eventos
+    base.events.push(event);
 
     // Log do evento recebido
     console.log('Evento recebido:', event.type);
@@ -67,6 +79,13 @@ app.post('/events', async (req, res) => {
 
     await Promise.all(promises);
     res.send({ status: 'Evento processado!' });
+
+});
+
+app.get('/events', (req, res) => {
+
+    // Retorna a lista de eventos gerados
+    res.send(base.events);
 
 });
 
