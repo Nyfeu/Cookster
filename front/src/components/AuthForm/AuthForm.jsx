@@ -33,13 +33,16 @@ export default class AuthForm extends Component {
 
     sign_in = () => {
         this.setState({ sign_in: false });
-        console.log("sign in clicked");
         console.log(this.state.sign_in);
     }
 
     sign_up = () => {
         this.setState({ sign_in: true });
-        console.log("sign up clicked");
+        console.log(this.state.sign_in);
+    }
+
+    register_done = () => {
+        this.setState({ sign_in: true });
         console.log(this.state.sign_in);
     }
 
@@ -61,6 +64,7 @@ export default class AuthForm extends Component {
                                     password_placeholder="Senha"
                                     email_placeholder="Email"
                                     text="Ou registre-se com suas redes sociais"
+                                    callback={this.register_done}
                                 />
                             </div>
                         </div>

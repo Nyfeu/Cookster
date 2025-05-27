@@ -26,7 +26,10 @@ const SignUpForm = (props) => {
             }
 
             setMessage('Usuário registrado com sucesso!');
-            // Opcional: redirecionar para login, ou salvar token, etc.
+
+            // Redireciona para o login
+            setTimeout(() => props.callback(), 750);
+
         } catch (err) {
             setMessage(err.message);
         }
