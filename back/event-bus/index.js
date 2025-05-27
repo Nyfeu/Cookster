@@ -6,16 +6,16 @@ const app = express();
 app.use(bodyParser.json());
 
 // Lista de serviços registrados para receber eventos
-const subscribers = [];
+const subscribers = new Set();
 
 // Mapa para rastrear falhas de envio de eventos
 const failures = new Map();
 const MAX_FAILURES = 3;
 
 // Lista de eventos gerados
-const base = [
-    events = []
-];
+const baseEventos = {
+    events: []
+};
 
 // Enumeração de eventos
 const EventType = {}
@@ -25,7 +25,7 @@ app.post('/register', (req, res) => {
 
     const { url } = req.body;
 
-    if (!subscribers.includes(url)) {
+    if (!subscribers.has(url)) {
 
         // Registra o serviço se não estiver na lista
         subscribers.add(url);
@@ -36,9 +36,14 @@ app.post('/register', (req, res) => {
         // Log do registro
         console.log(`Serviço registrado: ${url}`);
 
-    }
+        // Envia uma resposta de sucesso
+        res.send({ status: 'Registrado com sucesso!' });
 
-    res.send({ status: 'Registrado com sucesso!' });
+    } else {
+
+        res.send({ status: 'Já registrado!' });
+
+    }
 
 });
 
@@ -49,17 +54,17 @@ app.post('/events', async (req, res) => {
     const event = req.body;
 
     // Adiciona o evento à lista de eventos
-    base.events.push(event);
+    baseEventos.events.push(event);
 
     // Log do evento recebido
     console.log('Evento recebido:', event.type);
 
     // Envia o evento para todos os serviços registrados
-    const promises = subscribers.map(url =>
+    const promises = Array.from(subscribers).map(url =>
         axios.post(url, event).catch(err => {
 
             // Log de erro ao enviar o evento
-            console.error(`Falha ao enviar para ${url}:`, err.message);
+            console.error(`Falha ao enviar para ${url}`);
 
             // Incrementa a contagem de falhas
             const currentFailures = failures.get(url) || 0;
@@ -82,13 +87,20 @@ app.post('/events', async (req, res) => {
 
 });
 
-app.get('/events', (req, res) => {
+app.get('/subscribers', (_, res) => {
+
+    // Retorna a lista de serviços registrados
+    res.send(Array.from(subscribers));
+
+});
+
+app.get('/events', (_, res) => {
 
     // Retorna a lista de eventos gerados
-    res.send(base.events);
+    res.send(baseEventos);
 
 });
 
 app.listen(4000, () => {
-    console.log('Barramento de eventos ouvindo na porta 4000');
+    console.log('Event Bus (4000): [OK]');
 });
