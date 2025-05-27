@@ -42,7 +42,7 @@ export default class AuthForm extends Component {
     }
 
     register_done = () => {
-        this.setState({ sign_in: true });
+        this.setState({ sign_in: false });
         console.log(this.state.sign_in);
     }
 

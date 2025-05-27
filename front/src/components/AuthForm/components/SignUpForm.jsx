@@ -28,7 +28,14 @@ const SignUpForm = (props) => {
             setMessage('Usuário registrado com sucesso!');
 
             // Redireciona para o login
-            setTimeout(() => props.callback(), 750);
+            console.log('Redirecionando para o login...');
+            setName('');
+            setEmail('');
+            setPassword('');
+            setTimeout(() => {
+                setMessage(null);
+                props.callback()
+            }, 750);
 
         } catch (err) {
             setMessage(err.message);
