@@ -1,0 +1,13 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+COPY script.py .
+COPY data/ ./data/
+
+# Instala as dependências do projeto
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Expõe a porta 8000 e executa o servidor com auto-reload (--reload)
+CMD ["uvicorn", "script:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
