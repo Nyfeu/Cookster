@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa'; // Ícone de perfil
 import './NavBar.css';
 
 const NavBar = () => {
+
     return (
         <nav className="navbar navbar-expand-lg custom-navbar px-4">
             <Link className="navbar-brand" to="/">Cookster</Link>
@@ -29,7 +30,8 @@ const NavBar = () => {
                 <div className="d-flex align-items-center gap-3">
                     <Link className="btn btn-outline-primary" to="/login" state={{ mode: 'sign_in' }}>Entrar</Link>
                     <Link className="btn btn-primary" to="/register" state={{ mode: 'sign_up' }}>Registrar-se</Link>
-                    <Link to="/user">
+                    <Link to="/profile"
+                    >
                         <FaUserCircle style={{ color: "var(--background-color)" }} size={28} color="var(--background-color)" />
                     </Link>
                 </div>

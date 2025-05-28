@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
 import './PageProfile.css';
 import PainelReceitas from './components/PainelReceitas';
 import PainelInfos from './components/PainelInfos';
@@ -10,6 +11,8 @@ import { faGear } from '@fortawesome/free-solid-svg-icons';
 
 const PageProfile = (props) => {
 
+      const location = useLocation();
+    const token = location.state?.token;
 
     const [username, setUsername] = useState();
 
@@ -21,7 +24,7 @@ const PageProfile = (props) => {
     const [descricao, setDescricao] = useState(
         "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam erat volutpat. Morbi imperdiet, mauris ac auctor dictum, nisl ligula egestas nulla."
     );
-    const [token, setToken] = useState();
+    
 
     const [error, setError] = useState(null)
     const [user, setUser] = useState()
@@ -49,7 +52,6 @@ const PageProfile = (props) => {
         if (user) {
             setUsername(user.name)
             setEmail(user.email)
-            setToken(localStorage.getItem('token')) 
         }
     }, [user])
 
@@ -60,6 +62,8 @@ const PageProfile = (props) => {
         </div>
     )
 
+    console.log(token)
+    
 
     return (
         <div className="header__wrapper">
