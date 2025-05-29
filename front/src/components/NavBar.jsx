@@ -27,7 +27,7 @@ const NavBar = () => {
                         <Link className="nav-link" to="/#features">Funcionalidades</Link>
                     </li>
                 </ul>
-                <div className="d-flex align-items-center gap-3">
+                <div className="d-flex align-items-center gap-3 d-flex align-items-center gap-3 justify-content-center  flex-lg-row">
                     <Link className="btn btn-outline-primary" to="/login" state={{ mode: 'sign_in' }}>Entrar</Link>
                     <Link className="btn btn-primary" to="/register" state={{ mode: 'sign_up' }}>Registrar-se</Link>
                     <Link to="/profile"
