@@ -78,8 +78,6 @@ const SignUpForm = (props) => {
                 </div>
                 <input type="submit" className="btn btn-success btn-submit rounded-pill px-4 py-2 my-2"/>
                 {message && <p className="message">{message}</p>}
-                <p className="social-text">{props.text}</p>
-                <SocialMediaIcons />
             </form>
         </>
     )
