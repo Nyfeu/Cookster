@@ -4,9 +4,10 @@ import { useLocation } from 'react-router-dom';
 import './PageProfile.css';
 import PainelReceitas from './components/PainelReceitas';
 import PainelInfos from './components/PainelInfos';
-import NavBar from '../NavBar';
+import NavBar_Auth from '../NavBar_Auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 
 const PageProfile = (props) => {
@@ -67,7 +68,7 @@ const PageProfile = (props) => {
 
     return (
         <div className="header__wrapper">
-            <NavBar />
+            <NavBar_Auth/>
             <div className='banner'></div>
             <div className="cols__container">
                 <PainelInfos
@@ -82,7 +83,11 @@ const PageProfile = (props) => {
 
                 <div className="right__col">
                     <div className="seguir">
-                        <FontAwesomeIcon icon={faGear} className="gear-icon" />
+                        <Link  to="/profile"
+                                        >
+                                            <FontAwesomeIcon icon={faGear} className="gear-icon" />
+                                        </Link>
+                        
                         <button>
                             {
                                 (token) ?

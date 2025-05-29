@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa'; // Ícone de perfil
 import './NavBar.css';
 
 const NavBar = () => {
-
     return (
         <nav className="navbar navbar-expand-lg custom-navbar px-4">
             <Link className="navbar-brand" to="/">Cookster</Link>
@@ -21,10 +20,10 @@ const NavBar = () => {
                         <Link className="nav-link" to="/">Home</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/#cta">Sobre</Link>
+                        <Link className="nav-link" to="/sobre">Sobre</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/#features">Funcionalidades</Link>
+                        <Link className="nav-link" to="/funcionalidades">Funcionalidades</Link>
                     </li>
                 </ul>
                 <div className="d-flex align-items-center  d-flex align-items-center gap-3 justify-content-center  flex-lg-row">

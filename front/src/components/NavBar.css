@@ -53,3 +53,7 @@
     box-shadow: none;
 }
 
+.user-profile-link:hover {
+    transform: scale(1.1);                  
+}
+
