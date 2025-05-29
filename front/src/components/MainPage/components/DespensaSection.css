@@ -1,19 +1,28 @@
 .despensa-section {
-  background: linear-gradient(to bottom, var(--background-color) 10%, var(--transition-color) 85%);
+  background: var(--text-color);
+  background: linear-gradient(to bottom, var(--accent-color) 0%, var(--text-color) 100%);
   padding: 5rem 0;
 }
 
 .despensa-section h2 {
-  color: var(--primary-color);
+  color: var(--background-color);
+}
+
+.despensa-section p {
+  color: var(--background-color);
 }
 
 .despensa-section .btn-custom {
   background-color: var(--secondary-color);
   color: white;
+  border: none; 
 }
 
 .despensa-section .btn-custom:hover {
-  background-color: var(--primary-color);
+  background-color: #B54300;
+  border: none;          
+  outline: none; 
+  transform: scale(1.05);
 }
 
 .despensa-section .badge {

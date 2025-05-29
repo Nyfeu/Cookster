@@ -1,11 +1,10 @@
 .feed-section {
-  background: var(--transistion-color);
-  background: linear-gradient(to bottom, var(--transition-color) 10%, var(--background-color) 100%);
+  background: #fef6ee;
   padding: 4rem 0;
 }
 
 .feed-section h2 {
-  color: var(--background-color);
+  color: var(--text-color);
 }
 
 .recipe-card {
@@ -35,4 +34,20 @@
 
 .carousel::-webkit-scrollbar {
   display: none; /* Esconde a barra de rolagem no Chrome/Safari */
+}
+
+.arrow {
+  color: white;
+  background-color: var(--secondary-color); /* ou qualquer cor base */
+  border: none;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.arrow:hover {
+  background-color: #B54300;
+  color: white; 
+  transform: scale(1.05);    
 }

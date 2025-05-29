@@ -4,6 +4,7 @@ import HeroSection from "./components/HeroSection";
 import DespensaSection from "./components/DespensaSection";
 import FeedSection from "./components/FeedSection";
 import FooterSection from "./components/FooterSection";
+import SidePanel from "./components/SidePanel";
 import "./MainPage.css";
 
 export default function MainPage() {
@@ -17,6 +18,7 @@ export default function MainPage() {
           <HeroSection />
           <DespensaSection />
           <FeedSection />
+          <SidePanel />
           <FooterSection />
 
         </div>

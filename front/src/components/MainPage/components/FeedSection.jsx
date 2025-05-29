@@ -15,7 +15,7 @@ export default function FeedSection() {
   return (
     <section className="feed-section py-5 text-center">
       <div className="px-3">
-        <h2 className="text-color fw-bold mb-3">Feed de Receitas</h2>
+        <h2 className="text-color mb-3">Feed de Receitas</h2>
         <p classname="text-muted mb-4">Confira as últimas receitas compartilhadas pela comunidade!</p>
         <div className="d-flex align-items-center justify-content-center gap-3">
           <button className="arrow btn btn-custom" onClick={scrollLeft}>←</button>
