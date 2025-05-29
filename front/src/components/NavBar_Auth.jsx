@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react'
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa'; // Ícone de perfil
 import './NavBar.css';
+import { TieredMenu } from 'primereact/tieredmenu';
+import { Button } from 'primereact/button';
+import { useNavigate } from 'react-router-dom'
 
-const NavBar = () => {
+const NavBar_Auth = () => {
 
     return (
         <nav className="navbar navbar-expand-lg custom-navbar px-4">
@@ -21,19 +25,24 @@ const NavBar = () => {
                         <Link className="nav-link" to="/">Home</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/#cta">Sobre</Link>
+                        <Link className="nav-link" to="/sobre">Despensa</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/#features">Funcionalidades</Link>
+                        <Link className="nav-link" to="/funcionalidades">Funcionalidades</Link>
                     </li>
                 </ul>
-                <div className="d-flex align-items-center  d-flex align-items-center gap-3 justify-content-center  flex-lg-row">
-                    <Link className="btn btn-outline-primary" to="/login" state={{ mode: 'sign_in' }}>Entrar</Link>
-                    <Link className="btn btn-primary" to="/register" state={{ mode: 'sign_up' }}>Registrar-se</Link>
+                <div className="d-flex align-items-center gap-3 d-flex align-items-center gap-3 justify-content-center  flex-lg-row">
+                                        <Link to="/profile"
+                                        >
+                                            <FaUserCircle style={{ color: "var(--background-color)" }} size={28} color="var(--background-color)" />
+                                        </Link>
+
+                    
+
                 </div>
             </div>
         </nav>
-    );
-};
+    )
+}
 
-export default NavBar;
+export default NavBar_Auth
