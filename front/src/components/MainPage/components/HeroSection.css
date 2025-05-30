@@ -1,0 +1,44 @@
+.hero-section {
+  background: #fef6ee;  
+}
+
+.container {
+  width: 100%;
+}
+
+.hero-section h1 {
+  color: var(--accent-color);
+}
+
+.hero-section .btn-custom {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none; 
+}
+
+.hero-section .btn-custom:hover {
+  background-color: #B54300;
+  border: none;          
+  outline: none;  
+  transform: scale(1.05);
+}
+
+.btn-custom-outline {
+  border: 3px solid var(--accent-color);
+  color: var(--accent-color);
+  background-color: transparent;
+  padding: 0.5rem 1.25rem;
+  text-align: center; 
+  transition: all 0.3s ease;
+}
+
+.btn-custom-outline:hover {
+  background-color: var(--accent-color);
+  color: white;
+  transform: scale(1.05);
+}
+
+.hero-image img {
+  max-width: 350px;
+  height: auto;
+}
