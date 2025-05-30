@@ -10,6 +10,10 @@ const flash = require('express-flash')
 const initializePassport = require('./passport-config')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
+const axios = require('axios')
+
+const port = 3000
+const event_bus_port = 4000
 
 // Permitir acesso do front-end
 app.use(cors({
@@ -70,7 +74,7 @@ app.get('/', (req, res) => {
 app.get('/dashboard', checkAuthenticated, (req, res) => {
   res.json({
     message: 'Você está autenticado e acessou sua página privada.',
-    user: req.user 
+    user: req.user
   })
 })
 
@@ -106,8 +110,8 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 
   const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
   if (!strongPasswordRegex.test(password)) {
-    return res.status(400).json({ 
-      error: 'A senha deve conter ao menos 8 caracteres, uma letra maiúscula, uma minúscula e um número.' 
+    return res.status(400).json({
+      error: 'A senha deve conter ao menos 8 caracteres, uma letra maiúscula, uma minúscula e um número.'
     })
   }
 
@@ -171,4 +175,15 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
   res.status(200).json({ message: 'Logout simbólico com JWT. Basta remover o token no frontend.' })
 })
 
-app.listen(3000, () => console.log('mss-autenticacao (localhost:3000): [OK]'))
+app.listen(port, async () => {
+
+  console.log(`mss-autenticacao (localhost:${port}): [OK]`)
+
+  try {
+    await axios.post(`http://localhost:${event_bus_port}/register`, { url: `http://localhost:${port}` });
+    console.log(`Event Bus Registration (http://localhost:${port}): [OK]`);
+  } catch (error) {
+    console.error(`Event Bus Registration (http://localhost:${port}): [FAILED]`, error.message);
+  }
+
+})
