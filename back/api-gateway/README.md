@@ -20,8 +20,8 @@ Este é um **API Gateway** desenvolvido com **Node.js** e **Express**, responsá
 1. **Clone o repositório:**
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git
-cd seu-repositorio
+git clone https://github.com/Nyfeu/Cookster.git
+cd back/api-gateway
 ```
 
 2. **Instale as dependências:**
@@ -32,7 +32,7 @@ npm install
 3. **Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
 
 ```plain-text
-JWT_SECRET=sua_chave_secreta
+JWT_SECRET=chave_secreta
 ```
 
 ## 🔧 Estrutura dos Microserviços

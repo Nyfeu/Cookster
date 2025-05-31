@@ -1,0 +1,56 @@
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 300px;
+  height: 100%;
+  background-color: var(--background-color);
+  box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+  transition: right 0.3s ease-in-out;
+  padding: 1rem;
+  z-index: 1050;
+}
+
+.side-panel.open {
+  right: 0;
+}
+
+.categoria-section.com-linha {
+  border-top: 1px solid var(--primary-color);
+  padding-top: 0.5rem;
+  margin-top: 1rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  float: right;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: red;
+}
+
+.ingredient-item {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 4px;
+  background-color: #e0e0e0;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.ingredient-item:hover {
+  background-color: var(--secondary-color);
+}
+
+ul.list-unstyled {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+}
