@@ -22,11 +22,17 @@ app.use(cors({
 const services = {
     auth: {
         target: 'http://localhost:3000',
-        publicRoutes: ['/register', '/login']
+        publicRoutes: ['/register', '/login'],
+        requiresUserId: false
+    },
+    debug: {
+        target: 'http://localhost:7000',
+        requiresUserId: true
     },
     ingredient: {
         target: 'http://localhost:8000',
-        publicRoutes: ['/health']
+        publicRoutes: ['/health'],
+        requiresUserId: false
     }
 };
 
@@ -44,24 +50,32 @@ Object.entries(services).forEach(([route, config]) => {
 // 4. Middleware de Autenticação Global
 app.use(async (req, res, next) => {
 
-    // Passo 1: Pegar o cabeçalho de autenticação
+    // Passo 1: Identificar o serviço a partir do caminho
+    const serviceName = req.path.split('/')[1];
+    const serviceConfig = services[serviceName];
+
+    // Passo 2: Pegar o cabeçalho de autenticação
     const authHeader = req.headers.authorization;
 
-    // Verificar se a rota atual é pública
+    // Passo 3: Verificar se a rota atual é pública
     if (publicRoutes.includes(req.path)) return next();
 
     try {
 
-        // Passo 3: Extrair o token do cabeçalho
+        // Passo 4: Extrair o token do cabeçalho
         const token = authHeader.split(' ')[1];
 
-        // Passo 4: Validar o token (comunicação com Auth Service)
+        // Passo 5: Validar o token (comunicação com Auth Service)
         const decoded = await verifyToken(token);
 
-        // Passo 5: Adicionar dados do usuário à requisição
+        // Passo 6: Adicionar dados do usuário à requisição
         req.user = decoded;
 
-        // Passo 6: Liberar acesso ao microserviço
+        // Passo 7: Adiciona o user id aos headers
+        if (serviceConfig.requiresUserId)
+            req.headers['user-id'] = decoded.id; 
+
+        // Passo 8: Liberar acesso ao microserviço
         next();
 
     } catch (error) {
@@ -92,4 +106,4 @@ async function verifyToken(token) {
 }
 
 // 7. Configura o gateway para escutar na porta 2000
-app.listen(2000, () => console.log('Gateway running on port 2000'));
+app.listen(2000, () => console.log(`🟢 API-GATEWAY (2000): [OK]`));
