@@ -3,24 +3,46 @@
     color: var(--text-color);
 }
 
+.custom-navbar .navbar-brand {
+  color: var(--background-color);
+  transition: color 0.2s ease;
+}
+
+.custom-navbar .navbar-brand:hover {
+  color: var(--secondary-color);
+}
+
+.custom-navbar .navbar-brand.active {
+  color: var(--background-color) !important;
+}
+
 .custom-navbar .nav-link {
     color: var(--background-color);
     font-weight: 500;
 }
 
-.custom-navbar .nav-link:hover {
-    color: var(--accent-color);
+.custom-navbar .navbar-nav .nav-link {
+    display: inline-block;
+    padding: 0.5rem 0.5rem;
+}
+
+.custom-navbar .navbar-nav .nav-link:hover {
+    color: var(--secondary-color);
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.4));
+    transition: color 0.2s ease;
 }
 
 .custom-navbar .btn-outline-primary {
     border-color: var(--accent-color);
     color: var(--accent-color);
+    transition: all 0.2s ease;
 }
 
 .custom-navbar .btn-outline-primary:hover {
     background-color: var(--secondary-color);
     color: white;
     border-color: var(--secondary-color);
+    transition: all 0.2s ease;
 }
 
 .custom-navbar .btn-primary {
@@ -29,26 +51,33 @@
 }
 
 .custom-navbar .btn-primary:hover {
-    background-color: #d57c1a; /* tom mais escuro do secondary */
-    border-color: #d57c1a;
-}
-
-.navbar-brand {
-    color: var(--background-color);
-}
-
-.navbar-brand:hover {
-    color: var(--accent-color);
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    transition: all 0.2s ease;
 }
 
 .navbar-toggler {
     border: none;
 }
 
-.navbar-toggler:hover {
-    border: none;
+.navbar-toggler:focus {
+    color: var(--secondary-color);
+    box-shadow: none
 }
 
-.navbar-toggler:focus {
-    box-shadow: none;
+.navbar-toggler:hover svg {
+    fill: var(--secondary-color);
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 4px rgba(0,0,0,0.4));
+    transition: all 0.2s ease;
+}
+
+.profile-icon svg {
+    color: var(--background-color);
+}
+
+.profile-icon:hover svg {
+    color: var(--secondary-color); 
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+    transition: all 0.2s ease;
 }
