@@ -1,5 +1,5 @@
 import React from "react";
-import NavBar from "../NavBar";
+import NavBar_Auth from "../NavBar_Auth";
 import HeroSection from "./components/HeroSection";
 import DespensaSection from "./components/DespensaSection";
 import FeedSection from "./components/FeedSection";
@@ -12,7 +12,7 @@ export default function MainPage() {
     <>
       <div className="container-page">
 
-        <NavBar />
+        <NavBar_Auth/>
         <div className="container-fluid container-home p-0 d-flex flex-column">
 
           <HeroSection />
