@@ -31,11 +31,12 @@ const SignInForm = (props) => {
 
             // Salvar o token (pode usar localStorage, sessionStorage ou cookies)
             localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
             // Redirecionar ou atualizar o estado do app
             alert('Login bem-sucedido!');
             // props.onLoginSuccess?.(data.user); // caso deseje notificar o App principal
-            console.log(localStorage.getItem('token'))
-            navigate('/profile', { state: { token: localStorage.getItem('token')} });
+            
+            navigate('/profile', { state: { token: localStorage.getItem('token'), user: JSON.parse(localStorage.getItem('user'))} });
 
         } catch (err) {
             setError('Erro de conexão com o servidor');

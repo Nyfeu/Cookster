@@ -12,10 +12,11 @@ import { Link } from 'react-router-dom';
 
 const PageProfile = (props) => {
 
-      const location = useLocation();
+    const location = useLocation();
     const token = location.state?.token;
+    const user = location.state?.user
 
-    const [username, setUsername] = useState();
+    const [username, setUsername] = useState(null);
 
     const [bio, setBio] = useState("UX/UI Designer");
     const [email, setEmail] = useState(null);
@@ -28,40 +29,34 @@ const PageProfile = (props) => {
     
 
     const [error, setError] = useState(null)
-    const [user, setUser] = useState()
+
+    // useEffect(() => {
+    //     fetch('http://localhost:3000/register', {
+    //         headers: {
+    //             Authorization: `Bearer ${token}`
+    //         }
+    //     })
+    //         .then(async res => {
+    //             const data = await res.json()
+
+    //             if (!res.ok) throw new Error(data.error)
+    //             setUser(data[0])
+    //         })
+    //         .catch(err => {
+    //             console.error('ERRO NO FETCH:', err.message)
+    //             setError(err.message)
+    //         })
+
+    // }, [])
 
     useEffect(() => {
-        fetch('http://localhost:3000/register', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-            .then(async res => {
-                const data = await res.json()
-
-                if (!res.ok) throw new Error(data.error)
-                setUser(data[0])
-            })
-            .catch(err => {
-                console.error('ERRO NO FETCH:', err.message)
-                setError(err.message)
-            })
-
-    }, [])
-
-    useEffect(() => {
-        if (user) {
+        if (token) {
             setUsername(user.name)
             setEmail(user.email)
         }
     }, [user])
 
-    if (error) return <div>{error}</div>
-    if (!user) return (
-        <div className="center-container"> 
-            Carregando...
-        </div>
-    )
+    
 
     console.log(token)
     

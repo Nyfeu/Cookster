@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom'
 const NavBar_Auth = () => {
 
     const userToken = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'))
 
     return (
         <nav className="navbar navbar-expand-lg custom-navbar px-4">
@@ -35,7 +36,7 @@ const NavBar_Auth = () => {
                 </ul>
                 <div className="d-flex align-items-center gap-3 d-flex align-items-center gap-3 justify-content-center  flex-lg-row">
                                         <Link  to="/profile"
-                                        state={{ token: userToken }}
+                                        state={{ token: userToken, user: user }}
                                         >
                                             <FaUserCircle  className="user-profile-link" style={{ color: "var(--background-color)" }} size={28} color="var(--background-color)" />
                                         </Link>

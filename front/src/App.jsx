@@ -17,6 +17,7 @@ function App() {
         <Route path="/register" element={<AuthForm sign_in_mode='sign_up'/>} />
         <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/mainpage" element={<MainPage />}/>
+        <Route path="/profile" element={<PageProfile />}/>
       </Routes>
     </Router>
   )
