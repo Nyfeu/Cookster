@@ -17,7 +17,7 @@ const port = process.env.PORT || 4000
 
 // Middleware para permitir requisições do frontend
 app.use(cors({
-  origin: 'http://localhost:5173',  // ajuste conforme seu frontend
+  origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }))
@@ -49,79 +49,113 @@ function checkAuthenticated(req, res, next) {
 app.get('/ingredients', checkAuthenticated, async (req, res) => {
   try {
     const userId = req.user.id
-    const ingredients = await Ingredient.find({ userId })
-    res.json(ingredients)
+    const pantry = await Ingredient.findOne({ userId })
+
+    if (!pantry) return res.json([])
+
+    res.json(pantry.ingredientes)
   } catch (err) {
     res.status(500).json({ error: 'Erro ao buscar ingredientes' })
   }
 })
 
+
 // Criar ingrediente
 app.post('/ingredients', checkAuthenticated, async (req, res) => {
   try {
     const userId = req.user.id
-    const { nome, quantidade, unidade, dataValidade, categoria } = req.body
+    const { nome, categoria } = req.body
 
-     if (!nome || !quantidade || !unidade || !dataValidade || !categoria) {
-      return res.status(400).json({ error: 'Todos os campos são obrigatórios' })
+    if (!nome || !categoria) {
+      return res.status(400).json({ error: 'Nome e categoria são obrigatórios' })
     }
 
-    const ingredient = new Ingredient({
-      userId,
-      nome,
-      quantidade,
-      unidade,
-      dataValidade,
-      categoria
-    })
+    let pantry = await Ingredient.findOne({ userId })
 
-    await ingredient.save()
-    res.status(201).json(ingredient)
+    if (!pantry) {
+      pantry = new Ingredient({ userId, ingredientes: [] })
+    }
+
+    // Verifica duplicata
+    const existe = pantry.ingredientes.some(
+      ing => ing.nome === nome && ing.categoria === categoria
+    )
+
+    if (existe) {
+      return res.status(409).json({ error: 'Ingrediente já existe' })
+    }
+
+    pantry.ingredientes.push({ nome, categoria })
+    await pantry.save()
+    res.status(201).json(pantry.ingredientes)
   } catch (err) {
-    res.status(500).json({ error: 'Erro ao criar ingrediente' })
+    res.status(500).json({ error: 'Erro ao adicionar ingrediente' })
   }
 })
 
+
+
+
 // Atualizar ingrediente pelo ID
-app.put('/ingredients/:id', checkAuthenticated, async (req, res) => {
+app.put('/ingredients/:index', checkAuthenticated, async (req, res) => {
   try {
     const userId = req.user.id
-    const ingredientId = req.params.id
+    const index = parseInt(req.params.index, 10)
     const updates = req.body
 
-    // Só pode atualizar ingrediente do próprio usuário
-    const ingredient = await Ingredient.findOne({ _id: ingredientId, userId })
-
-    if (!ingredient) {
+    const pantry = await Ingredient.findOne({ userId })
+    if (!pantry || !pantry.ingredientes[index]) {
       return res.status(404).json({ error: 'Ingrediente não encontrado' })
     }
 
-    Object.assign(ingredient, updates)
+    Object.assign(pantry.ingredientes[index], updates)
+    await pantry.save()
 
-    await ingredient.save()
-    res.json(ingredient)
+    res.json(pantry.ingredientes[index])
   } catch (err) {
     res.status(500).json({ error: 'Erro ao atualizar ingrediente' })
   }
 })
 
-// Deletar ingrediente pelo ID
-app.delete('/ingredients/:id', checkAuthenticated, async (req, res) => {
+
+// Deletar ingrediente pelo Nome (Categoria opcional)
+app.delete('/ingredients', checkAuthenticated, async (req, res) => {
   try {
     const userId = req.user.id
-    const ingredientId = req.params.id
+    const { nome, categoria } = req.body
 
-    const ingredient = await Ingredient.findOneAndDelete({ _id: ingredientId, userId })
+    if (!nome) {
+      return res.status(400).json({ error: 'Nome do ingrediente é obrigatório' })
+    }
 
-    if (!ingredient) {
+    const pantry = await Ingredient.findOne({ userId })
+    if (!pantry) {
+      return res.status(404).json({ error: 'Pantry não encontrada para este usuário' })
+    }
+
+    // Se categoria for informada, filtra por nome + categoria. Senão, só por nome.
+    const index = pantry.ingredientes.findIndex(ing =>
+      ing.nome === nome && (!categoria || ing.categoria === categoria)
+    )
+
+    if (index === -1) {
       return res.status(404).json({ error: 'Ingrediente não encontrado' })
     }
 
-    res.json({ message: 'Ingrediente removido com sucesso' })
+    const ingredienteRemovido = pantry.ingredientes.splice(index, 1)[0]
+    await pantry.save()
+
+    res.json({
+      message: 'Ingrediente removido com sucesso',
+      ingrediente: ingredienteRemovido
+    })
   } catch (err) {
     res.status(500).json({ error: 'Erro ao deletar ingrediente' })
   }
 })
+
+
+//lista - filter - montar lista nova sem o ingrediente
 
 // Teste simples
 app.get('/', (req, res) => {
