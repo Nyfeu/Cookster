@@ -8,6 +8,7 @@ Este é um **API Gateway** desenvolvido com **Node.js** e **Express**, responsá
     - Esconde os servidores internos do cliente
     - Cliente → Proxy → Servidores internos
 - Middleware global de autenticação com JWT
+- Repasse de contexto do usuário para serviços específicos
 - Rotas públicas configuráveis
 - Gerenciamento de CORS
 - Logging de requisições via `morgan`
@@ -39,10 +40,11 @@ JWT_SECRET=chave_secreta
 
 > Ainda será atualizada para cobrir todos os microserviços do sistema
 
-| Serviço    | Porta | Descrição                             |
-| ---------- | ----- | ------------------------------------- |
-| Auth       | 3000  | Serviço de autenticação               |
-| Ingredient | 8000  | Serviço de autocomple de ingredientes |
+| Serviço    | Porta | Descrição                             | Requer user-id? |
+| ---------- | ----- | ------------------------------------- |---------------- |
+| Auth       | 3000  | Serviço de autenticação               | ❌ Não         |
+| Debug      | 7000  | Serviço para debug da API Gateway     | ✅ Sim         |
+| Ingredient | 8000  | Serviço de autocomple de ingredientes | ❌ Não         |
 
 ## 🌐 Rotas
 
@@ -115,6 +117,49 @@ sequenceDiagram
 
 Exemplo:
 - GET `/ingredient/suggestion...`
+
+## 🔄 Repasse de Contexto do Usuário
+
+Para serviços que necessitam do identificador do usuário (como o serviço de perfil), o gateway adiciona o `user-id` extraído do token JWT no header da requisição que é repassada ao microserviço.
+
+### Configuração por Serviço
+Cada serviço pode ser configurado com a propriedade `requiresUserId`:
+```javascript
+const services = {
+  // ...
+  profile: {
+    target: 'http://localhost:7000',
+    requiresUserId: true // Indica que o user-id será repassado
+  },
+  // ...
+};
+```
+
+### Funcionamento
+
+1. O gateway valida o token JWT e extrai o payload
+2. Se o serviço de destino tiver requiresUserId: true, o gateway adiciona um header `user-id` através do proxy
+3. O microserviço recebe a requisição com o contexto do usuário
+
+```mermaid
+sequenceDiagram
+    participant Frontend
+    participant API Gateway
+    participant Profile Service
+
+    Frontend->>API Gateway: GET /profile (com token)
+    API Gateway->>API Gateway: Valida token e extrai user-id
+    API Gateway->>Profile Service: GET /profile + Header: user-id: 123
+    Profile Service->>API Gateway: Resposta com dados do perfil
+    API Gateway->>Frontend: Dados do perfil
+```
+
+### Vantagens
+
+1. **Desacoplamento**: Os serviços não precisam acessar o token JWT
+2. **Segurança**: Reduz exposição de dados sensíveis
+3. **Performance**: Evita repetidas validações de token
+4. **Simplicidade**: Microserviços consomem ID diretamente
 
 ## ▶️ Executando o Gateway
 
