@@ -4,26 +4,33 @@ import AuthForm from "./components/AuthForm/AuthForm"
 import LandingPage from "./components/LandingPage/LandingPage"
 import AuthSuccess from "./components/AuthForm/components/AuthSuccess"
 import MainPage from "./components/MainPage/MainPage"
+import PageProfile from "./components/ProfilePage/PageProfile"
 
 import './theme.css'
-import PageProfile from './components/ProfilePage/PageProfile';
 
 function App() {
 
   function ProtectedRoute({ children }) {
-    console.log(localStorage.getItem('token'))
-  return localStorage.getItem('token')?  <Navigate to="/mainpage" /> : children;
-}
+    const token = localStorage.getItem('token');
+    return token ? children : <Navigate to="/login" replace />;
+  }
+
+  function PublicRoute({ children }) {
+    const token = localStorage.getItem('token');
+    return token ? <Navigate to="/mainpage" replace /> : children;
+  }
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<ProtectedRoute><LandingPage /></ProtectedRoute>} />
-        <Route path="/login" element={<AuthForm sign_in_mode='sign_in'/>} />
-        <Route path="/register" element={<AuthForm sign_in_mode='sign_up'/>} />
+        <Route path="/mainpage" element={<ProtectedRoute><MainPage /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><PageProfile /></ProtectedRoute>} />
+
+        <Route path="/login" element={<PublicRoute><AuthForm sign_in_mode="sign_in" /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><AuthForm sign_in_mode="sign_up" /></PublicRoute>} />
+
         <Route path="/auth-success" element={<AuthSuccess />} />
-        <Route path="/mainpage" element={<MainPage />}/>
-        <Route path="/profile" element={<PageProfile />}/>
       </Routes>
     </Router>
   )
