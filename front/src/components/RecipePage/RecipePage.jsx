@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './RecipePage.css'
-import NavBar from '../NavBar'
+import NavBar_Auth from '../NavBar_Auth'
 import RecipeInfo from './componentes/RecipeInfo'
 import IngredientsInfo from './componentes/IngredientsInfo'
 import ToolsInfo from './componentes/ToolsInfo'
@@ -11,7 +11,7 @@ export default class RecipePage extends Component {
     return (
         <div>
             <div className="nav">
-            <NavBar />
+            <NavBar_Auth />
             </div>
         <main className="page">
           

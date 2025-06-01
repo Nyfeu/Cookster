@@ -13,7 +13,7 @@ const CallToAction = () => {
                     ></path>
                 </svg>
             </div>
-            <section className="cta-banner py-5">
+            <section id="cta" className="cta-banner py-5">
                 <div className="container py-5 d-flex flex-column flex-md-row align-items-center justify-content-center gap-5">
                     <div className="cta-image text-center mx-5">
                         <img src='reg.png' alt="Pessoa cozinhando" className="img-fluid" style={{width: "100%"}}/>

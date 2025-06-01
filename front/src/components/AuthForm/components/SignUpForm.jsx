@@ -11,7 +11,7 @@ const SignUpForm = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:3000/register', {
+            const response = await fetch('http://localhost:2000/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -26,7 +26,17 @@ const SignUpForm = (props) => {
             }
 
             setMessage('Usuário registrado com sucesso!');
-            // Opcional: redirecionar para login, ou salvar token, etc.
+
+            // Redireciona para o login
+            console.log('Redirecionando para o login...');
+            setName('');
+            setEmail('');
+            setPassword('');
+            setTimeout(() => {
+                setMessage(null);
+                props.callback()
+            }, 750);
+
         } catch (err) {
             setMessage(err.message);
         }
@@ -68,8 +78,6 @@ const SignUpForm = (props) => {
                 </div>
                 <input type="submit" className="btn btn-success btn-submit rounded-pill px-4 py-2 my-2"/>
                 {message && <p className="message">{message}</p>}
-                <p className="social-text">{props.text}</p>
-                <SocialMediaIcons />
             </form>
         </>
     )
