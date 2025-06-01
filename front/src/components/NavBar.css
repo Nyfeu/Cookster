@@ -26,6 +26,12 @@
     padding: 0.5rem 0.5rem;
 }
 
+.nav-link:hover {
+    color: var(--secondary-color); 
+    background-color: rgba(0, 0, 0, 0.05); 
+ 
+}
+
 .custom-navbar .navbar-nav .nav-link:hover {
     color: var(--secondary-color);
     filter: drop-shadow(0 0 5px rgba(0,0,0,0.4));
@@ -80,4 +86,57 @@
     color: var(--secondary-color); 
     filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
     transition: all 0.2s ease;
+}
+
+.p-confirm-dialog {
+  border-radius: 12px;
+  padding: 2rem;
+  background-color: var(--primary-color);
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Estiliza o título */
+.p-confirm-dialog .p-dialog-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--background-color);
+}
+
+/* Estiliza o texto da mensagem */
+.p-confirm-dialog .p-confirm-dialog-message {
+  font-size: 1rem;
+  color: var(--background-color);
+  margin-bottom: 5px;
+}
+
+/* Estiliza os botões */
+.p-confirm-dialog .p-confirm-dialog-accept,
+.p-confirm-dialog .p-confirm-dialog-reject {
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  margin: 2px;
+  font-weight: bold;
+}
+
+.p-confirm-dialog .p-confirm-dialog-accept:hover,
+.p-confirm-dialog .p-confirm-dialog-reject:hover{
+    transform: scale(1.05);
+}
+.p-confirm-dialog .p-confirm-dialog-accept {
+  background-color: var(--secondary-color);
+  border: none;
+}
+
+.p-confirm-dialog .p-confirm-dialog-reject {
+    
+    background-color: var(--accent-color);
+    border: none;
+}
+
+.p-confirm-dialog .p-dialog-header-close {
+  position: absolute;
+  left: auto;
+  right: 1rem; /* remove o posicionamento padrão */
+  top: 1rem;
 }

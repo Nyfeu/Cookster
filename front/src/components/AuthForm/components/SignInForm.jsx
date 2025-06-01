@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import SocialMediaIcons from './SocialMediaIcons';
+import { useNavigate } from 'react-router-dom';
 
 const SignInForm = (props) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,11 +29,12 @@ const SignInForm = (props) => {
                 return;
             }
 
-            // Salvar o token (pode usar localStorage, sessionStorage ou cookies)
+
             localStorage.setItem('token', data.token);
-            // Redirecionar ou atualizar o estado do app
-            alert('Login bem-sucedido!');
-            // props.onLoginSuccess?.(data.user); // caso deseje notificar o App principal
+            localStorage.setItem('user', JSON.stringify(data.user));
+            alert('Login bem-sucedido!');           
+            navigate('/profile', { state: { token: localStorage.getItem('token'), user: JSON.parse(localStorage.getItem('user'))} });
+
 
         } catch (err) {
             setError('Erro de conexão com o servidor');
