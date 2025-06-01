@@ -23,7 +23,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<ProtectedRoute><LandingPage /></ProtectedRoute>} />
+        <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
         <Route path="/mainpage" element={<ProtectedRoute><MainPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><PageProfile /></ProtectedRoute>} />
 
