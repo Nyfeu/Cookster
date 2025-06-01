@@ -5,10 +5,7 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: rgba(232, 152, 65, 0.9);
-  color: #333;
-  line-height: 1.3;
+  min-height: 93vh;
 }
 
 
@@ -24,9 +21,13 @@ body {
 
 
 .page {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  line-height: 1.3;
   display: flex;
   flex-direction: row;
   padding: 2rem;
+  background: rgba(232, 152, 65, 0.9);
   /* max-width: 1200px; */
   margin: 0 auto;
 }
