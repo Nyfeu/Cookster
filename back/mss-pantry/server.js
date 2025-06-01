@@ -2,6 +2,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
+const axios = require('axios')
 const express = require('express')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
@@ -13,7 +14,8 @@ const app = express()
 const dbUser = process.env.DB_USER
 const dbPass = process.env.DB_PASS
 const jwtSecret = process.env.JWT_SECRET
-const port = process.env.PORT || 4000
+const port = 6000
+const event_bus_port = 4000
 
 // Middleware para permitir requisições do frontend
 app.use(cors({
@@ -163,12 +165,35 @@ app.get('/', (req, res) => {
 })
 
 // Conexão com banco e start do servidor
+
 mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
   .then(() => {
-    app.listen(port, () => {
-      console.log(`Pantry Service rodando na porta ${port}`)
-    })
+    app.listen(6000, () => console.log('Servidor rodando na porta 6000'))
+    console.log('Conectado ao MongoDB')
   })
-  .catch(err => {
-    console.error('Erro ao conectar no MongoDB', err)
-  })
+  .catch(err => console.log(err))
+
+
+app.listen(port, async () => {
+ 
+  console.log(`mss-pantry (localhost:${port}): [OK]`)
+ 
+  try {
+    await axios.post(`http://localhost:${event_bus_port}/register`, { url: `http://localhost:${port}` });
+    console.log(`Event Bus Registration (http://localhost:${port}): [OK]`);
+  } catch (error) {
+    console.error(`Event Bus Registration (http://localhost:${port}): [FAILED]`, error.message);
+  }
+ 
+})
+
+// mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
+//   .then(() => {
+//     app.listen(port, () => {
+//       console.log(`mss-pantry (localhost:${port}): [OK]`)
+//       console.log(`Pantry Service rodando na porta ${port}`)
+//     })
+//   })
+//   .catch(err => {
+//     console.error('Erro ao conectar no MongoDB', err)
+//   })
