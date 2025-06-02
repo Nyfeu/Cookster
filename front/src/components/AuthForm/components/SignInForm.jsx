@@ -29,7 +29,7 @@ const SignInForm = (props) => {
                 return;
             }
 
-
+            console.log(data.token)
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
             alert('Login bem-sucedido!');           
