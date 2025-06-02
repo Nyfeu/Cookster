@@ -5,11 +5,18 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const app = express()
 const bcrypt = require('bcrypt')
+const mongoose = require('mongoose')
 const passport = require('passport')
 const flash = require('express-flash')
 const initializePassport = require('./passport-config')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
+const User = require('./models/User')
+
+const axios = require('axios')
+
+const port = 3000
+const event_bus_port = 4000
 
 // Permitir acesso do front-end
 app.use(cors({
@@ -18,18 +25,21 @@ app.use(cors({
   credentials: true
 }))
 
-const users = []
+//const users = []
 
 initializePassport(
   passport,
-  email => users.find(user => user.email === email),
-  id => users.find(user => user.id === id)
+  async email => await User.findOne({ email }),
+  async id => await User.findOne({ id})
 )
 
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(flash())
 app.use(passport.initialize())
+
+
+
 
 function checkAuthenticated(req, res, next) {
   const authHeader = req.headers.authorization
@@ -70,8 +80,19 @@ app.get('/', (req, res) => {
 app.get('/dashboard', checkAuthenticated, (req, res) => {
   res.json({
     message: 'Você está autenticado e acessou sua página privada.',
+    user: req.user
+  })
+})
+
+app.get('/profile', checkAuthenticated, (req, res) => {
+  res.json({
+    message: 'Você está autenticado e acessou sua página privada.',
     user: req.user 
   })
+})
+
+app.get('/register', (req, res) => {
+  res.json(users)
 })
 
 
@@ -106,32 +127,34 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 
   const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
   if (!strongPasswordRegex.test(password)) {
-    return res.status(400).json({ 
-      error: 'A senha deve conter ao menos 8 caracteres, uma letra maiúscula, uma minúscula e um número.' 
+    return res.status(400).json({
+      error: 'A senha deve conter ao menos 8 caracteres, uma letra maiúscula, uma minúscula e um número.'
     })
   }
 
-  const existingUser = users.find(user => user.email === email)
-  if (existingUser) {
+  const existingUser = await User.findOne({ email: email})
+  if(existingUser) {
     return res.status(409).json({ error: 'Email já cadastrado' })
   }
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10)
-    const newUser = {
+
+    const user = new User({
       id: Date.now().toString(),
       name,
       email,
       password: hashedPassword
-    }
-    users.push(newUser)
+    })
 
+    await user.save()
+    
     return res.status(201).json({
       message: 'Usuário cadastrado com sucesso',
       user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email
+        id: user.id,
+        name: user.name,
+        email: user.email
       }
     })
   } catch (err) {
@@ -148,8 +171,14 @@ app.get('/auth/google',
 app.get('/auth/google/callback',
   passport.authenticate('google', { session: false, failureRedirect: '/login' }),
   (req, res) => {
-    const token = jwt.sign({ id: req.user.id, email: req.user.email }, process.env.JWT_SECRET, { expiresIn: '1h' })
-    res.json({ message: 'Autenticado com sucesso via Google', token, user: req.user })
+    const token = jwt.sign(
+      { id: req.user.id, email: req.user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    )
+
+    const redirectUrl = `http://localhost:5173/auth-success?token=${token}&name=${encodeURIComponent(req.user.name)}&email=${encodeURIComponent(req.user.email)}`;
+    res.redirect(redirectUrl);
   }
 )
 
@@ -161,8 +190,14 @@ app.get('/auth/facebook',
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { session: false, failureRedirect: '/login' }),
   (req, res) => {
-    const token = jwt.sign({ id: req.user.id, email: req.user.email }, process.env.JWT_SECRET, { expiresIn: '1h' })
-    res.json({ message: 'Autenticado com sucesso via Facebook', token, user: req.user })
+    const token = jwt.sign(
+      { id: req.user.id, email: req.user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    )
+
+    const redirectUrl = `http://localhost:5173/auth-success?token=${token}&name=${encodeURIComponent(req.user.name)}&email=${encodeURIComponent(req.user.email)}`;
+    res.redirect(redirectUrl);
   }
 )
 
@@ -171,4 +206,25 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
   res.status(200).json({ message: 'Logout simbólico com JWT. Basta remover o token no frontend.' })
 })
 
-app.listen(3000, () => console.log('mss-autenticacao (localhost:3000): [OK]'))
+const dbUser = process.env.DB_USER
+const dbPassword = process.env.DB_PASS
+
+mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
+  .then(() => {
+    app.listen(3000, () => console.log('Servidor rodando na porta 3000'))
+    console.log('Conectado ao MongoDB')
+  })
+  .catch(err => console.log(err))
+
+app.listen(port, async () => {
+
+  console.log(`mss-autenticacao (localhost:${port}): [OK]`)
+
+  try {
+    await axios.post(`http://localhost:${event_bus_port}/register`, { url: `http://localhost:${port}` });
+    console.log(`Event Bus Registration (http://localhost:${port}): [OK]`);
+  } catch (error) {
+    console.error(`Event Bus Registration (http://localhost:${port}): [FAILED]`, error.message);
+  }
+
+})
