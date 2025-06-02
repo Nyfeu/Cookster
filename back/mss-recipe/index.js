@@ -122,62 +122,69 @@ app.get('/recipes', async (req, res) => {
 
 app.get('/suggest', async (req, res) => {
 
-  try {
-    
-    const { user_id, name } = req.query;
+    try {
 
-    if (!user_id) {
-      return res.status(400).json({ error: "user_id é obrigatório." });
-    }
+        const { user_id, name } = req.query;
 
-    // Busca a pantry do usuário
-    const pantry = await Pantry.findOne({ userId: user_id });
+        if (!user_id) {
+            return res.status(400).json({ error: "user_id é obrigatório." });
+        }
 
-    if (!pantry || pantry.ingredientes.length === 0) {
-      return res.status(404).json({ error: "Nenhum ingrediente encontrado na despensa do usuário." });
-    }
+        // Busca a pantry do usuário
+        const pantry = await Pantry.findOne({ userId: user_id });
 
-    // Extrai nomes dos ingredientes (em minúsculas)
-    const ingredientList = pantry.ingredientes.map(ing => ing.nome.toLowerCase());
+        if (!pantry || pantry.ingredientes.length === 0) {
+            return res.status(404).json({ error: "Nenhum ingrediente encontrado na despensa do usuário." });
+        }
 
-    // Construção do pipeline
-    const matchStage = {};
-    if (name) matchStage.name = { $regex: name, $options: 'i' };
+        // Extrai nomes dos ingredientes (em minúsculas)
+        const ingredientList = pantry.ingredientes.map(ing => ing.nome.toLowerCase());
 
-    const pipeline = [
-      { $match: matchStage },
-      {
-        $addFields: {
-          ingredient_names: {
-            $map: {
-              input: "$ingredients",
-              as: "ing",
-              in: { $toLower: "$$ing.name" }
+        // Construção do pipeline
+        const matchStage = {};
+        if (name) matchStage.name = { $regex: name, $options: 'i' };
+
+        const pipeline = [
+            { $match: matchStage },
+            {
+                $addFields: {
+                    ingredient_names: {
+                        $map: {
+                            input: "$ingredients",
+                            as: "ing",
+                            in: { $toLower: "$$ing.name" }
+                        }
+                    }
+                }
+            },
+            {
+                $match: {
+                    $expr: {
+                        $setIsSubset: ["$ingredient_names", ingredientList]
+                    }
+                }
+            },
+            {
+                $project: {
+                    ingredient_names: 0 // remove campo auxiliar
+                }
             }
-          }
-        }
-      },
-      {
-        $match: {
-          $expr: {
-            $setIsSubset: ["$ingredient_names", ingredientList]
-          }
-        }
-      },
-      {
-        $project: {
-          ingredient_names: 0 // remove campo auxiliar
-        }
-      }
-    ];
+        ];
 
-    const recipes = await Recipe.aggregate(pipeline);
+        // Paginação
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
 
-    res.status(200).json(recipes);
+        pipeline.push({ $skip: skip }, { $limit: limit });
 
-  } catch (err) {
-    console.error('❌ Erro ao buscar receitas:', err);
-    res.status(500).json({ error: 'Erro ao buscar receitas.' });
-  }
+        const recipes = await Recipe.aggregate(pipeline);
+
+        res.status(200).json(recipes);
+
+    } catch (err) {
+        console.error('❌ Erro ao buscar receitas:', err);
+        res.status(500).json({ error: 'Erro ao buscar receitas.' });
+    }
 
 });
