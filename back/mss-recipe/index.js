@@ -64,18 +64,49 @@ app.get('/recipes', async (req, res) => {
 
     try {
 
-        const { user_id, name } = req.query;
+        const { user_id, name, ingredients } = req.query;
 
         // Filtro dinâmico
-        const filter = {};
-        if (user_id) filter.user_id = user_id;
-        if (name) filter.name = { $regex: name, $options: 'i' }; // busca parcial, case-insensitive
+        const matchStage = {};
 
-        console.log('🔍 Filtro:', filter);  // DEBUG
+        if (user_id) matchStage.user_id = user_id;
+        if (name) matchStage.name = { $regex: name, $options: 'i' };
 
-        const recipes = await Recipe.find(filter);
+        let pipeline = [{ $match: matchStage }];
 
-        console.log('📄 Receitas encontradas:', recipes); // DEBUG
+        if (ingredients) {
+            const ingredientList = ingredients
+                .split(',')
+                .map(i => i.trim().toLowerCase());
+
+            pipeline.push(
+                {
+                    $addFields: {
+                        ingredient_names: {
+                            $map: {
+                                input: "$ingredients",
+                                as: "ing",
+                                in: "$$ing.name"
+                            }
+                        }
+                    }
+                },
+                {
+                    $match: {
+                        $expr: {
+                            $setIsSubset: ["$ingredient_names", ingredientList]
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        ingredient_names: 0 // remove campo auxiliar
+                    }
+                }
+            );
+        }
+
+        const recipes = await Recipe.aggregate(pipeline);
 
         res.status(200).json(recipes);
 
