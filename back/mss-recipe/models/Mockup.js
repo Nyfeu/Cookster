@@ -8,7 +8,7 @@ const IngredientSchema = new mongoose.Schema({
     required: true, 
     trim: true,
     lowercase: true,  // Padroniza em minúsculas
-    enum: [  // Lista de ingredientes padronizados
+    enum: [           // Lista de ingredientes padronizados
       'farinha de trigo', 'açúcar', 'ovos', 'leite', 'óleo',
       'fermento', 'chocolate em pó', 'sal', 'manteiga', 'frango',
       'alho', 'cebola', 'limão', 'azeite', 'pão', 'queijo',
@@ -27,8 +27,7 @@ const IngredientSchema = new mongoose.Schema({
 
 const RecipeSchema = new mongoose.Schema({
   user_id: { 
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    type: String,
     required: true,
     index: true
   },
