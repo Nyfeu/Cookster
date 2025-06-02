@@ -5,7 +5,6 @@ const axios = require('axios');
 
 // Esquemas de dados do MongoDB
 const Recipe = require('./models/Recipe');
-const UserPantry = require('./models/UserPantry');
 
 // Lendo dados .env
 require('dotenv').config();
@@ -28,7 +27,7 @@ app.use(cors({
 // Conexão com MongoDB
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
-const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/cookster?retryWrites=true&w=majority&appName=Cluster0`;
+const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 mongoose.connect(mongoURI)
     .then(() => {
@@ -49,38 +48,43 @@ mongoose.connect(mongoURI)
             } catch (error) {
 
                 console.error('❌ Falha ao registrar no Event Bus:', error.message);
-            
+
             }
-        
+
         });
-    
+
     }).catch(err => {
-      
+
         console.error('❌ Erro ao conectar ao MongoDB:', err);
-    
+
     });
 
-// Endpoint: receitas viáveis para um usuário
-app.get("/recipes/available/:userId", async (req, res) => {
-
-    const { userId } = req.params;
+// Endpoint para consultar receitas
+app.get('/recipes', async (req, res) => {
 
     try {
 
-        const pantry = await UserPantry.findOne({ userId });
-        if (!pantry) return res.json([]);
+        const { user_id, name } = req.query;
 
-        const allRecipes = await Recipe.find({});
-        const available = allRecipes.filter(recipe =>
-            recipe.ingredients.every(ing => pantry.ingredients.includes(ing))
-        );
+        // Filtro dinâmico
+        const filter = {};
+        if (user_id) filter.user_id = user_id;
+        if (name) filter.name = { $regex: name, $options: 'i' }; // busca parcial, case-insensitive
 
-        res.json(available);
+        console.log('🔍 Filtro:', filter);  // DEBUG
+
+        const recipes = await Recipe.find(filter);
+
+        console.log('📄 Receitas encontradas:', recipes); // DEBUG
+
+        res.status(200).json(recipes);
 
     } catch (err) {
 
-        console.error("Erro ao buscar receitas disponíveis:", err);
-        res.status(500).json({ error: "Erro interno do servidor" });
+        console.error('❌ Erro ao buscar receitas:', err);
+        res.status(500).json({ error: 'Erro ao buscar receitas.' });
+
     }
 
 });
+
