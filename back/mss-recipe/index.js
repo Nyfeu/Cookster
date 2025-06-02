@@ -5,6 +5,7 @@ const axios = require('axios');
 
 // Esquemas de dados do MongoDB
 const Recipe = require('./models/Recipe');
+const Pantry = require('./models/Pantry');
 
 // Lendo dados .env
 require('dotenv').config();
@@ -119,3 +120,64 @@ app.get('/recipes', async (req, res) => {
 
 });
 
+app.get('/suggest', async (req, res) => {
+
+  try {
+    
+    const { user_id, name } = req.query;
+
+    if (!user_id) {
+      return res.status(400).json({ error: "user_id é obrigatório." });
+    }
+
+    // Busca a pantry do usuário
+    const pantry = await Pantry.findOne({ userId: user_id });
+
+    if (!pantry || pantry.ingredientes.length === 0) {
+      return res.status(404).json({ error: "Nenhum ingrediente encontrado na despensa do usuário." });
+    }
+
+    // Extrai nomes dos ingredientes (em minúsculas)
+    const ingredientList = pantry.ingredientes.map(ing => ing.nome.toLowerCase());
+
+    // Construção do pipeline
+    const matchStage = {};
+    if (name) matchStage.name = { $regex: name, $options: 'i' };
+
+    const pipeline = [
+      { $match: matchStage },
+      {
+        $addFields: {
+          ingredient_names: {
+            $map: {
+              input: "$ingredients",
+              as: "ing",
+              in: { $toLower: "$$ing.name" }
+            }
+          }
+        }
+      },
+      {
+        $match: {
+          $expr: {
+            $setIsSubset: ["$ingredient_names", ingredientList]
+          }
+        }
+      },
+      {
+        $project: {
+          ingredient_names: 0 // remove campo auxiliar
+        }
+      }
+    ];
+
+    const recipes = await Recipe.aggregate(pipeline);
+
+    res.status(200).json(recipes);
+
+  } catch (err) {
+    console.error('❌ Erro ao buscar receitas:', err);
+    res.status(500).json({ error: 'Erro ao buscar receitas.' });
+  }
+
+});
