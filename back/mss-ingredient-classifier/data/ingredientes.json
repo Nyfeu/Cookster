@@ -5,6 +5,7 @@
     },
     {
         "nome": "Leite",
+        "categoria": "Laticínios",
         "sinonimos": ["leite integral", "leite desnatado", "leite vegetal", "leite de vaca", "lácteo"]
     },
     {

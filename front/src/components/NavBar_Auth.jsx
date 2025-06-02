@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaUserCircle } from 'react-icons/fa'; // Ícone de perfil
+import React, { useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaUserCircle } from 'react-icons/fa';
 import './NavBar.css';
 
-const NavBar = () => {
+const NavBar_Auth = () => {
     const [isCollapsed, setIsCollapsed] = useState(true);
 
     const toggleNavbar = () => {
@@ -24,27 +24,28 @@ const NavBar = () => {
                 </svg>
             </button>
 
-
             <div className={`collapse navbar-collapse ${isCollapsed ? '' : 'show'}`} id="navbarContent">
                 <ul className="navbar-nav mb-2 mb-lg-0">
                     <li className="nav-item">
                         <Link className="nav-link" to="/" onClick={closeNavbar}>Home</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/sobre">Sobre</Link>
+                        <Link className="nav-link" to="/sobre" onClick={closeNavbar}>Despensa</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/funcionalidades">Funcionalidades</Link>
+                        <Link className="nav-link" to="/funcionalidades" onClick={closeNavbar}>Funcionalidades</Link>
                     </li>
                 </ul>
 
-                <div className="d-flex justify-content-start justify-content-lg-end w-100 px-1 gap-3">
-                    <Link className="btn btn-outline-primary" to="/login" state={{ mode: 'sign_in' }}>Entrar</Link>
-                    <Link className="btn btn-primary" to="/register" state={{ mode: 'sign_up' }}>Registrar-se</Link>
+                <div className="d-flex justify-content-start justify-content-lg-end w-100 px-1">
+                    <Link to="/profile" onClick={closeNavbar} className="profile-icon">
+                        <FaUserCircle size={28} />
+                    </Link>
                 </div>
+
             </div>
         </nav>
     );
 };
 
-export default NavBar;
+export default NavBar_Auth;
