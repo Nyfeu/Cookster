@@ -7,7 +7,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken'); 
 const cors = require('cors');
-const Profile = require('./models/Profile'); 
+const Profile = require('./models/Profile');
+const User = require('./models/User');
 
 const app = express();
 
@@ -51,7 +52,15 @@ app.get('/profile/:userId', async (req, res) => {
         const { userId } = req.params;
 
 
-        const profile = await Profile.findOne({ userId: userId }, 'bio profissao fotoPerfil');
+        const profile = await Profile.findOne({ userId: userId }) 
+                                     .populate({
+                                         path: 'userId',         
+                                         model: 'User',         
+                                         localField: 'userId',   
+                                         foreignField: 'id',     
+                                         select: 'name email'    
+                                     })
+                                     .exec();
 
         if (!profile) {
             return res.status(404).json({ message: `Perfil não encontrado para o usuário com ID: ${userId}` });

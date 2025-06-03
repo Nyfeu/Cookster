@@ -11,9 +11,6 @@ import { Link } from 'react-router-dom';
 const PageProfile = () => {
     const location = useLocation();
     const token = location.state?.token;
-    const user = location.state?.user;
-
-
     const userId = location.state?.user.id
 
 
@@ -81,14 +78,10 @@ const PageProfile = () => {
             setBio(profile.bio);
             setProfissao(profile.profissao);
             setFotoPerfil(profile.fotoPerfil);
+            setUsername(profile.userId.name);
+            setEmail(profile.userId.email)
         }
-
-
-        if (user) {
-            setUsername(user.name);
-            setEmail(user.email);
-        }
-    }, [profile, user]); 
+    }, [profile]); 
 
 
 
