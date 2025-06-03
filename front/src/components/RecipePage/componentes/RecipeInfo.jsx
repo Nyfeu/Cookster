@@ -1,4 +1,6 @@
 import React from 'react'
+import '../RecipePage.css'
+import { Link } from 'react-router-dom'
 
 const RecipeInfo = () => {
   return (
@@ -9,7 +11,10 @@ const RecipeInfo = () => {
                 alt="recipe"
               />
               <article className="recipe-info">
+                <div className='d-flex flex-collumn align-items-center'>
                 <h2>Banana Pancakes</h2>
+                <Link to='/profile' className='user-link'>by Lucas</Link>   
+                </div>
                 <p>
                   Shabby chic humblebrag banh mi bushwick, banjo kale chips
                   meggings. Cred selfies sartorial, cloud bread disrupt blue bottle

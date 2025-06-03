@@ -1,4 +1,5 @@
 import React from 'react'
+import '../RecipePage.css'
 
 const InstructionsInfo = () => {
   return (

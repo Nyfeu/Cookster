@@ -175,14 +175,18 @@ body {
   justify-content: center;
 }
 
+.tool-list,
 .ingredient-list {
   padding-left: 1.25rem;
   list-style-type: disc;
+  display: flex;
+  align-items: start;
+  flex-direction: column;
    
 }
 
 .tool-list p,
-.ingredient-list p {
+.ingredient-list p{
   display: flex;
   align-items: center;
   justify-content: start;  
@@ -193,6 +197,18 @@ body {
 .tool-list li::marker {
   color: var(--secondary-color); 
   font-size: 1.2rem;
+}
+
+.user-link{
+  margin-left: 10px;
+  text-decoration: none;
+  color: var(--secondary-color);
+
+}
+
+.user-link:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
