@@ -14,7 +14,7 @@ const PageProfile = () => {
     const user = location.state?.user;
 
 
-    const userId = '1748704728028'; 
+    const userId = location.state?.user.id
 
 
     const [profile, setProfile] = useState(null);
