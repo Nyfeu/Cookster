@@ -2,6 +2,7 @@ import { useState } from 'react'
 import SocialMediaIcons from './SocialMediaIcons';
 import { useNavigate } from 'react-router-dom';
 
+
 const SignInForm = (props) => {
 
     const [email, setEmail] = useState('');
@@ -29,7 +30,7 @@ const SignInForm = (props) => {
                 return;
             }
 
-
+            console.log(data.token)
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
             alert('Login bem-sucedido!');           
