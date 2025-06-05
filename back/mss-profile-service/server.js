@@ -35,7 +35,7 @@ const eventHandlers = { // Renomeei para 'eventHandlers' para clareza
     try {
       console.log(`[x] Evento 'UserCreated' recebido para:`, userData);
 
-      const { userId, name, email } = userData; // Renomeia 'id' do payload para 'userId'
+      const { id: userId, name, email } = userData; // Renomeia 'id' do payload para 'userId'
 
       // Validação básica do userId recebido
       if (!userId) {
