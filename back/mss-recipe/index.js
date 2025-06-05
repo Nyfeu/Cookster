@@ -51,7 +51,7 @@ mongoose.connect(mongoURI)
             try {
 
                 await axios.post(`http://localhost:${EVENT_BUS_PORT}/register`, {
-                    url: `http://localhost:${APP_PORT}`
+                    url: `http://localhost:${APP_PORT}/events`
                 });
 
                 console.log('📡 Registrado no Event Bus com sucesso');
