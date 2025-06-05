@@ -15,7 +15,8 @@
 .despensa-section .btn-custom {
   background-color: var(--secondary-color);
   color: white;
-  border: none; 
+  border: none;
+  transition: all 0.3s ease 
 }
 
 .despensa-section .btn-custom:hover {

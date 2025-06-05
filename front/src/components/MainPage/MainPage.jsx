@@ -12,7 +12,7 @@ export default function MainPage() {
     <>
       <div className="container-page">
 
-        <NavBar_Auth/>
+        <NavBar_Auth />
         <div className="container-fluid container-home p-0 d-flex flex-column">
 
           <HeroSection />

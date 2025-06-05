@@ -17,6 +17,9 @@ const jwtSecret = process.env.JWT_SECRET
 const APP_PORT = 3001
 const EVENT_BUS_PORT = 4000
 const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/mss-pantry?retryWrites=true&w=majority&appName=Cluster0`
+const APP_PORT = 3001
+const EVENT_BUS_PORT = 4000
+const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/mss-pantry?retryWrites=true&w=majority&appName=Cluster0`
 
 // Middleware para permitir requisições do frontend
 app.use(cors({

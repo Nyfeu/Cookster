@@ -22,6 +22,12 @@ const APP_PORT = 3000
 const EVENT_BUS_PORT = 4000
 const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/mss-autenticacao?retryWrites=true&w=majority&appName=Cluster0`
 
+const dbUser = process.env.DB_USER
+const dbPass = process.env.DB_PASS
+const APP_PORT = 3000
+const EVENT_BUS_PORT = 4000
+const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/mss-autenticacao?retryWrites=true&w=majority&appName=Cluster0`
+
 // Permitir acesso do front-end
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -253,6 +259,14 @@ mongoose.connect(mongoURI)
                 console.error('❌ Falha ao registrar no Event Bus:', error.message);
 
             }
+
+        });
+
+    }).catch(err => {
+
+        console.error('❌ Erro ao conectar ao MongoDB:', err);
+
+    });
 
         });
 
