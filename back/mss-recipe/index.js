@@ -127,6 +127,25 @@ app.get('/recipes', async (req, res) => {
 
 });
 
+// Endpoint para consultar uma receita específica
+app.get('/recipes/:id', async (req, res) => {
+    try {
+        const { id } = req.params; // Get the ID from the request parameters
+        const recipe = await Recipe.findById(id); // Find the recipe by its ID
+
+        if (!recipe) {
+            return res.status(404).json({ error: 'Receita não encontrada.' }); // If no recipe is found, return 404
+        }
+
+        res.status(200).json(recipe); // Return the recipe if found
+
+    } catch (err) {
+        console.error('❌ Erro ao buscar receita por ID:', err);
+        res.status(500).json({ error: 'Erro ao buscar receita.' }); // Handle server errors
+    }
+});
+
+// Endpoint para sugerir receitas com base na despensa do usuário
 app.get('/suggest', async (req, res) => {
 
     try {
