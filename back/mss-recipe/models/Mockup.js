@@ -116,7 +116,7 @@ async function seedDatabase() {
 
     const dbUser = process.env.DB_USER;
     const dbPassword = process.env.DB_PASS;
-    const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+    const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/mss-recipe?retryWrites=true&w=majority&appName=Cluster0`;
 
     await mongoose.connect(mongoURI);
     console.log('Conectado ao MongoDB Atlas...');
