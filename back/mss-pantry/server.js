@@ -14,7 +14,7 @@ const app = express()
 const dbUser = process.env.DB_USER
 const dbPass = process.env.DB_PASS
 const jwtSecret = process.env.JWT_SECRET
-const APP_PORT = 6000
+const APP_PORT = 3001
 const EVENT_BUS_PORT = 4000
 const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/mss-pantry?retryWrites=true&w=majority&appName=Cluster0`
 
@@ -90,6 +90,23 @@ app.post('/ingredients', checkAuthenticated, async (req, res) => {
 
     pantry.ingredientes.push({ nome, categoria })
     await pantry.save()
+
+     try {
+        await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
+            type: 'IngredientAdded',
+            payload: {
+                userId: userId,
+                ingredient: {
+                    nome,
+                    categoria
+                }
+            }
+        });
+        console.log(`Evento IngredientAdded emitido para o Event Bus: ${nome} (${categoria}) para o usuário ${userId}`);
+    } catch (eventBusErr) {
+        console.error('Falha ao emitir evento IngredientAdded para o Event Bus:', eventBusErr.message);
+    }
+
     res.status(201).json(pantry.ingredientes)
   } catch (err) {
     res.status(500).json({ error: 'Erro ao adicionar ingrediente' })
@@ -148,6 +165,22 @@ app.delete('/ingredients', checkAuthenticated, async (req, res) => {
     const ingredienteRemovido = pantry.ingredientes.splice(index, 1)[0]
     await pantry.save()
 
+    try {
+        await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
+            type: 'IngredientRemoved',
+            payload: {
+                userId: userId,
+                ingredient: {
+                    nome: ingredienteRemovido.nome,
+                    categoria: ingredienteRemovido.categoria
+                }
+            }
+        });
+        console.log(`Evento IngredientRemoved emitido para o Event Bus: ${ingredienteRemovido.nome} (${ingredienteRemovido.categoria}) para o usuário ${userId}`);
+    } catch (eventBusErr) {
+        console.error('Falha ao emitir evento IngredientRemoved para o Event Bus:', eventBusErr.message);
+    }
+
     res.json({
       message: 'Ingrediente removido com sucesso',
       ingrediente: ingredienteRemovido
@@ -165,6 +198,11 @@ app.get('/', (req, res) => {
   res.json({ message: 'Pantry Service está no ar!' })
 })
 
+app.post('/events', async (req, res) => {
+  const event = req.body;
+  console.log('Evento recebido:', event.type);
+})
+
 // Conexão com banco e start do servidor
 
 mongoose.connect(mongoURI)
@@ -178,7 +216,7 @@ mongoose.connect(mongoURI)
             try {
 
                 await axios.post(`http://localhost:${EVENT_BUS_PORT}/register`, {
-                    url: `http://localhost:${APP_PORT}`
+                    url: `http://localhost:${APP_PORT}/events`
                 });
 
                 console.log('📡 Registrado no Event Bus com sucesso');

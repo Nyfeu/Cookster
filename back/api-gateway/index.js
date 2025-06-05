@@ -33,6 +33,10 @@ const services = {
         target: 'http://localhost:8000',
         publicRoutes: ['/health'],
         requiresUserId: false
+    },
+    pantrie:{
+        target: 'http://localhost:3001',
+        requiresUserId: true
     }
 };
 
