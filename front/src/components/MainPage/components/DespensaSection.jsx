@@ -6,23 +6,31 @@ export default function DespensaSection() {
   const [showPanel, setShowPanel] = useState(false);
   const [ingredientes, setIngredientes] = useState([]);
 
-  const abrirDespensa = async () => {
-    console.log("abrindo painel...");
-    setShowPanel(true);
+  const alternarDespensa = async () => {
+    if (showPanel) {
+      setShowPanel(false);
+    } else {
+      setShowPanel(true);
 
-    const token = localStorage.getItem("token"); // ou outro local onde você armazena o JWT
+      const token = localStorage.getItem("token");
 
-    try {
-      const res = await fetch("http://localhost:4000/ingredients", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      if (!token) {
+        console.error("Token não encontrado. Usuário pode não estar autenticado.");
+        return;
+      }
 
-      const data = await res.json();
-      setIngredientes(data);
-    } catch (err) {
-      console.error("Erro ao buscar ingredientes:", err);
+      try {
+        const res = await fetch("http://localhost:3001/ingredients", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        setIngredientes(data);
+      } catch (err) {
+        console.error("Erro ao buscar ingredientes:", err);
+      }
     }
   };
 
@@ -34,7 +42,9 @@ export default function DespensaSection() {
 
           <div className="col-md-6">
             <h2 className="mb-3">Sua Despensa</h2>
-            <button className="btn btn-custom" onClick={abrirDespensa}>Gerenciar Despensa</button>
+            <button className="btn btn-custom" onClick={alternarDespensa}>
+              Gerenciar Despensa
+            </button>
 
             <SidePanel
               show={showPanel}

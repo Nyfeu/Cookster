@@ -9,32 +9,38 @@
   transition: right 0.3s ease-in-out;
   padding: 1rem;
   z-index: 1050;
+  overflow-y: auto
 }
 
 .side-panel.open {
   right: 0;
 }
 
+.categoria-section h6 {
+  font-size: 0.85rem;
+  padding: 0.5rem 0.5rem 0rem 0.5rem ;
+  text-align: left;
+  letter-spacing: 0.02em;
+}
 .categoria-section.com-linha {
   border-top: 1px solid var(--primary-color);
   padding-top: 0.5rem;
   margin-top: 1rem;
 }
 
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  float: right;
-  cursor: pointer;
-  margin-top: -4px
-}
+.close-btn {   
+  background: none;   
+  border: none;   font-size: 1.5rem;   
+  float: right;   cursor: pointer;   
+  margin-top: -4px 
+} 
 
-.close-btn:hover {
-  color: red;
+.close-btn:hover {   
+  color: red; 
 }
 
 .ingredient-item {
+  font-size: 0.7rem;
   display: inline-block;
   padding: 8px 12px;
   margin: 4px;
@@ -93,6 +99,7 @@ ul.list-unstyled {
 }
 
 .dropdown-menu {
+  font-size: 0.8rem;
   position: absolute;
   z-index: 10;
 }
@@ -110,7 +117,6 @@ ul.list-unstyled {
 
 .dropdown-menu li:active small {
   color: white !important;
-  transition: all 0.1s ease
 }
 
 .dropdown-item i:first-child {

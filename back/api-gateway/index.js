@@ -33,6 +33,10 @@ const services = {
         target: 'http://localhost:8000',
         publicRoutes: ['/health'],
         requiresUserId: false
+    },
+    profile: {
+        target: 'http://localhost:5000',
+        requiresUserId: true
     }
 };
 

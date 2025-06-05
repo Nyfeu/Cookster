@@ -14,8 +14,9 @@ const app = express()
 const dbUser = process.env.DB_USER
 const dbPass = process.env.DB_PASS
 const jwtSecret = process.env.JWT_SECRET
-const port = 6000
-const event_bus_port = 4000
+const APP_PORT = 3001
+const EVENT_BUS_PORT = 4000
+const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/mss-pantry?retryWrites=true&w=majority&appName=Cluster0`
 
 // Middleware para permitir requisições do frontend
 app.use(cors({
@@ -166,34 +167,32 @@ app.get('/', (req, res) => {
 
 // Conexão com banco e start do servidor
 
-mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
-  .then(() => {
-    app.listen(6000, () => console.log('Servidor rodando na porta 6000'))
-    console.log('Conectado ao MongoDB')
-  })
-  .catch(err => console.log(err))
+mongoose.connect(mongoURI)
+    .then(() => {
 
+        console.log('✅ Conectado ao MongoDB');
 
-app.listen(port, async () => {
- 
-  console.log(`mss-pantry (localhost:${port}): [OK]`)
- 
-  try {
-    await axios.post(`http://localhost:${event_bus_port}/register`, { url: `http://localhost:${port}` });
-    console.log(`Event Bus Registration (http://localhost:${port}): [OK]`);
-  } catch (error) {
-    console.error(`Event Bus Registration (http://localhost:${port}): [FAILED]`, error.message);
-  }
- 
-})
+        app.listen(APP_PORT, async () => {
+            console.log(`🟢 PANTRY-SERVICE (http://localhost:${APP_PORT}): [OK]`);
 
-// mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
-//   .then(() => {
-//     app.listen(port, () => {
-//       console.log(`mss-pantry (localhost:${port}): [OK]`)
-//       console.log(`Pantry Service rodando na porta ${port}`)
-//     })
-//   })
-//   .catch(err => {
-//     console.error('Erro ao conectar no MongoDB', err)
-//   })
+            try {
+
+                await axios.post(`http://localhost:${EVENT_BUS_PORT}/register`, {
+                    url: `http://localhost:${APP_PORT}`
+                });
+
+                console.log('📡 Registrado no Event Bus com sucesso');
+
+            } catch (error) {
+
+                console.error('❌ Falha ao registrar no Event Bus:', error.message);
+
+            }
+
+        });
+
+    }).catch(err => {
+
+        console.error('❌ Erro ao conectar ao MongoDB:', err);
+
+    });
