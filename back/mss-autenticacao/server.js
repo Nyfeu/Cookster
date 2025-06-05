@@ -224,8 +224,11 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
 
 
 app.post('/events', async (req, res) => {
+
   const event = req.body;
   console.log('Evento recebido:', event.type);
+  res.status(200).send('Evento processado ou reconhecido');
+
 })
 
 
@@ -240,7 +243,7 @@ mongoose.connect(mongoURI)
             try {
 
                 await axios.post(`http://localhost:${EVENT_BUS_PORT}/register`, {
-                    url: `http://localhost:${APP_PORT}`
+                    url: `http://localhost:${APP_PORT}/events`
                 });
 
                 console.log('📡 Registrado no Event Bus com sucesso');
