@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import './PageProfile.css';
 import PainelReceitas from './components/PainelReceitas';
@@ -9,80 +8,121 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
-
-const PageProfile = (props) => {
-
+const PageProfile = () => {
     const location = useLocation();
     const token = location.state?.token;
-    const user = location.state?.user
+    const userId = location.state?.user.id
+
+
+    const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
 
     const [username, setUsername] = useState(null);
-
-    const [bio, setBio] = useState("UX/UI Designer");
+    const [bio, setBio] = useState("Carregando bio...");
+    const [profissao, setProfissao] = useState("Carregando profissão...");
     const [email, setEmail] = useState(null);
-    const [seguidores, setSeguidores] = useState(4073);
-    const [seguindo, setSeguindo] = useState(322);
-    const [posts, setPosts] = useState(200);
+    const [seguidores, setSeguidores] = useState(0);
+    const [seguindo, setSeguindo] = useState(0);
+    const [posts, setPosts] = useState(0);
+    const [fotoPerfil, setFotoPerfil] = useState('');
     const [descricao, setDescricao] = useState(
         "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam erat volutpat. Morbi imperdiet, mauris ac auctor dictum, nisl ligula egestas nulla."
     );
-    
 
-    const [error, setError] = useState(null)
-
-    // useEffect(() => {
-    //     fetch('http://localhost:3000/register', {
-    //         headers: {
-    //             Authorization: `Bearer ${token}`
-    //         }
-    //     })
-    //         .then(async res => {
-    //             const data = await res.json()
-
-    //             if (!res.ok) throw new Error(data.error)
-    //             setUser(data[0])
-    //         })
-    //         .catch(err => {
-    //             console.error('ERRO NO FETCH:', err.message)
-    //             setError(err.message)
-    //         })
-
-    // }, [])
 
     useEffect(() => {
-        if (token) {
-            setUsername(user.name)
-            setEmail(user.email)
+        const fetchUserProfile = async () => {
+            if (!userId) {
+                setError("ID do usuário fixo não foi definido.");
+                setLoading(false);
+                return;
+            }
+
+            try {
+                setLoading(true);
+                setError(null);
+
+                const response = await fetch(`http://localhost:5000/profile/${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Erro HTTP: ${response.status}`);
+                }
+
+                const responseData = await response.json();
+                setProfile(responseData.data);
+            } catch (err) {
+                console.error("Erro ao buscar perfil:", err);
+                setError(err.message || "Erro desconhecido ao buscar perfil.");
+                setProfile(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserProfile();
+
+    }, [userId]); 
+
+
+
+    useEffect(() => {
+        if (profile) {
+            setBio(profile.bio);
+            setProfissao(profile.profissao);
+            setFotoPerfil(profile.fotoPerfil);
+            setUsername(profile.userId.name);
+            setEmail(profile.userId.email)
         }
-    }, [user])
+    }, [profile]); 
 
-    
 
-    console.log(token)
-    
+
+
+    if (loading) {
+        return <p>Carregando perfil...</p>;
+    }
+
+    if (error) {
+        return <p style={{ color: 'red' }}>Erro: {error}</p>;
+    }
+
+    if (!profile) {
+        return <p>Nenhum perfil encontrado para este usuário.</p>;
+    }
+
+    console.log(profile)
 
     return (
         <div className="header__wrapper">
-            <NavBar_Auth/>
+            <NavBar_Auth />
             <div className='banner'></div>
             <div className="cols__container">
                 <PainelInfos
                     username={username}
                     bio={bio}
+                    profissao={profissao}
                     email={email}
                     seguidores={seguidores}
                     seguindo={seguindo}
                     posts={posts}
                     descricao={descricao}
+                    fotoPerfil={fotoPerfil}
                 />
 
                 <div className="right__col">
                     <div className="seguir">
-                        <Link  to="/profile"
-                                        >
-                                            <FontAwesomeIcon icon={faGear} className="gear-icon" />
-                                        </Link>
-                        
+                        <Link to="/profile">
+                            <FontAwesomeIcon icon={faGear} className="gear-icon" />
+                        </Link>
+
                         <button>
                             {
                                 (token) ?
@@ -102,7 +142,6 @@ const PageProfile = (props) => {
             </div>
         </div>
     );
-}
-
+};
 
 export default PageProfile;

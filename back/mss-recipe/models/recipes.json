@@ -1,0 +1,17 @@
+[
+  {
+    "user_id": "user123",
+    "name": "Omelete",
+    "ingredients": ["egg", "salt", "cheese"]
+  },
+  {
+    "user_id": "user123",
+    "name": "Salada Simples",
+    "ingredients": ["lettuce", "tomato", "olive oil", "salt"]
+  },
+  {
+    "user_id": "user456",
+    "name": "Arroz com Ovo",
+    "ingredients": ["rice", "egg", "oil", "salt"]
+  }
+]

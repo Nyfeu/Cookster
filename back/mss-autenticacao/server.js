@@ -15,8 +15,12 @@ const User = require('./models/User')
 
 const axios = require('axios')
 
-const port = 3000
-const event_bus_port = 4000
+
+const dbUser = process.env.DB_USER
+const dbPass = process.env.DB_PASS
+const APP_PORT = 3000
+const EVENT_BUS_PORT = 4000
+const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/mss-autenticacao?retryWrites=true&w=majority&appName=Cluster0`
 
 // Permitir acesso do front-end
 app.use(cors({
@@ -24,8 +28,6 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }))
-
-//const users = []
 
 initializePassport(
   passport,
@@ -149,6 +151,20 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 
     await user.save()
     
+     try {
+      await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
+        type: 'UserRegistered',
+        payload: {
+          id: user.id,
+          name: user.name,
+          email: user.email
+        }
+      });
+      console.log('Evento UserRegistered emitido para o Event Bus');
+    } catch (eventBusErr) {
+      console.error('Falha ao emitir evento UserRegistered para o Event Bus:', eventBusErr.message);
+    }
+
     return res.status(201).json({
       message: 'Usuário cadastrado com sucesso',
       user: {
@@ -206,25 +222,43 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
   res.status(200).json({ message: 'Logout simbólico com JWT. Basta remover o token no frontend.' })
 })
 
-const dbUser = process.env.DB_USER
-const dbPassword = process.env.DB_PASS
 
-mongoose.connect(`mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
-  .then(() => {
-    app.listen(3000, () => console.log('Servidor rodando na porta 3000'))
-    console.log('Conectado ao MongoDB')
-  })
-  .catch(err => console.log(err))
+app.post('/events', async (req, res) => {
 
-app.listen(port, async () => {
-
-  console.log(`mss-autenticacao (localhost:${port}): [OK]`)
-
-  try {
-    await axios.post(`http://localhost:${event_bus_port}/register`, { url: `http://localhost:${port}` });
-    console.log(`Event Bus Registration (http://localhost:${port}): [OK]`);
-  } catch (error) {
-    console.error(`Event Bus Registration (http://localhost:${port}): [FAILED]`, error.message);
-  }
+  const event = req.body;
+  console.log('Evento recebido:', event.type);
+  res.status(200).send('Evento processado ou reconhecido');
 
 })
+
+
+mongoose.connect(mongoURI)
+    .then(() => {
+
+        console.log('✅ Conectado ao MongoDB');
+
+        app.listen(APP_PORT, async () => {
+            console.log(`🟢 MSS-AUTENTICACAO (http://localhost:${APP_PORT}): [OK]`);
+
+            try {
+
+                await axios.post(`http://localhost:${EVENT_BUS_PORT}/register`, {
+                    url: `http://localhost:${APP_PORT}/events`
+                });
+
+                console.log('📡 Registrado no Event Bus com sucesso');
+
+            } catch (error) {
+
+                console.error('❌ Falha ao registrar no Event Bus:', error.message);
+
+            }
+
+        });
+
+    }).catch(err => {
+
+        console.error('❌ Erro ao conectar ao MongoDB:', err);
+
+    });
+
