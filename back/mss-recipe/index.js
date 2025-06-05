@@ -30,6 +30,16 @@ const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
 const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/mss-recipe?retryWrites=true&w=majority&appName=Cluster0`;
 
+// Função para aplicar paginação
+const applyPagination = (pipeline, req) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    pipeline.push({ $skip: skip }, { $limit: limit });
+    return pipeline;
+};
+
+// Conexão com o MongoDB e inicialização do servidor
 mongoose.connect(mongoURI)
     .then(() => {
 
@@ -108,18 +118,17 @@ app.get('/recipes', async (req, res) => {
         }
 
         // Paginação
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const skip = (page - 1) * limit;
+        applyPagination(pipeline, req);
 
-        pipeline.push({ $skip: skip }, { $limit: limit });
-
+        // Consulta ao banco de dados
         const recipes = await Recipe.aggregate(pipeline);
 
+        // Retorna as receitas encontradas
         res.status(200).json(recipes);
 
     } catch (err) {
 
+        // Em caso de erro, loga o erro e retorna uma mensagem de erro
         console.error('❌ Erro ao buscar receitas:', err);
         res.status(500).json({ error: 'Erro ao buscar receitas.' });
 
@@ -198,19 +207,20 @@ app.get('/suggest', async (req, res) => {
         ];
 
         // Paginação
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const skip = (page - 1) * limit;
+        applyPagination(pipeline, req);
 
-        pipeline.push({ $skip: skip }, { $limit: limit });
-
+        // Consulta ao banco de dados
         const recipes = await Recipe.aggregate(pipeline);
 
+        // Retorna as receitas encontradas
         res.status(200).json(recipes);
 
     } catch (err) {
+
+        // Em caso de erro, loga o erro e retorna uma mensagem de erro
         console.error('❌ Erro ao buscar receitas:', err);
         res.status(500).json({ error: 'Erro ao buscar receitas.' });
+        
     }
 
 });
