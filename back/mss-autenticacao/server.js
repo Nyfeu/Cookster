@@ -261,3 +261,4 @@ mongoose.connect(mongoURI)
         console.error('❌ Erro ao conectar ao MongoDB:', err);
 
     });
+
