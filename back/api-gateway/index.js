@@ -37,13 +37,10 @@ const services = {
     profile: {
         target: 'http://localhost:5000',
         requiresUserId: true
-<<<<<<< HEAD
     },
     pantry:{
         target: 'http://localhost:3001',
         requiresUserId: true
-=======
->>>>>>> feature/main-page
     }
 };
 
