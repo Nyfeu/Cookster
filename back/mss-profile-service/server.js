@@ -12,7 +12,7 @@ const User = require('./models/User');
 
 const app = express();
 
-
+const defaultImageUrl = `default-profile.png`;
 const jwtSecret = process.env.JWT_SECRET; 
 const APP_PORT = 5000; 
 const EVENT_BUS_PORT = 4000;
@@ -28,6 +28,48 @@ app.use(cors({
 
 
 app.use(express.json());
+
+const eventHandlers = { // Renomeei para 'eventHandlers' para clareza
+  // Função que será chamada quando um evento 'UserCreated' for recebido
+  UserRegistered: async (userData) => { // Adaptei o nome da função para 'UserCreated'
+    try {
+      console.log(`[x] Evento 'UserCreated' recebido para:`, userData);
+
+      const { userId, name, email } = userData; // Renomeia 'id' do payload para 'userId'
+
+      // Validação básica do userId recebido
+      if (!userId) {
+        console.warn(`[!] Evento 'UserCreated' recebido sem userId. Ignorando.`);
+        return;
+      }
+
+      // 1. Verificar se o perfil já existe (para garantir idempotência)
+      const existingProfile = await Profile.findOne({ userId: userId });
+
+      if (existingProfile) {
+        console.log(`[x] Perfil para o usuário ${userId} já existe. Ignorando criação duplicada.`);
+        return;
+      }
+
+      // 3. Criar uma nova instância de perfil com informações preenchidas automaticamente
+      const newProfile = new Profile({
+        userId: userId,
+        bio: `Olá! Sou ${name || 'um novo usuário'}. Bem-vindo(a)!`,
+        profissao: 'Não informada',
+        fotoPerfil: defaultImageUrl
+      });
+
+      await newProfile.save();
+      console.log(`[+] Perfil criado automaticamente para o usuário: ${userId} (Nome: ${name || 'N/A'})`);
+
+    } catch (error) {
+      console.error('Erro ao processar evento UserCreated ou criar perfil:', error);
+    }
+  }
+  // Se você tiver outros tipos de eventos no futuro, adicione-os aqui:
+  // AnotherEventType: async (data) => { /* ... lógica ... */ }
+};
+
 
 
 app.get('/profile/:userId', async (req, res) => {
@@ -63,7 +105,7 @@ app.get('/profile/:userId', async (req, res) => {
 
 app.post('/profile', async (req, res) => {
     try {
-        const { userId, bio, profissao, fotoPerfil } = req.body;
+        const { id: userId, bio, profissao, fotoPerfil } = req.body;
 
         if (!userId) {
             return res.status(400).json({ message: 'O ID do usuário (userId) é obrigatório.' });
@@ -74,9 +116,6 @@ app.post('/profile', async (req, res) => {
         if (existingProfile) {
             return res.status(409).json({ message: `Um perfil já existe para o usuário com ID: ${userId}` });
         }
-
-   
-        const defaultImageUrl = `default-profile.png`;
 
 
         const newProfile = new Profile({
@@ -102,6 +141,23 @@ app.post('/profile', async (req, res) => {
     }
 });
 
+app.post(`/events`, async (req, res) => {
+   try {
+    const evento = req.body; 
+    console.log(`[Event Bus] Evento Recebido: Tipo=${evento.type}, Dados=`, evento.payload);
+
+    if (eventHandlers[evento.type]) {
+      await eventHandlers[evento.type](evento.payload);
+    } else {
+      console.warn(`[!] Tipo de evento desconhecido: ${evento.type}. Nenhuma função de tratamento encontrada.`);
+    }
+  } catch (e) {
+    console.error('Erro ao processar evento do Event Bus:', e);
+  } finally {
+    res.end(); 
+  }
+});
+
 
 mongoose.connect(mongoURI)
     .then(() => {
@@ -114,7 +170,7 @@ mongoose.connect(mongoURI)
             try {
 
                 await axios.post(`http://localhost:${EVENT_BUS_PORT}/register`, {
-                    url: `http://localhost:${APP_PORT}`
+                    url: `http://localhost:${APP_PORT}/events`
                 });
 
                 console.log('📡 Registrado no Event Bus com sucesso');
