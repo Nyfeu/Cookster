@@ -1,7 +1,7 @@
 .despensa-section {
   background: var(--text-color);
   background: linear-gradient(to bottom, var(--accent-color) 0%, var(--text-color) 100%);
-  padding: 5rem 0;
+  
 }
 
 .despensa-section h2 {
@@ -27,5 +27,7 @@
 }
 
 .despensa-section .badge {
+  background-color: var(--background-color) !important;
+  color: var(--primary-color); 
   font-size: 1.1rem;
 }

@@ -40,7 +40,7 @@ export default function DespensaSection() {
       <div className="container px-3 mb-4 mt-5">
         <div className="row align-items-start justify-content-between">
 
-          <div className="col-md-6">
+          <div className="col-md-6 pb-5">
             <h2 className="mb-3">Sua Despensa</h2>
             <button className="btn btn-custom" onClick={alternarDespensa}>
               Gerenciar Despensa
@@ -55,13 +55,13 @@ export default function DespensaSection() {
           </div>
 
           <div className="col-md-6">
+            <p className="text-center">Organize seus ingredientes para descobrir novas receitas!</p>
             <div className="d-flex justify-content-center flex-wrap gap-3 mb-3">
               <span className="badge bg-secondary rounded-pill px-3 py-2 fs-5">🍅 Tomate</span>
               <span className="badge bg-secondary rounded-pill px-3 py-2 fs-5">🥕 Cenoura</span>
               <span className="badge bg-secondary rounded-pill px-3 py-2 fs-5">🥦 Brócolis</span>
               <span className="badge bg-secondary rounded-pill px-3 py-2 fs-5">🍞 Pão</span>
             </div>
-            <p className="text-center">Organize seus ingredientes para descobrir novas receitas!</p>
           </div>
 
         </div>
