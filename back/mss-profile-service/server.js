@@ -12,12 +12,13 @@ const User = require('./models/User');
 
 const app = express();
 
-const dbUser = process.env.DB_USER;
-const dbPass = process.env.DB_PASS;
-const jwtSecret = process.env.JWT_SECRET; 
-const servicePort = 5000; 
-const eventBusPort = 4000;
 
+const jwtSecret = process.env.JWT_SECRET; 
+const APP_PORT = 5000; 
+const EVENT_BUS_PORT = 4000;
+const dbUser = process.env.DB_USER;
+const dbPassword = process.env.DB_PASS;
+const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/mss-profile-service?retryWrites=true&w=majority&appName=Cluster0`;
 
 app.use(cors({
   origin: 'http://localhost:5173', 
@@ -102,23 +103,32 @@ app.post('/profile', async (req, res) => {
 });
 
 
-mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
-  .then(() => {
-    console.log('Conectado ao MongoDB');
+mongoose.connect(mongoURI)
+    .then(() => {
 
-    app.listen(servicePort, async () => {
-      console.log(`mss-profile-service (localhost:${servicePort}): [OK]`);
+        console.log('✅ Conectado ao MongoDB');
 
+        app.listen(APP_PORT, async () => {
+            console.log(`🟢 MSS-PROFILE-SERVICE (http://localhost:${APP_PORT}): [OK]`);
 
-      try {
-        await axios.post(`http://localhost:${eventBusPort}/register`, { url: `http://localhost:${servicePort}` });
-        console.log(`Event Bus Registration (http://localhost:${servicePort}): [OK]`);
-      } catch (error) {
-        console.error(`Event Bus Registration (http://localhost:${servicePort}): [FAILED]`, error.message);
-      }
+            try {
+
+                await axios.post(`http://localhost:${EVENT_BUS_PORT}/register`, {
+                    url: `http://localhost:${APP_PORT}`
+                });
+
+                console.log('📡 Registrado no Event Bus com sucesso');
+
+            } catch (error) {
+
+                console.error('❌ Falha ao registrar no Event Bus:', error.message);
+
+            }
+
+        });
+
+    }).catch(err => {
+
+        console.error('❌ Erro ao conectar ao MongoDB:', err);
+
     });
-  })
-  .catch(err => {
-    console.error('Erro ao conectar ao MongoDB:', err);
-    process.exit(1); 
-  });
