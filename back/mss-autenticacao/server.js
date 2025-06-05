@@ -151,6 +151,20 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 
     await user.save()
     
+     try {
+      await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
+        type: 'UserRegistered',
+        payload: {
+          id: user.id,
+          name: user.name,
+          email: user.email
+        }
+      });
+      console.log('Evento UserRegistered emitido para o Event Bus');
+    } catch (eventBusErr) {
+      console.error('Falha ao emitir evento UserRegistered para o Event Bus:', eventBusErr.message);
+    }
+
     return res.status(201).json({
       message: 'Usuário cadastrado com sucesso',
       user: {
@@ -207,6 +221,13 @@ app.get('/auth/facebook/callback',
 app.delete('/logout', checkAuthenticated, (req, res) => {
   res.status(200).json({ message: 'Logout simbólico com JWT. Basta remover o token no frontend.' })
 })
+
+
+app.post('/events', async (req, res) => {
+  const event = req.body;
+  console.log('Evento recebido:', event.type);
+})
+
 
 mongoose.connect(mongoURI)
     .then(() => {
