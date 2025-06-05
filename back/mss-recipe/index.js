@@ -139,18 +139,18 @@ app.get('/recipes', async (req, res) => {
 // Endpoint para consultar uma receita específica
 app.get('/recipes/:id', async (req, res) => {
     try {
-        const { id } = req.params; // Get the ID from the request parameters
-        const recipe = await Recipe.findById(id); // Find the recipe by its ID
+        const { id } = req.params; 
+        const recipe = await Recipe.findById(id); 
 
         if (!recipe) {
-            return res.status(404).json({ error: 'Receita não encontrada.' }); // If no recipe is found, return 404
+            return res.status(404).json({ error: 'Receita não encontrada.' }); 
         }
 
-        res.status(200).json(recipe); // Return the recipe if found
+        res.status(200).json(recipe); 
 
     } catch (err) {
         console.error('❌ Erro ao buscar receita por ID:', err);
-        res.status(500).json({ error: 'Erro ao buscar receita.' }); // Handle server errors
+        res.status(500).json({ error: 'Erro ao buscar receita.' }); 
     }
 });
 
@@ -220,7 +220,116 @@ app.get('/suggest', async (req, res) => {
         // Em caso de erro, loga o erro e retorna uma mensagem de erro
         console.error('❌ Erro ao buscar receitas:', err);
         res.status(500).json({ error: 'Erro ao buscar receitas.' });
+
+    }
+
+});
+
+// Endpoint para receber eventos do Event Bus
+app.post('/events', async (req, res) => {
+
+    const { type, payload } = req.body; // 'type' e 'payload' virão do Event Bus
+
+    console.log(`Evento recebido: ${type}`);
+
+    try {
         
+        switch (type) {
+
+            case 'IngredientAdded':
+
+                console.log('Processando evento IngredientAdded:', payload);
+
+                // Espera-se que 'payload' contenha: { userId, ingredient: { nome, categoria } }
+                const { userId: addedUserId, ingredient: addedIngredient } = payload;
+
+                let pantryToAdd = await Pantry.findOne({ userId: addedUserId });
+
+                if (pantryToAdd) {
+
+                    // Verifica se o ingrediente já existe para o usuário de forma case-insensitive
+                    const ingredientExists = pantryToAdd.ingredientes.some(
+                        (ing) => ing.nome.toLowerCase() === addedIngredient.nome.toLowerCase()
+                    );
+
+                    if (!ingredientExists) {
+
+                        pantryToAdd.ingredientes.push(addedIngredient);
+                        console.log(`Ingrediente '${addedIngredient.nome}' adicionado à despensa do usuário ${addedUserId}.`);
+
+                    } else {
+
+                        console.log(`Ingrediente '${addedIngredient.nome}' já existe para o usuário ${addedUserId}. Pulando adição.`);
+
+                    }
+
+                } else {
+
+                    // Cria uma nova despensa para o usuário se não existir
+                    pantryToAdd = new Pantry({
+                        userId: addedUserId,
+                        ingredientes: [addedIngredient]
+                    });
+
+                    console.log(`Nova despensa criada para o usuário ${addedUserId} com o ingrediente '${addedIngredient.nome}'.`);
+
+                }
+
+                // Salva a despensa atualizada
+                await pantryToAdd.save();
+                break;
+
+            case 'IngredientRemoved':
+
+                console.log('Processando evento IngredientRemoved:', payload);
+
+                // Espera-se que 'payload' contenha: { userId, ingredient: { nome, categoria } }
+                const { userId: removedUserId, ingredient: removedIngredient } = payload;
+
+                let pantryToRemove = await Pantry.findOne({ userId: removedUserId });
+
+                if (pantryToRemove) {
+
+                    // Filtra o ingrediente a ser removido (case-insensitive)
+                    const initialLength = pantryToRemove.ingredientes.length;
+                    pantryToRemove.ingredientes = pantryToRemove.ingredientes.filter(
+                        (ing) => ing.nome.toLowerCase() !== removedIngredient.nome.toLowerCase()
+                    );
+
+                    if (pantryToRemove.ingredientes.length < initialLength) {
+
+                        await pantryToRemove.save();
+                        console.log(`Ingrediente '${removedIngredient.nome}' removido da despensa do usuário ${removedUserId}.`);
+
+                    } else {
+
+                        console.warn(`Ingrediente '${removedIngredient.nome}' não encontrado na despensa do usuário ${removedUserId} para remoção.`);
+
+                    }
+
+                } else {
+
+                    console.warn(`Despensa não encontrada para o usuário ${removedUserId} para remoção de ingrediente.`);
+
+                }
+
+                break;
+
+            default:
+
+                // Se o tipo de evento não for reconhecido, loga um aviso
+                console.warn(`Tipo de evento desconhecido: ${type}`);
+
+        }
+
+        res.status(200).send('Evento processado com sucesso');
+
+    } catch (error) {
+
+        // Em caso de erro, loga o erro e retorna uma mensagem de erro
+        console.error('❌ Erro ao processar evento:', error.message);
+        res.status(500).send('Erro interno do servidor ao processar evento.');
+
     }
 
 });
