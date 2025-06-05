@@ -261,6 +261,39 @@ O microsserviço estará rodando na porta `5000` (ou na porta definida em `APP_P
     Erro interno do servidor ao processar evento.
     ```
 
+```mermaid
+sequenceDiagram
+    participant Cliente as Cliente (UI/App)
+    participant OutroMS as Outro Microsserviço (Ex: MSS-PANTRY)
+    participant EventBus as Event Bus
+    participant MSSRecipe as MSS-RECIPE
+
+    Cliente->>OutroMS: Adicionar Ingrediente (Requisição HTTP)
+    OutroMS-->>Cliente: Resposta OK (Ingrediente Adicionado)
+    OutroMS->>EventBus: Publicar Evento (IngredientAdded)
+    EventBus-->>OutroMS: Confirmação de Evento
+    EventBus->>MSSRecipe: Enviar Evento (POST /events)
+    MSSRecipe->>MSSRecipe: Validar e Processar Evento
+    MSSRecipe->>MongoDB: Buscar Despensa do Usuário (findOne)
+    alt Despensa Existente
+        MongoDB-->>MSSRecipe: Despensa Encontrada
+        MSSRecipe->>MSSRecipe: Verificar se Ingrediente Já Existe
+        alt Ingrediente Não Existe
+            MSSRecipe->>MSSRecipe: Adicionar Ingrediente à Despensa
+            MSSRecipe->>MongoDB: Salvar Despensa Atualizada (save)
+            MongoDB-->>MSSRecipe: Confirmação de Salvo
+        else Ingrediente Já Existe
+            MSSRecipe->>MSSRecipe: Ignorar Adição
+        end
+    else Despensa Não Existente
+        MongoDB-->>MSSRecipe: Despensa Não Encontrada
+        MSSRecipe->>MSSRecipe: Criar Nova Despensa com Ingrediente
+        MSSRecipe->>MongoDB: Salvar Nova Despensa (save)
+        MongoDB-->>MSSRecipe: Confirmação de Salvo
+    end
+    MSSRecipe-->>EventBus: Resposta OK (Evento Processado)
+```
+
 ## Tecnologias Utilizadas
 - Node.js
 - Express.js
