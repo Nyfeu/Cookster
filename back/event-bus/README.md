@@ -56,15 +56,16 @@ npm run devStart
 { 
     "status": "Registrado com sucesso!" 
 }
+```
 ```json
 {
     "status": "Registrado com sucesso e X eventos do backlog enviados!"
 }
+```
 ```json
 {
     "status": "Registrado, mas falha ao enviar todos os eventos do backlog. Serviço 'nome-do-serviço  ' offline."
 }
-
 ```
 
 ```mermaid
