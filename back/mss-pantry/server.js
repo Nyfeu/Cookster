@@ -199,10 +199,12 @@ app.get('/', (req, res) => {
 })
 
 app.post('/events', async (req, res) => {
+
   const event = req.body;
   console.log('Evento recebido:', event.type);
-})
+  res.status(200).send('Evento processado ou reconhecido');
 
+})
 // Conexão com banco e start do servidor
 
 mongoose.connect(mongoURI)
