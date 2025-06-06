@@ -56,7 +56,7 @@
   },
   {
     "nome": "Açúcar",
-    "categoria": "Açúcares e adoçantes",
+    "categoria": "Açúcares e Adoçantes",
     "sinonimos": [
       "açúcar refinado",
       "açúcar cristal",
@@ -146,8 +146,7 @@
       "cebola roxa",
       "cebola caramelizada",
       "cebola picada",
-      "cebola em cubos",
-      "ceola"
+      "cebola em cubos"
     ]
   },
   {
@@ -174,14 +173,13 @@
   },
   {
     "nome": "Pão de Forma",
-    "categoria": "Massas",
+    "categoria": "Pães",
     "sinonimos": [
       "pão de sanduíche",
       "pão integral",
       "pão branco",
       "pão seven grain",
-      "pão sem glúten",
-      "pão"
+      "pão sem glúten"
     ]
   },
   {
@@ -219,7 +217,7 @@
   },
   {
     "nome": "Óleo de Cozinha",
-    "categoria": "Óleos e gorduras",
+    "categoria": "Óleos e Gorduras",
     "sinonimos": [
       "óleo de soja",
       "óleo de girassol",
@@ -241,7 +239,7 @@
   },
   {
     "nome": "Maionese",
-    "categoria": "Molhos e pastas",
+    "categoria": "Molhos e Pastas",
     "sinonimos": [
       "maionese light",
       "maionese caseira",
@@ -251,7 +249,7 @@
   },
   {
     "nome": "Mostarda",
-    "categoria": "Molhos e pastas",
+    "categoria": "Molhos e Pastas",
     "sinonimos": [
       "mostarda dijon",
       "mostarda amarela",
@@ -261,7 +259,7 @@
   },
   {
     "nome": "Ketchup",
-    "categoria": "Molhos e pastas",
+    "categoria": "Molhos e Pastas",
     "sinonimos": [
       "catchup",
       "molho de tomate industrializado",
@@ -271,7 +269,7 @@
   },
   {
     "nome": "Molho Shoyu",
-    "categoria": "Molhos e pastas",
+    "categoria": "Molhos e Pastas",
     "sinonimos": [
       "shoyu",
       "molho de soja",
@@ -282,7 +280,7 @@
   },
   {
     "nome": "Fermento Biológico",
-    "categoria": "Farinhas e fermentos",
+    "categoria": "Farinhas e Fermentos",
     "sinonimos": [
       "fermento fresco",
       "fermento seco",
@@ -354,7 +352,7 @@
   },
   {
     "nome": "Mel",
-    "categoria": "Açúcares e adoçantes",
+    "categoria": "Açúcares e Adoçantes",
     "sinonimos": [
       "mel de abelha",
       "mel orgânico",
@@ -390,7 +388,7 @@
     "sinonimos": [
       "essência de baunilha",
       "baunilha líquida",
-      "vainilla",
+      "baunilha",
       "fava de baunilha"
     ]
   },
@@ -403,6 +401,854 @@
       "café em grãos",
       "café espresso",
       "café descafeinado"
+    ]
+  },
+  {
+    "nome": "Sal",
+    "categoria": "Temperos",
+    "sinonimos": [
+      "sal refinado",
+      "sal grosso",
+      "sal marinho",
+      "flor de sal",
+      "sal do himalaia"
+    ]
+  },
+  {
+    "nome": "Pimenta do Reino",
+    "categoria": "Temperos",
+    "sinonimos": [
+      "pimenta preta",
+      "pimenta moída",
+      "pimenta em grãos",
+      "pimenta branca"
+    ]
+  },
+  {
+    "nome": "Limão",
+    "categoria": "Frutas",
+    "sinonimos": [
+      "limão siciliano",
+      "limão taiti",
+      "suco de limão",
+      "raspas de limão"
+    ]
+  },
+  {
+    "nome": "Salsinha",
+    "categoria": "Ervas",
+    "sinonimos": [
+      "salsinha fresca",
+      "salsinha desidratada",
+      "cheiro verde"
+    ]
+  },
+  {
+    "nome": "Cebolinha",
+    "categoria": "Ervas",
+    "sinonimos": [
+      "cebolinha fresca",
+      "cebolinha desidratada",
+      "cheiro verde"
+    ]
+  },
+  {
+    "nome": "Manjericão",
+    "categoria": "Ervas",
+    "sinonimos": [
+      "manjericão fresco",
+      "manjericão seco",
+      "basílico"
+    ]
+  },
+  {
+    "nome": "Pão",
+    "categoria": "Pães",
+    "sinonimos": [
+      "pão francês",
+      "pão de forma",
+      "pão caseiro",
+      "pão integral"
+    ]
+  },
+  {
+    "nome": "Água",
+    "categoria": "Bebidas",
+    "sinonimos": [
+      "água filtrada",
+      "água mineral",
+      "água potável"
+    ]
+  },
+  {
+    "nome": "Fermento Químico",
+    "categoria": "Farinhas e Fermentos",
+    "sinonimos": [
+      "fermento em pó",
+      "fermento para bolo",
+      "bicarbonato de sódio"
+    ]
+  },
+  {
+    "nome": "Molho de Tomate",
+    "categoria": "Molhos e Pastas",
+    "sinonimos": [
+      "extrato de tomate",
+      "passata de tomate",
+      "molho pronto de tomate",
+      "purê de tomate"
+    ]
+  },
+  {
+    "nome": "Pão de Hambúrguer",
+    "categoria": "Pães",
+    "sinonimos": [
+      "pão de sanduíche redondo",
+      "pão para hambúrguer",
+      "pão de brioche"
+    ]
+  },
+  {
+    "nome": "Carne Bovina",
+    "categoria": "Carnes",
+    "sinonimos": [
+      "bife",
+      "carne vermelha",
+      "músculo",
+      "picanha",
+      "patinho"
+    ]
+  },
+  {
+    "nome": "Frango",
+    "categoria": "Carnes",
+    "sinonimos": [
+      "frango inteiro",
+      "coxa de frango",
+      "sobrecoxa de frango",
+      "asa de frango"
+    ]
+  },
+  {
+    "nome": "Peixe",
+    "categoria": "Carnes",
+    "sinonimos": [
+      "salmão",
+      "tilápia",
+      "sardinha",
+      "bacalhau"
+    ]
+  },
+  {
+    "nome": "Pimentão",
+    "categoria": "Legumes",
+    "sinonimos": [
+      "pimentão verde",
+      "pimentão vermelho",
+      "pimentão amarelo",
+      "pimentão roxo"
+    ]
+  },
+  {
+    "nome": "Pepino",
+    "categoria": "Legumes",
+    "sinonimos": [
+      "pepino japonês",
+      "pepino comum",
+      "pepino agridoce"
+    ]
+  },
+  {
+    "nome": "Alface",
+    "categoria": "Folhas e Ervas",
+    "sinonimos": [
+      "alface crespa",
+      "alface americana",
+      "alface lisa",
+      "alface roxa"
+    ]
+  },
+  {
+    "nome": "Maçã",
+    "categoria": "Frutas",
+    "sinonimos": [
+      "maçã gala",
+      "maçã fuji",
+      "maçã verde",
+      "maçã vermelha"
+    ]
+  },
+  {
+    "nome": "Banana",
+    "categoria": "Frutas",
+    "sinonimos": [
+      "banana prata",
+      "banana nanica",
+      "banana maçã",
+      "banana da terra"
+    ]
+  },
+  {
+    "nome": "Azeite de Oliva",
+    "categoria": "Óleos e Gorduras",
+    "sinonimos": [
+      "azeite extra virgem",
+      "azeite virgem",
+      "óleo de oliva"
+    ]
+  },
+  {
+    "nome": "Vinagre Balsâmico",
+    "categoria": "Temperos",
+    "sinonimos": [
+      "vinagre escuro",
+      "aceto balsâmico",
+      "glacê balsâmico"
+    ]
+  },
+  {
+    "nome": "Óleo de Coco",
+    "categoria": "Óleos e Gorduras",
+    "sinonimos": [
+      "óleo vegetal de coco",
+      "gordura de coco",
+      "óleo de coco extra virgem"
+    ]
+  },
+  {
+    "nome": "Açúcar Mascavo",
+    "categoria": "Açúcares e Adoçantes",
+    "sinonimos": [
+      "açúcar integral",
+      "açúcar bruto",
+      "açúcar moreno"
+    ]
+  },
+  {
+    "nome": "Granola",
+    "categoria": "Grãos",
+    "sinonimos": [
+      "mix de cereais",
+      "granola com frutas",
+      "granola sem açúcar"
+    ]
+  },
+  {
+    "nome": "Gengibre",
+    "categoria": "Temperos",
+    "sinonimos": [
+      "gengibre fresco",
+      "gengibre em pó",
+      "raiz de gengibre"
+    ]
+  },
+  {
+    "nome": "Pimenta Caiena",
+    "categoria": "Temperos",
+    "sinonimos": [
+      "pimenta vermelha",
+      "pimenta em pó",
+      "pimenta picante"
+    ]
+  },
+  {
+    "nome": "Noz-moscada",
+    "categoria": "Especiarias",
+    "sinonimos": [
+      "noz moscada moída",
+      "noz moscada em pó"
+    ]
+  },
+  {
+    "nome": "Orégano",
+    "categoria": "Ervas",
+    "sinonimos": [
+      "orégano seco",
+      "orégano fresco",
+      "orégão"
+    ]
+  },
+  {
+    "nome": "Louro",
+    "categoria": "Ervas",
+    "sinonimos": [
+      "folha de louro",
+      "louro seco"
+    ]
+  },
+  {
+    "nome": "Abobrinha",
+    "categoria": "Legumes",
+    "sinonimos": [
+      "abobrinha verde",
+      "abobrinha italiana"
+    ]
+  },
+  {
+    "nome": "Berinjela",
+    "categoria": "Legumes",
+    "sinonimos": [
+      "berinjela comum",
+      "berinjela roxa"
+    ]
+  },
+  {
+    "nome": "Batata Doce",
+    "categoria": "Legumes",
+    "sinonimos": [
+      "batata roxa",
+      "batata laranja"
+    ]
+  },
+  {
+    "nome": "Leite Vegetal",
+    "categoria": "Laticínios (Alternativas)",
+    "sinonimos": [
+      "leite de amêndoas",
+      "leite de soja",
+      "leite de coco",
+      "leite de aveia"
+    ]
+  },
+  {
+    "nome": "Queijo",
+    "categoria": "Laticínios",
+    "sinonimos": [
+      "queijo prato",
+      "queijo minas",
+      "queijo mussarela",
+      "queijo coalho"
+    ]
+  },
+  {
+    "nome": "Iogurte",
+    "categoria": "Laticínios",
+    "sinonimos": [
+      "iogurte natural",
+      "iogurte grego",
+      "iogurte desnatado"
+    ]
+  },
+  {
+    "nome": "Abacate",
+    "categoria": "Frutas",
+    "sinonimos": [
+      "abacate maduro",
+      "abacate avocado"
+    ]
+  },
+  {
+    "nome": "Brócolis",
+    "categoria": "Legumes",
+    "sinonimos": [
+      "brócolis fresco",
+      "brócolis congelado",
+      "brócolis americano"
+    ]
+  },
+  {
+    "nome": "Couve-flor",
+    "categoria": "Legumes",
+    "sinonimos": [
+      "couve-flor fresca",
+      "couve-flor congelada"
+    ]
+  },
+  {
+    "nome": "Espinafre",
+    "categoria": "Folhas e Ervas",
+    "sinonimos": [
+      "espinafre fresco",
+      "espinafre congelado",
+      "folha de espinafre"
+    ]
+  },
+  {
+    "nome": "Cogumelo",
+    "categoria": "Legumes",
+    "sinonimos": [
+      "cogumelo paris",
+      "champignon",
+      "cogumelo shitake",
+      "cogumelo portobello"
+    ]
+  },
+  {
+    "nome": "Azeitona",
+    "categoria": "Conservas",
+    "sinonimos": [
+      "azeitona preta",
+      "azeitona verde",
+      "azeitona sem caroço"
+    ]
+  },
+  {
+    "nome": "Milho",
+    "categoria": "Grãos",
+    "sinonimos": [
+      "milho em conserva",
+      "milho verde",
+      "espiga de milho"
+    ]
+  },
+  {
+    "nome": "Ervilha",
+    "categoria": "Grãos",
+    "sinonimos": [
+      "ervilha fresca",
+      "ervilha congelada",
+      "ervilha em conserva"
+    ]
+  },
+  {
+    "nome": "Lentilha",
+    "categoria": "Grãos",
+    "sinonimos": [
+      "lentilha seca",
+      "lentilha cozida"
+    ]
+  },
+  {
+    "nome": "Grão de Bico",
+    "categoria": "Grãos",
+    "sinonimos": [
+      "grão de bico seco",
+      "grão de bico cozido"
+    ]
+  },
+  {
+    "nome": "Massa de Pizza",
+    "categoria": "Massas",
+    "sinonimos": [
+      "base para pizza",
+      "massa de pão para pizza"
+    ]
+  },
+  {
+    "nome": "Tortilla",
+    "categoria": "Massas",
+    "sinonimos": [
+      "tortilla de trigo",
+      "tortilla de milho",
+      "wrap"
+    ]
+  },
+  {
+    "nome": "Geleia",
+    "categoria": "Doces",
+    "sinonimos": [
+      "geleia de fruta",
+      "doce de fruta"
+    ]
+  },
+  {
+    "nome": "Melado",
+    "categoria": "Açúcares e Adoçantes",
+    "sinonimos": [
+      "melado de cana",
+      "xarope de cana"
+    ]
+  },
+  {
+    "nome": "Cerveja",
+    "categoria": "Bebidas Alcoólicas",
+    "sinonimos": [
+      "cerveja lager",
+      "cerveja artesanal",
+      "cerveja pilsen"
+    ]
+  },
+  {
+    "nome": "Vinho",
+    "categoria": "Bebidas Alcoólicas",
+    "sinonimos": [
+      "vinho tinto",
+      "vinho branco",
+      "vinho rosé"
+    ]
+  },
+  {
+    "nome": "Salsicha",
+    "categoria": "Carnes Processadas",
+    "sinonimos": [
+      "salsicha de frango",
+      "salsicha de porco",
+      "salsicha hot dog"
+    ]
+  },
+  {
+    "nome": "Presunto",
+    "categoria": "Carnes Processadas",
+    "sinonimos": [
+      "presunto fatiado",
+      "presunto cozido",
+      "presunto de peru"
+    ]
+  },
+  {
+    "nome": "Requeijão",
+    "categoria": "Laticínios",
+    "sinonimos": [
+      "requeijão cremoso",
+      "requeijão light",
+      "requeijão culinário"
+    ]
+  },
+  {
+    "nome": "Creme de Queijo",
+    "categoria": "Laticínios",
+    "sinonimos": [
+      "cream cheese",
+      "queijo cremoso"
+    ]
+  },
+  {
+    "nome": "Melancia",
+    "categoria": "Frutas",
+    "sinonimos": [
+      "melancia vermelha",
+      "melancia com semente",
+      "melancia sem semente"
+    ]
+  },
+  {
+    "nome": "Laranja",
+    "categoria": "Frutas",
+    "sinonimos": [
+      "laranja pera",
+      "laranja lima",
+      "laranja bahia",
+      "laranja suco"
+    ]
+  },
+  {
+    "nome": "Biscoito Salgado",
+    "categoria": "Salgados",
+    "sinonimos": [
+      "bolacha salgada",
+      "cracker",
+      "biscoito cream cracker"
+    ]
+  },
+  {
+    "nome": "Carne Suína",
+    "categoria": "Carnes",
+    "sinonimos": [
+      "carne de porco",
+      "lombo suíno",
+      "pernil suíno"
+    ]
+  },
+  {
+    "nome": "Carne de Cordeiro",
+    "categoria": "Carnes",
+    "sinonimos": [
+      "costela de cordeiro",
+      "paleta de cordeiro"
+    ]
+  },
+  {
+    "nome": "Sardinha",
+    "categoria": "Pescados",
+    "sinonimos": [
+      "sardinha em lata",
+      "sardinha fresca"
+    ]
+  },
+  {
+    "nome": "Atum",
+    "categoria": "Pescados",
+    "sinonimos": [
+      "atum em lata",
+      "atum fresco",
+      "atum sólido"
+    ]
+  },
+  {
+    "nome": "Salmão",
+    "categoria": "Pescados",
+    "sinonimos": [
+      "filé de salmão",
+      "salmão fresco",
+      "salmão defumado"
+    ]
+  },
+  {
+    "nome": "Abóbora",
+    "categoria": "Legumes",
+    "sinonimos": [
+      "abóbora moranga",
+      "abóbora japonesa",
+      "purê de abóbora"
+    ]
+  },
+  {
+    "nome": "Quiabo",
+    "categoria": "Legumes",
+    "sinonimos": [
+      "quiabo fresco",
+      "quiabo congelado"
+    ]
+  },
+  {
+    "nome": "Jiló",
+    "categoria": "Legumes",
+    "sinonimos": [
+      "jiló verde",
+      "jiló roxo"
+    ]
+  },
+  {
+    "nome": "Leite em Pó",
+    "categoria": "Laticínios",
+    "sinonimos": [
+      "leite instantâneo",
+      "leite desidratado"
+    ]
+  },
+  {
+    "nome": "Creme de Ricota",
+    "categoria": "Laticínios",
+    "sinonimos": [
+      "ricota cremosa",
+      "queijo ricota"
+    ]
+  },
+  {
+    "nome": "Pão de Queijo",
+    "categoria": "Pães",
+    "sinonimos": [
+      "pãozinho de queijo",
+      "massa de pão de queijo"
+    ]
+  },
+  {
+    "nome": "Tapioca",
+    "categoria": "Massas",
+    "sinonimos": [
+      "goma de tapioca",
+      "farinha de tapioca"
+    ]
+  },
+  {
+    "nome": "Massa Fresca",
+    "categoria": "Massas",
+    "sinonimos": [
+      "massa caseira",
+      "massa para lasanha",
+      "talharim fresco"
+    ]
+  },
+  {
+    "nome": "Molho Branco",
+    "categoria": "Molhos e Pastas",
+    "sinonimos": [
+      "molho bechamel",
+      "creme branco"
+    ]
+  },
+  {
+    "nome": "Molho Pesto",
+    "categoria": "Molhos e Pastas",
+    "sinonimos": [
+      "pesto de manjericão",
+      "molho verde"
+    ]
+  },
+  {
+    "nome": "Molho Inglês",
+    "categoria": "Temperos",
+    "sinonimos": [
+      "molho worcestershire",
+      "molho escuro"
+    ]
+  },
+  {
+    "nome": "Goiabada",
+    "categoria": "Doces",
+    "sinonimos": [
+      "doce de goiaba",
+      "goiabada cascão"
+    ]
+  },
+  {
+    "nome": "Doce de Leite",
+    "categoria": "Doces",
+    "sinonimos": [
+      "leite caramelizado",
+      "doce de leite pastoso"
+    ]
+  },
+  {
+    "nome": "Polvilho Doce",
+    "categoria": "Farinhas e Fermentos",
+    "sinonimos": [
+      "fécula de mandioca doce",
+      "povilho"
+    ]
+  },
+  {
+    "nome": "Polvilho Azedo",
+    "categoria": "Farinhas e Fermentos",
+    "sinonimos": [
+      "fécula de mandioca azeda",
+      "povilho azedo"
+    ]
+  },
+  {
+    "nome": "Amido de Milho",
+    "categoria": "Farinhas e Fermentos",
+    "sinonimos": [
+      "maisena",
+      "maizena",
+      "amido"
+    ]
+  },
+  {
+    "nome": "Gergelim",
+    "categoria": "Sementes",
+    "sinonimos": [
+      "semente de gergelim",
+      "gergelim branco",
+      "gergelim preto"
+    ]
+  },
+  {
+    "nome": "Linhaça",
+    "categoria": "Sementes",
+    "sinonimos": [
+      "semente de linhaça",
+      "linhaça dourada",
+      "linhaça marrom"
+    ]
+  },
+  {
+    "nome": "Creme de Milho",
+    "categoria": "Molhos e Pastas",
+    "sinonimos": [
+      "creme de milho enlatado",
+      "milho cremoso"
+    ]
+  },
+  {
+    "nome": "Alcaparra",
+    "categoria": "Temperos",
+    "sinonimos": [
+      "alcaparra em conserva"
+    ]
+  },
+  {
+    "nome": "Picles",
+    "categoria": "Temperos",
+    "sinonimos": [
+      "pepino em conserva",
+      "vegetais em conserva"
+    ]
+  },
+  {
+    "nome": "Molho de Pimenta",
+    "categoria": "Molhos e Pastas",
+    "sinonimos": [
+      "pimenta líquida",
+      "molho picante"
+    ]
+  },
+  {
+    "nome": "Caldo de Carne",
+    "categoria": "Temperos",
+    "sinonimos": [
+      "caldo bovino",
+      "tablete de caldo de carne",
+      "cubo de carne"
+    ]
+  },
+  {
+    "nome": "Caldo de Frango",
+    "categoria": "Temperos",
+    "sinonimos": [
+      "caldo de galinha",
+      "tablete de caldo de frango",
+      "cubo de frango"
+    ]
+  },
+  {
+    "nome": "Caldo de Legumes",
+    "categoria": "Temperos",
+    "sinonimos": [
+      "caldo vegetariano",
+      "tablete de caldo de legumes",
+      "cubo de legumes"
+    ]
+  },
+  {
+    "nome": "Cacau em Pó",
+    "categoria": "Bebidas",
+    "sinonimos": [
+      "chocolate em pó 100% cacau",
+      "cacau puro"
+    ]
+  },
+  {
+    "nome": "Bicarbonato de Sódio",
+    "categoria": "Fermentos",
+    "sinonimos": [
+      "carbonato de sódio",
+      "fermento bicarbonato"
+    ]
+  },
+  {
+    "nome": "Creme Tártaro",
+    "categoria": "Fermentos",
+    "sinonimos": [
+      "bitartarato de potássio"
+    ]
+  },
+  {
+    "nome": "Glacê",
+    "categoria": "Doces",
+    "sinonimos": [
+      "cobertura de bolo",
+      "frosting",
+      "calda de açúcar"
+    ]
+  },
+  {
+    "nome": "Chocolate Branco",
+    "categoria": "Doces",
+    "sinonimos": [
+      "barra de chocolate branco"
+    ]
+  },
+  {
+    "nome": "Chips de Chocolate",
+    "categoria": "Doces",
+    "sinonimos": [
+      "gotas de chocolate",
+      "chocolate em pedaços"
+    ]
+  },
+  {
+    "nome": "Marshmallow",
+    "categoria": "Doces",
+    "sinonimos": [
+      "doce de marshmallow",
+      "marshmallow para assar"
+    ]
+  },
+  {
+    "nome": "Caramelo",
+    "categoria": "Doces",
+    "sinonimos": [
+      "doce de caramelo",
+      "calda de caramelo"
+    ]
+  },
+  {
+    "nome": "Creme de Avelã",
+    "categoria": "Doces",
+    "sinonimos": [
+      "nutella",
+      "creme de chocolate com avelã"
     ]
   }
 ]
