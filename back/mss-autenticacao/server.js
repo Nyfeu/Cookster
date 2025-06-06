@@ -19,7 +19,10 @@ const axios = require('axios')
 const dbUser = process.env.DB_USER
 const dbPass = process.env.DB_PASS
 const APP_PORT = 3000
-const EVENT_BUS_PORT = 4000
+
+const SERVICE_ID = 'mss-autenticacao';
+const EVENT_BUS_URL = 'http://localhost:4000';
+
 const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/mss-autenticacao?retryWrites=true&w=majority&appName=Cluster0`
 
 // Permitir acesso do front-end
@@ -32,7 +35,7 @@ app.use(cors({
 initializePassport(
   passport,
   async email => await User.findOne({ email }),
-  async id => await User.findOne({ id})
+  async id => await User.findOne({ id })
 )
 
 app.use(express.urlencoded({ extended: false }))
@@ -89,7 +92,7 @@ app.get('/dashboard', checkAuthenticated, (req, res) => {
 app.get('/profile', checkAuthenticated, (req, res) => {
   res.json({
     message: 'Você está autenticado e acessou sua página privada.',
-    user: req.user 
+    user: req.user
   })
 })
 
@@ -134,8 +137,8 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     })
   }
 
-  const existingUser = await User.findOne({ email: email})
-  if(existingUser) {
+  const existingUser = await User.findOne({ email: email })
+  if (existingUser) {
     return res.status(409).json({ error: 'Email já cadastrado' })
   }
 
@@ -150,9 +153,9 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     })
 
     await user.save()
-    
-     try {
-      await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
+
+    try {
+      await axios.post(`${EVENT_BUS_URL}/events`, {
         type: 'UserRegistered',
         payload: {
           id: user.id,
@@ -233,32 +236,28 @@ app.post('/events', async (req, res) => {
 
 
 mongoose.connect(mongoURI)
-    .then(() => {
+  .then(() => {
 
-        console.log('✅ Conectado ao MongoDB');
+    console.log('✅ MongoDB: [OK]');
 
-        app.listen(APP_PORT, async () => {
-            console.log(`🟢 MSS-AUTENTICACAO (http://localhost:${APP_PORT}): [OK]`);
+    app.listen(APP_PORT, async () => {
+      console.log(`🟢 MSS-AUTENTICACAO (${APP_PORT}): [OK]`);
 
-            try {
+      try {
 
-                await axios.post(`http://localhost:${EVENT_BUS_PORT}/register`, {
-                    url: `http://localhost:${APP_PORT}/events`
-                });
-
-                console.log('📡 Registrado no Event Bus com sucesso');
-
-            } catch (error) {
-
-                console.error('❌ Falha ao registrar no Event Bus:', error.message);
-
-            }
-
+        await axios.post(`${EVENT_BUS_URL}/register`, {
+          serviceId: SERVICE_ID,
+          url: `http://localhost:${APP_PORT}/events`
         });
 
-    }).catch(err => {
+        console.log('📡 EVENT-BUS: [REGISTERED]');
 
-        console.error('❌ Erro ao conectar ao MongoDB:', err);
+      } catch (error) {
+
+        console.error('❌ EVENT-BUS: [FAILED]');
+
+      }
 
     });
 
+  }).catch(_ => console.error('❌ MongoDB: [FAILED]'));
