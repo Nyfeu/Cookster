@@ -162,7 +162,7 @@ app.get('/suggest', async (req, res) => {
         console.log(req.headers);
 
         if (!user_id) {
-            return res.status(400).json({ error: "user_id é obrigatório." });
+            return res.status(400).json({ error: "user-id é obrigatório." });
         }
 
         // Busca a pantry do usuário

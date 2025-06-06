@@ -215,7 +215,7 @@ O microsserviço estará rodando na porta `5000` (ou na porta definida em `APP_P
 * **Resposta (Requisição Inválida - Status 400 Bad Request)**:
     ```json
     {
-        "error": "user_id é obrigatório."
+        "error": "user-id é obrigatório."
     }
     ```
 * **Resposta (Não Encontrado - Status 404 Not Found)**:
