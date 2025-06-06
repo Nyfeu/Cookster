@@ -21,16 +21,15 @@ const EditProfilePage = () => {
     });
 
     const getUserId = () => {
-        // Por exemplo, de localStorage ou sessionStorage
         return JSON.parse(localStorage.getItem('user')).id
     };
 
-    // Função para carregar os dados do perfil ao montar o componente
+
     useEffect(() => {
         const fetchProfileData = async () => {
             setLoading(true);
             setError(null);
-            const userId_comp = getUserId(); // Obtenha o token de autenticação
+            const userId_comp = getUserId(); 
             console.log(userId_comp)
             if (userId_comp != userId) {
                 setError("Usuário não autenticado. Faça login para ver seu perfil.");
@@ -72,8 +71,7 @@ const EditProfilePage = () => {
         };
 
         fetchProfileData();
-    }, []); // O array vazio [] garante que esta função roda apenas uma vez ao montar o componente
-
+    }, []); 
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -87,10 +85,9 @@ const EditProfilePage = () => {
     };
 
     const handleSaveChanges = async () => {
-        setLoading(true); // Indica que a operação de salvar está em andamento
+        setLoading(true); 
         setError(null);
-
-        const userId_comp = getUserId() // Obtenha o token de autenticação
+        const userId_comp = getUserId() 
 
         if (userId_comp != userId) {
             setError("Usuário não autenticado. Por favor, faça login.");
@@ -99,8 +96,6 @@ const EditProfilePage = () => {
         }
 
         try {
-            console.log("Dados a serem enviados para /profile (PUT):", formData);
-
             const response = await fetch(`http://localhost:5000/profile/${userId}`, {
                 method: 'PUT',
                 headers: {
@@ -115,7 +110,6 @@ const EditProfilePage = () => {
             }
 
             const result = await response.json();
-            console.log("Resposta do servidor (perfil atualizado):", result);
             alert("Perfil atualizado com sucesso!");
             navigate(`/profile/${userId}`)
 
@@ -129,7 +123,7 @@ const EditProfilePage = () => {
     };
 
     const cancel = () => {
-        navigate(`/profile/${userId}`); // Navega para a rota '/about'
+        navigate(`/profile/${userId}`);
     };
 
     if (loading) {

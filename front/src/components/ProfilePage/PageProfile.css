@@ -247,7 +247,7 @@ a {
 
   .overlay-text {
     position: absolute;
-    bottom: 0; /* ou use top: 50%; left: 50% para centralizar */
+    bottom: 0; 
     left: 0;
     right: 0;
     background-color: rgba(0, 0, 0, 0.6);
@@ -310,7 +310,7 @@ a {
     height: 365px;
     overflow:auto;
     padding: 0 0 30px;
-    scrollbar-color: #a0b4c4 var(--accent-color); /* thumb e track */
+    scrollbar-color: #a0b4c4 var(--accent-color); 
     scrollbar-width:thin;
   }
 

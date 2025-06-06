@@ -10,9 +10,7 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 const PageProfile = () => {
-    const location = useLocation();
     const comparador = JSON.parse(localStorage.getItem('user')).id
-    console.log(comparador)
     const userId = useParams().userId
 
     const [profile, setProfile] = useState(null);

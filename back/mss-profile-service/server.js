@@ -30,7 +30,6 @@ app.use(express.json());
 
 const validateProfileUpdate = (req, res, next) => {
     const { fotoPerfil, bio, descricao, email, username: name } = req.body;
-    console.log(req.body.username)
 
     if (!name || !email) {
         return res.status(400).json({ message: 'Nome e Email são campos obrigatórios.' });
@@ -47,7 +46,6 @@ const validateProfileUpdate = (req, res, next) => {
 const eventHandlers = {
     UserRegistered: async (userData) => {
         try {
-            console.log(`[x] Evento 'UserCreated' recebido para:`, userData);
 
             const { id: userId, name, email } = userData;
 
