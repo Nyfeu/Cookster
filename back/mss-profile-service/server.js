@@ -15,7 +15,7 @@ const app = express();
 const APP_PORT = 5000;
 const SERVICE_ID = 'mss-profile-service';
 const EVENT_BUS_URL = 'http://localhost:4000';
-
+const defaultImageUrl = `default-profile.png`;
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
 const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/mss-profile-service?retryWrites=true&w=majority&appName=Cluster0`;
@@ -116,9 +116,6 @@ app.post('/profile', async (req, res) => {
         if (existingProfile) {
             return res.status(409).json({ message: `Um perfil já existe para o usuário com ID: ${userId}` });
         }
-
-
-        const defaultImageUrl = `default-profile.png`;
 
 
         const newProfile = new Profile({
