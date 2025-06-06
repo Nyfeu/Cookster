@@ -157,7 +157,7 @@ app.get('/suggest', async (req, res) => {
 
     try {
 
-        const { user_id, name } = req.query;
+        const user_id = req.headers['user_id'];
 
         if (!user_id) {
             return res.status(400).json({ error: "user_id é obrigatório." });
@@ -174,11 +174,7 @@ app.get('/suggest', async (req, res) => {
         const ingredientList = pantry.ingredientes.map(ing => ing.nome.toLowerCase());
 
         // Construção do pipeline
-        const matchStage = {};
-        if (name) matchStage.name = { $regex: name, $options: 'i' };
-
         const pipeline = [
-            { $match: matchStage },
             {
                 $addFields: {
                     ingredient_names: {
