@@ -1,6 +1,6 @@
 .custom-navbar {
-    background-color: var(--primary-color);
-    color: var(--text-color);
+  background-color: var(--primary-color);
+  color: var(--text-color);
 }
 
 .custom-navbar .navbar-brand {
@@ -17,75 +17,73 @@
 }
 
 .custom-navbar .nav-link {
-    color: var(--background-color);
-    font-weight: 500;
+  color: var(--background-color);
+  font-weight: 500;
 }
 
 .custom-navbar .navbar-nav .nav-link {
-    display: inline-block;
-    padding: 0.5rem 0.5rem;
+  display: inline-block;
+  padding: 0.5rem 0.5rem;
 }
 
 .nav-link:hover {
-    color: var(--secondary-color); 
-    background-color: rgba(0, 0, 0, 0.05); 
- 
+  color: var(--secondary-color); 
+  transition: color 0.2s ease;
 }
 
 .custom-navbar .navbar-nav .nav-link:hover {
-    color: var(--secondary-color);
-    filter: drop-shadow(0 0 5px rgba(0,0,0,0.4));
-    transition: color 0.2s ease;
+  color: var(--secondary-color);
+  transition: color 0.2s ease;
 }
 
 .custom-navbar .btn-outline-primary {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-    transition: all 0.2s ease;
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  transition: all 0.2s ease;
 }
 
 .custom-navbar .btn-outline-primary:hover {
-    background-color: var(--secondary-color);
-    color: white;
-    border-color: var(--secondary-color);
-    transition: all 0.2s ease;
+  background-color: var(--secondary-color);
+  color: white;
+  border-color: var(--secondary-color);
+  transition: all 0.2s ease;
 }
 
 .custom-navbar .btn-primary {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
 }
 
 .custom-navbar .btn-primary:hover {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
-    transition: all 0.2s ease;
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  transition: all 0.2s ease;
 }
 
 .navbar-toggler {
-    border: none;
+  border: none;
 }
 
 .navbar-toggler:focus {
-    color: var(--secondary-color);
-    box-shadow: none
+  color: var(--secondary-color);
+  box-shadow: none
 }
 
 .navbar-toggler:hover svg {
-    fill: var(--secondary-color);
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 4px rgba(0,0,0,0.4));
-    transition: all 0.2s ease;
+  fill: var(--secondary-color);
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.4));
+  transition: all 0.2s ease;
 }
 
 .profile-icon svg {
-    color: var(--background-color);
-    transition: all 0.2s ease;
+  color: var(--background-color);
+  transition: all 0.2s ease;
 }
 
 .profile-icon:hover svg {
-    color: var(--secondary-color); 
-    filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+  color: var(--secondary-color); 
+  filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
 }
 
 .p-confirm-dialog {
@@ -129,9 +127,8 @@
 }
 
 .p-confirm-dialog .p-confirm-dialog-reject {
-    
-    background-color: var(--accent-color);
-    border: none;
+  background-color: var(--accent-color);
+  border: none;
 }
 
 .p-confirm-dialog .p-dialog-header-close {

@@ -38,7 +38,7 @@ const NavBar = () => {
                     </li>
                 </ul>
 
-                <div className="d-flex justify-content-start justify-content-lg-end w-100 px-1 gap-3">
+                <div className="d-flex flex-lg-row align-items-center justify-content-center justify-content-lg-end w-100 px-1 gap-3">
                     <Link className="btn btn-outline-primary" to="/login" state={{ mode: 'sign_in' }}>Entrar</Link>
                     <Link className="btn btn-primary" to="/register" state={{ mode: 'sign_up' }}>Registrar-se</Link>
                 </div>
