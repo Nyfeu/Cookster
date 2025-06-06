@@ -37,7 +37,7 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
 
     try {
       // **CRITICAL FIX:** Changed port from 4000 to 6000 for your mss-pantry service
-      const res = await fetch("http://localhost:3001/ingredients", {
+      const res = await fetch("http://localhost:2000/pantry/ingredients", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +86,7 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
 
     try {
       // ** Porta correta: 3001 para o mss-pantry DELETE **
-      const res = await fetch("http://localhost:3001/ingredients", {
+      const res = await fetch("http://localhost:2000/pantry/ingredients", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -118,7 +118,7 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
     }
   };
   
-  const ingredientesValidos = Array.isArray(ingredientes) ? ingredientes : [];
+  // const ingredientesValidos = Array.isArray(ingredientes) ? ingredientes : [];
 
   // This grouping logic is already correct and will display categories
   const agrupadoPorCategoria = (ingredientes || []).reduce((acc, item) => {

@@ -2,6 +2,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
+// Importar dependências
 const express = require('express')
 const app = express()
 const bcrypt = require('bcrypt')
@@ -11,18 +12,21 @@ const flash = require('express-flash')
 const initializePassport = require('./passport-config')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
-const User = require('./models/User')
-
 const axios = require('axios')
 
+// Importar modelo de usuário
+const User = require('./models/User')
 
+// Configurações do banco de dados e variáveis de ambiente
 const dbUser = process.env.DB_USER
 const dbPass = process.env.DB_PASS
-const APP_PORT = 3000
 
+// Configurações do servidor
+const APP_PORT = 3000
 const SERVICE_ID = 'mss-autenticacao';
 const EVENT_BUS_URL = 'http://localhost:4000';
 
+// Configuração do MongoDB
 const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/mss-autenticacao?retryWrites=true&w=majority&appName=Cluster0`
 
 // Permitir acesso do front-end
@@ -53,7 +57,7 @@ app.post('/validate-token', async (req, res) => {
   try {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+
     // Retorna o usuário decodificado como payload
     res.status(200).json({ user: decoded });
 
@@ -66,63 +70,8 @@ app.post('/validate-token', async (req, res) => {
 
 });
 
-function checkAuthenticated(req, res, next) {
-  const authHeader = req.headers.authorization
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Token não fornecido' })
-  }
-
-  const token = authHeader.split(' ')[1]
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next(); // Segue para a próxima função (a rota de "/dashboard", por exemplo)
-  } catch (err) {
-    return res.status(403).json({ error: 'Token inválido ou expirado' })
-  }
-}
-
-
-
-function checkNotAuthenticated(req, res, next) {
-  const authHeader = req.headers.authorization
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    return res.status(403).json({ error: 'Você já está autenticado' })
-  }
-  next()
-}
-
-// Rota pública (Landing Page)
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Bem-vindo ao Cookster meu nobre! Acesse sua área privada após o login.'
-  })
-})
-
-// Rota privada (somente usuários autenticados podem acessar)
-app.get('/dashboard', checkAuthenticated, (req, res) => {
-  res.json({
-    message: 'Você está autenticado e acessou sua página privada.',
-    user: req.user
-  })
-})
-
-app.get('/profile', checkAuthenticated, (req, res) => {
-  res.json({
-    message: 'Você está autenticado e acessou sua página privada.',
-    user: req.user
-  })
-})
-
-app.get('/register', (req, res) => {
-  res.json(users)
-})
-
-
 // Login local
-app.post('/login', checkNotAuthenticated, (req, res, next) => {
+app.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) return next(err)
     if (!user) return res.status(401).json({ error: info.message })
@@ -136,9 +85,8 @@ app.post('/login', checkNotAuthenticated, (req, res, next) => {
   })(req, res, next)
 })
 
-
 // Cadastro
-app.post('/register', checkNotAuthenticated, async (req, res) => {
+app.post('/register', async (req, res) => {
   const { name, email, password } = req.body
 
   if (!name || !email || !password) {
@@ -241,7 +189,7 @@ app.get('/auth/facebook/callback',
 )
 
 // "Logout" com JWT (frontend remove o token)
-app.delete('/logout', checkAuthenticated, (req, res) => {
+app.delete('/logout', (req, res) => {
   res.status(200).json({ message: 'Logout simbólico com JWT. Basta remover o token no frontend.' })
 })
 

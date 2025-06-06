@@ -2,6 +2,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
+// Importar dependências
 const axios = require('axios')
 const express = require('express')
 const mongoose = require('mongoose')
@@ -30,31 +31,12 @@ app.use(cors({
 
 app.use(express.json())
 
-// Middleware para checar autenticação via JWT
-function checkAuthenticated(req, res, next) {
-  const authHeader = req.headers.authorization
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Token não fornecido' })
-  }
-
-  const token = authHeader.split(' ')[1]
-
-  try {
-    const decoded = jwt.verify(token, jwtSecret)
-    req.user = decoded
-    next()
-  } catch (err) {
-    return res.status(403).json({ error: 'Token inválido ou expirado' })
-  }
-}
-
 // Rotas CRUD
 
 // Listar todos ingredientes do usuário
-app.get('/ingredients', checkAuthenticated, async (req, res) => {
+app.get('/ingredients', async (req, res) => {
   try {
-    const userId = req.user.id
+    const userId = req.headers['user-id'];
     const pantry = await Ingredient.findOne({ userId })
 
     if (!pantry) return res.json([])
@@ -67,9 +49,12 @@ app.get('/ingredients', checkAuthenticated, async (req, res) => {
 
 
 // Criar ingrediente
-app.post('/ingredients', checkAuthenticated, async (req, res) => {
+app.post('/ingredients', async (req, res) => {
+
   try {
-    const userId = req.user.id
+
+    const userId = req.headers['user-id'];
+
     const { nome, categoria } = req.body
 
     if (!nome || !categoria) {
@@ -111,18 +96,22 @@ app.post('/ingredients', checkAuthenticated, async (req, res) => {
     }
 
     res.status(201).json(pantry.ingredientes)
+
   } catch (err) {
+
     res.status(500).json({ error: 'Erro ao adicionar ingrediente' })
+
   }
+
 })
 
 
 
 
 // Atualizar ingrediente pelo ID
-app.put('/ingredients/:index', checkAuthenticated, async (req, res) => {
+app.put('/ingredients/:index', async (req, res) => {
   try {
-    const userId = req.user.id
+    const userId = req.headers['user-id'];
     const index = parseInt(req.params.index, 10)
     const updates = req.body
 
@@ -142,9 +131,9 @@ app.put('/ingredients/:index', checkAuthenticated, async (req, res) => {
 
 
 // Deletar ingrediente pelo Nome (Categoria opcional)
-app.delete('/ingredients', checkAuthenticated, async (req, res) => {
+app.delete('/ingredients', async (req, res) => {
   try {
-    const userId = req.user.id
+    const userId = req.headers['user-id'];
     const { nome, categoria } = req.body
 
     if (!nome) {

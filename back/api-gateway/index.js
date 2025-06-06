@@ -21,24 +21,34 @@ app.use(cors({
 
 // 2. Configuração de Proxies para Microserviços
 const services = {
+
     auth: {
         target: 'http://localhost:3000',
         publicRoutes: ['/register', '/login'],
         requiresUserId: false
     },
+
     ingredient: {
         target: 'http://localhost:8000',
         publicRoutes: ['/health'],
         requiresUserId: false
     },
+
     profile: {
         target: 'http://localhost:5000',
         requiresUserId: true
     },
+
     pantry:{
         target: 'http://localhost:3001',
         requiresUserId: true
+    },
+    
+    recipe: {
+        target: 'http://localhost:9000',
+        requiresUserId: true
     }
+
 };
 
 // 3. Gerar lista de rotas públicas a partir de services
