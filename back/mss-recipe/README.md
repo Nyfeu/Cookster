@@ -203,14 +203,14 @@ O microsserviço estará rodando na porta `5000` (ou na porta definida em `APP_P
 * **URL**: `/suggest`
 * **Método**: `GET`
 * **Descrição**: Sugere receitas com base nos ingredientes que o usuário possui em sua despensa. As receitas sugeridas devem ter *todos* os ingredientes presentes na despensa do usuário.
+* **Cabeçalhos (Headers)**:
+    * `user_id` (obrigatório): o ID do usuário para o qual a sugestão será feita.
 * **Parâmetros de Query**:
-    * `user_id` (obrigatório): O ID do usuário para o qual a sugestão será feita.
-    * `name` (opcional): Filtra as sugestões pelo nome da receita (busca insensível a maiúsculas/minúsculas).
     * `page` (opcional): Número da página para paginação (padrão: `1`).
     * `limit` (opcional): Número de receitas por página (padrão: `10`).
 * **Exemplos**:
-    * `GET /suggest?user_id=user456`
-    * `GET /suggest?user_id=user456&name=salada`
+    * `GET /suggest` com o header `user_id: user456`
+    * `GET /suggest?page=2&limit=5` com o header `user_id: user456`
 * **Resposta (Sucesso - Status 200 OK)**: Um array de objetos de receita.
 * **Resposta (Requisição Inválida - Status 400 Bad Request)**:
     ```json
