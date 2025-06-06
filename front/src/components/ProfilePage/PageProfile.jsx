@@ -7,12 +7,13 @@ import NavBar_Auth from '../NavBar_Auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const PageProfile = () => {
     const location = useLocation();
-    const token = location.state?.token;
-    const userId = location.state?.user.id
-
+    const comparador = JSON.parse(localStorage.getItem('user')).id
+    console.log(comparador)
+    const userId = useParams().userId
 
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -80,6 +81,7 @@ const PageProfile = () => {
             setFotoPerfil(profile.fotoPerfil);
             setUsername(profile.userId.name);
             setEmail(profile.userId.email)
+            setDescricao(profile.descricao)
         }
     }, [profile]); 
 
@@ -119,13 +121,13 @@ const PageProfile = () => {
 
                 <div className="right__col">
                     <div className="seguir">
-                        <Link to="/profile">
+                        <Link to={`/profile/${userId}`}>
                             <FontAwesomeIcon icon={faGear} className="gear-icon" />
                         </Link>
 
                         <button>
                             {
-                                (token) ?
+                                (userId == comparador) ?
                                     "Editar Perfil"
                                     :
                                     "Seguir"

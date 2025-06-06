@@ -43,8 +43,8 @@ const NavBar_Auth = () => {
                     </a>
                 </div>
                 
-                <Link to="/profile" className="profile-icon"
-                 state={{ token: userToken, user: user }}>
+                <Link to={`/profile/${user.id}`} className="profile-icon"
+                 state={{ token: userToken}}>
                     <FaUserCircle size={28} />
                 </Link>
             </div>

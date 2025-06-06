@@ -8,14 +8,13 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const Profile = require('./models/Profile');
-const User = require('./models/User');
 
 const app = express();
 
 const APP_PORT = 5000;
 const SERVICE_ID = 'mss-profile-service';
 const EVENT_BUS_URL = 'http://localhost:4000';
-const defaultImageUrl = `default-profile.png`;
+const defaultImageUrl = 'default-profile.jpeg';
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
 const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/mss-profile-service?retryWrites=true&w=majority&appName=Cluster0`;
@@ -56,7 +55,10 @@ const eventHandlers = { // Renomeei para 'eventHandlers' para clareza
         userId: userId,
         bio: `Olá! Sou ${name || 'um novo usuário'}. Bem-vindo(a)!`,
         profissao: 'Não informada',
-        fotoPerfil: defaultImageUrl
+        fotoPerfil: defaultImageUrl,
+        email: email,
+        name: name,
+        descricao: 'Fale mais sobre você!'
       });
 
       await newProfile.save();
@@ -77,15 +79,7 @@ app.get('/profile/:userId', async (req, res) => {
         const { userId } = req.params;
 
 
-        const profile = await Profile.findOne({ userId: userId })
-            .populate({
-                path: 'userId',
-                model: 'User',
-                localField: 'userId',
-                foreignField: 'id',
-                select: 'name email'
-            })
-            .exec();
+        const profile = await Profile.findOne({ userId: userId });
 
         if (!profile) {
             return res.status(404).json({ message: `Perfil não encontrado para o usuário com ID: ${userId}` });
@@ -102,10 +96,10 @@ app.get('/profile/:userId', async (req, res) => {
     }
 });
 
-
+// Para Teste
 app.post('/profile', async (req, res) => {
     try {
-        const { id: userId, bio, profissao, fotoPerfil } = req.body;
+        const { id: userId, bio, profissao, fotoPerfil,email, nome, descricao } = req.body;
 
         if (!userId) {
             return res.status(400).json({ message: 'O ID do usuário (userId) é obrigatório.' });
@@ -122,7 +116,11 @@ app.post('/profile', async (req, res) => {
             userId,
             bio: bio || '',
             profissao: profissao || '',
-            fotoPerfil: fotoPerfil || defaultImageUrl
+            fotoPerfil: fotoPerfil || defaultImageUrl,
+            email: email || '',
+            nome: nome || '',
+            descricao: descricao || ''
+
         });
 
         await newProfile.save();

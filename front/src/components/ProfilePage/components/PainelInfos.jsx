@@ -6,8 +6,8 @@ const PainelInfos = (props) => {
         <div className="left__col">
             <div className="img__container">
                 <Image
-                    src={props.fotoPerfil}
-                    zoomSrc={props.fotoPerfil}
+                    src={`../${props.fotoPerfil}`}
+                    zoomSrc={`../${props.fotoPerfil}`}
                     alt="Image"
                     width="120"
                     height="120"

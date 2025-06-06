@@ -26,7 +26,7 @@ function App() {
       <Routes>
         <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
         <Route path="/mainpage" element={<ProtectedRoute><MainPage /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><PageProfile /></ProtectedRoute>} />
+        <Route path="/profile/:userId" element={<ProtectedRoute><PageProfile /></ProtectedRoute>} />
         <Route path="/recipe/:idReceita" element={<ProtectedRoute><RecipePage /></ProtectedRoute>} />
         <Route path="/login" element={<PublicRoute><AuthForm sign_in_mode="sign_in" /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><AuthForm sign_in_mode="sign_up" /></PublicRoute>} />
