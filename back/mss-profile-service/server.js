@@ -1,29 +1,29 @@
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
+    require('dotenv').config();
 }
 
 const axios = require('axios');
 const express = require('express');
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken'); 
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const Profile = require('./models/Profile');
 const User = require('./models/User');
 
 const app = express();
 
+const APP_PORT = 5000;
+const SERVICE_ID = 'mss-profile-service';
+const EVENT_BUS_URL = 'http://localhost:4000';
 
-const jwtSecret = process.env.JWT_SECRET; 
-const APP_PORT = 5000; 
-const EVENT_BUS_PORT = 4000;
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
 const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/mss-profile-service?retryWrites=true&w=majority&appName=Cluster0`;
 
 app.use(cors({
-  origin: 'http://localhost:5173', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
 }));
 
 
@@ -35,15 +35,15 @@ app.get('/profile/:userId', async (req, res) => {
         const { userId } = req.params;
 
 
-        const profile = await Profile.findOne({ userId: userId }) 
-                                     .populate({
-                                         path: 'userId',         
-                                         model: 'User',         
-                                         localField: 'userId',   
-                                         foreignField: 'id',     
-                                         select: 'name email'    
-                                     })
-                                     .exec();
+        const profile = await Profile.findOne({ userId: userId })
+            .populate({
+                path: 'userId',
+                model: 'User',
+                localField: 'userId',
+                foreignField: 'id',
+                select: 'name email'
+            })
+            .exec();
 
         if (!profile) {
             return res.status(404).json({ message: `Perfil não encontrado para o usuário com ID: ${userId}` });
@@ -75,7 +75,7 @@ app.post('/profile', async (req, res) => {
             return res.status(409).json({ message: `Um perfil já existe para o usuário com ID: ${userId}` });
         }
 
-   
+
         const defaultImageUrl = `default-profile.png`;
 
 
@@ -83,7 +83,7 @@ app.post('/profile', async (req, res) => {
             userId,
             bio: bio || '',
             profissao: profissao || '',
-            fotoPerfil: fotoPerfil || defaultImageUrl 
+            fotoPerfil: fotoPerfil || defaultImageUrl
         });
 
         await newProfile.save();
@@ -106,29 +106,26 @@ app.post('/profile', async (req, res) => {
 mongoose.connect(mongoURI)
     .then(() => {
 
-        console.log('✅ Conectado ao MongoDB');
+        console.log('✅ MongoDB: [OK]');
 
         app.listen(APP_PORT, async () => {
-            console.log(`🟢 MSS-PROFILE-SERVICE (http://localhost:${APP_PORT}): [OK]`);
+            console.log(`🟢 MSS-PROFILE-SERVICE (${APP_PORT}): [OK]`);
 
             try {
 
-                await axios.post(`http://localhost:${EVENT_BUS_PORT}/register`, {
-                    url: `http://localhost:${APP_PORT}`
+                await axios.post(`${EVENT_BUS_URL}/register`, {
+                    serviceId: SERVICE_ID,
+                    url: `http://localhost:${APP_PORT}/events`
                 });
 
-                console.log('📡 Registrado no Event Bus com sucesso');
+                console.log('📡 EVENT-BUS: [REGISTERED]');
 
             } catch (error) {
 
-                console.error('❌ Falha ao registrar no Event Bus:', error.message);
+                console.error('❌ EVENT-BUS: [FAILED]');
 
             }
 
         });
 
-    }).catch(err => {
-
-        console.error('❌ Erro ao conectar ao MongoDB:', err);
-
-    });
+    }).catch(_ => console.error('❌ MongoDB: [FAILED]'));

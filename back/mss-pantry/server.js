@@ -14,8 +14,11 @@ const app = express()
 const dbUser = process.env.DB_USER
 const dbPass = process.env.DB_PASS
 const jwtSecret = process.env.JWT_SECRET
+
+// Configurações
+const SERVICE_ID = 'mss-pantry';
+const EVENT_BUS_URL = 'http://localhost:4000';
 const APP_PORT = 3001
-const EVENT_BUS_PORT = 4000
 const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/mss-pantry?retryWrites=true&w=majority&appName=Cluster0`
 
 // Middleware para permitir requisições do frontend
@@ -91,20 +94,20 @@ app.post('/ingredients', checkAuthenticated, async (req, res) => {
     pantry.ingredientes.push({ nome, categoria })
     await pantry.save()
 
-     try {
-        await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
-            type: 'IngredientAdded',
-            payload: {
-                userId: userId,
-                ingredient: {
-                    nome,
-                    categoria
-                }
-            }
-        });
-        console.log(`Evento IngredientAdded emitido para o Event Bus: ${nome} (${categoria}) para o usuário ${userId}`);
+    try {
+      await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
+        type: 'IngredientAdded',
+        payload: {
+          userId: userId,
+          ingredient: {
+            nome,
+            categoria
+          }
+        }
+      });
+      console.log(`Evento IngredientAdded emitido para o Event Bus: ${nome} (${categoria}) para o usuário ${userId}`);
     } catch (eventBusErr) {
-        console.error('Falha ao emitir evento IngredientAdded para o Event Bus:', eventBusErr.message);
+      console.error('Falha ao emitir evento IngredientAdded para o Event Bus:', eventBusErr.message);
     }
 
     res.status(201).json(pantry.ingredientes)
@@ -166,19 +169,19 @@ app.delete('/ingredients', checkAuthenticated, async (req, res) => {
     await pantry.save()
 
     try {
-        await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
-            type: 'IngredientRemoved',
-            payload: {
-                userId: userId,
-                ingredient: {
-                    nome: ingredienteRemovido.nome,
-                    categoria: ingredienteRemovido.categoria
-                }
-            }
-        });
-        console.log(`Evento IngredientRemoved emitido para o Event Bus: ${ingredienteRemovido.nome} (${ingredienteRemovido.categoria}) para o usuário ${userId}`);
+      await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
+        type: 'IngredientRemoved',
+        payload: {
+          userId: userId,
+          ingredient: {
+            nome: ingredienteRemovido.nome,
+            categoria: ingredienteRemovido.categoria
+          }
+        }
+      });
+      console.log(`Evento IngredientRemoved emitido para o Event Bus: ${ingredienteRemovido.nome} (${ingredienteRemovido.categoria}) para o usuário ${userId}`);
     } catch (eventBusErr) {
-        console.error('Falha ao emitir evento IngredientRemoved para o Event Bus:', eventBusErr.message);
+      console.error('Falha ao emitir evento IngredientRemoved para o Event Bus:', eventBusErr.message);
     }
 
     res.json({
@@ -206,31 +209,29 @@ app.post('/events', async (req, res) => {
 // Conexão com banco e start do servidor
 
 mongoose.connect(mongoURI)
-    .then(() => {
+  .then(() => {
 
-        console.log('✅ Conectado ao MongoDB');
+    console.log('✅ MongoDB: [OK]');
 
-        app.listen(APP_PORT, async () => {
-            console.log(`🟢 PANTRY-SERVICE (http://localhost:${APP_PORT}): [OK]`);
+    app.listen(APP_PORT, async () => {
 
-            try {
+      console.log(`🟢 PANTRY-SERVICE (${APP_PORT}): [OK]`);
 
-                await axios.post(`http://localhost:${EVENT_BUS_PORT}/register`, {
-                    url: `http://localhost:${APP_PORT}/events`
-                });
+      try {
 
-                console.log('📡 Registrado no Event Bus com sucesso');
-
-            } catch (error) {
-
-                console.error('❌ Falha ao registrar no Event Bus:', error.message);
-
-            }
-
+        await axios.post(`${EVENT_BUS_URL}/register`, {
+          serviceId: SERVICE_ID,
+          url: `http://localhost:${APP_PORT}/events`
         });
 
-    }).catch(err => {
+        console.log('📡 EVENT-BUS: [REGISTERED]');
 
-        console.error('❌ Erro ao conectar ao MongoDB:', err);
+      } catch (error) {
+
+        console.error('❌ EVENT-BUS: [FAILED]');
+
+      }
 
     });
+
+  }).catch(_ => console.error('❌ MongoDB: [FAILED]'));

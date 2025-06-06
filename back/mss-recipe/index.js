@@ -15,8 +15,9 @@ const app = express();
 app.use(express.json());
 
 // Configurações
+const SERVICE_ID = 'mss-recipe';
 const APP_PORT = 5000;
-const EVENT_BUS_PORT = 4000;
+const EVENT_BUS_URL = 'http://localhost:4000';
 
 // CORS
 app.use(cors({
@@ -43,32 +44,29 @@ const applyPagination = (pipeline, req) => {
 mongoose.connect(mongoURI)
     .then(() => {
 
-        console.log('✅ Conectado ao MongoDB');
+        console.log('✅ MongoDB: [OK]');
 
         app.listen(APP_PORT, async () => {
-            console.log(`🟢 MSS-RECIPE (http://localhost:${APP_PORT}): [OK]`);
+            console.log(`🟢 MSS-RECIPE (${APP_PORT}): [OK]`);
 
             try {
 
-                await axios.post(`http://localhost:${EVENT_BUS_PORT}/register`, {
-                    url: `http://localhost:${APP_PORT}/events`
+                await axios.post(`${EVENT_BUS_URL}/register`, {
+                    serviceId: SERVICE_ID,
+                    url: `http://localhost:${APP_PORT}/events` 
                 });
 
-                console.log('📡 Registrado no Event Bus com sucesso');
+                console.log('📡 EVENT-BUS: [REGISTERED]');
 
             } catch (error) {
 
-                console.error('❌ Falha ao registrar no Event Bus:', error.message);
+                console.error('❌ EVENT-BUS: [FAILED]');
 
             }
 
         });
 
-    }).catch(err => {
-
-        console.error('❌ Erro ao conectar ao MongoDB:', err);
-
-    });
+    }).catch(_ => console.error('❌ MongoDB: [FAILED]'));
 
 // Endpoint para consultar receitas
 app.get('/recipes', async (req, res) => {

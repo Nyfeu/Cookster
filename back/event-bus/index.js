@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
+// Define a porta do aplicativo
+const APP_PORT = 4000; 
+
 // Mapa para rastrear serviços registrados
 // Map<string, { url: string, checkpoint: number, status: 'online' | 'offline' }>
 const subscribers = new Map(); 
@@ -31,8 +34,8 @@ app.post('/register', async (req, res) => {
     const { serviceId, url } = req.body; 
 
     // Verifica se serviceId e url foram fornecidos
-    if (!serviceId) return res.status(400).send({ status: 'Erro: serviceId é obrigatório para registro!' });
-    if (!url) return res.status(400).send({ status: 'Erro: url é obrigatória para registro!' });
+    if (!serviceId) return res.status(400).send({ status: '❌ Erro: serviceId é obrigatório para registro!' });
+    if (!url) return res.status(400).send({ status: '❌ Erro: url é obrigatória para registro!' });
 
     // Verifica se o serviceId já está registrado
     let subscriber = subscribers.get(serviceId);
@@ -41,13 +44,13 @@ app.post('/register', async (req, res) => {
 
         // Serviço já existe, verifica se a URL mudou e atualiza
         if (subscriber.url !== url) {
-            console.log(`Serviço '${serviceId}' re-registrou com nova URL: ${url} (anterior: ${subscriber.url})`);
+            console.log(`🔁 Serviço '${serviceId}' re-registrou com nova URL: ${url} (anterior: ${subscriber.url})`);
             subscriber.url = url; 
         }
 
         // Define o status como 'online' se o serviço se registrou novamente
         subscriber.status = 'online';
-        console.log(`Serviço '${serviceId}' re-registrado e status atualizado para 'online'.`);
+        console.log(`🟢 Serviço '${serviceId}' re-registrado e status atualizado para 'online'.`);
     
     } else {
 
@@ -60,7 +63,7 @@ app.post('/register', async (req, res) => {
 
         // Adiciona o novo serviço ao mapa de assinantes
         subscribers.set(serviceId, subscriber);
-        console.log(`Novo serviço registrado: '${serviceId}' com URL: ${url} e status 'online'.`);
+        console.log(`🧾 Novo serviço registrado: '${serviceId}' com URL: ${url} e status 'online'.`);
 
     }   
 
@@ -73,7 +76,7 @@ app.post('/register', async (req, res) => {
 
     if (eventsToSend.length > 0) {
 
-        console.log(`Enviando ${eventsToSend.length} eventos do backlog para serviço '${serviceId}' (${subscriber.url}) a partir do checkpoint ${subscriber.checkpoint}...`);
+        console.log(`⌯⌲ Enviando ${eventsToSend.length} eventos do backlog para serviço '${serviceId}' (${subscriber.url}) a partir do checkpoint ${subscriber.checkpoint}...`);
         
         let allBacklogSent = true;
 
@@ -98,10 +101,10 @@ app.post('/register', async (req, res) => {
 
             if (!eventSentSuccessfully) {
 
-                console.error(`  💀 Todas as ${MAX_FAILURES} tentativas falharam para o evento '${event.type}' (ID: ${event.id}) do backlog para '${serviceId}'.`);
+                console.error(`💀 Todas as ${MAX_FAILURES} tentativas falharam para o evento '${event.type}' (ID: ${event.id}) do backlog para '${serviceId}'.`);
                 // Se um evento falhar após todas as tentativas, o serviço é considerado offline
                 subscriber.status = 'offline'; 
-                console.warn(`Serviço '${serviceId}' (${subscriber.url}) passou para 'offline' após falhas consecutivas ao enviar backlog.`);
+                console.warn(`🔴 Serviço '${serviceId}' (${subscriber.url}) passou para 'offline' após falhas consecutivas ao enviar backlog.`);
                 allBacklogSent = false; // Nem todos os eventos do backlog foram enviados
                 break; // Interrompe o envio do backlog, pois a consistência está comprometida
             
@@ -115,7 +118,7 @@ app.post('/register', async (req, res) => {
     } else {
 
         // Se não houver eventos no backlog para enviar
-        console.log(`Nenhum evento no backlog para serviço '${serviceId}' (${subscriber.url}) a partir do checkpoint ${subscriber.checkpoint}.`);
+        console.log(`⏱ Nenhum evento no backlog para serviço '${serviceId}' (${subscriber.url}) a partir do checkpoint ${subscriber.checkpoint}.`);
         res.send({ status: 'Registrado com sucesso!' });
 
     }
@@ -156,14 +159,14 @@ app.post('/events', async (req, res) => {
                 try {
 
                     await axios.post(subscriber.url, newEvent);
-                    console.log(`Evento '${newEvent.type}' (ID: ${newEvent.id}) enviado para '${serviceId}' (Tentativa: ${i + 1}).`);
+                    console.log(`⌯⌲ Evento '${newEvent.type}' (ID: ${newEvent.id}) enviado para '${serviceId}' (Tentativa: ${i + 1}).`);
                     subscriber.checkpoint = newEvent.id; // Atualiza o checkpoint após o envio bem-sucedido
                     eventDelivered = true;
                     break; // Sai do loop de retries
 
                 } catch (err) {
 
-                    console.error(`Falha na tentativa ${i + 1} ao enviar para '${serviceId}' (${subscriber.url}): ${err.message}`);
+                    console.error(`❌ Falha na tentativa ${i + 1} ao enviar para '${serviceId}' (${subscriber.url}): ${err.message}`);
 
                     if (i < MAX_FAILURES - 1) { // Se não for a última tentativa
                         await delay(RETRY_DELAY_MS); // Espera antes de tentar novamente
@@ -176,10 +179,10 @@ app.post('/events', async (req, res) => {
             if (!eventDelivered) {
 
                 // Se todas as tentativas falharem
-                console.error(`Todas as ${MAX_FAILURES} tentativas falharam para o evento '${newEvent.type}' (ID: ${newEvent.id}) para '${serviceId}'.`);
+                console.error(`❌ Todas as ${MAX_FAILURES} tentativas falharam para o evento '${newEvent.type}' (ID: ${newEvent.id}) para '${serviceId}'.`);
                 // Se o número de falhas atingir o limite, altera o status para 'offline'
                 subscriber.status = 'offline';
-                console.warn(`Serviço '${serviceId}' (${subscriber.url}) passou para 'offline' após ${MAX_FAILURES} falhas consecutivas.`);
+                console.warn(`🔴 Serviço '${serviceId}' (${subscriber.url}) passou para 'offline' após ${MAX_FAILURES} falhas consecutivas.`);
 
             }
 
@@ -201,6 +204,4 @@ app.get('/events', (_, res) => {
 });
 
 // Inicia o servidor
-app.listen(4000, () => {
-    console.log('Event Bus (4000): [OK]');
-});
+app.listen(APP_PORT, () => console.log(`🟢 EVENT-BUS (${APP_PORT}): [OK]`));
