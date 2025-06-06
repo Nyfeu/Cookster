@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json());
 
 // Configurações
-const APP_PORT = 5000;
+const APP_PORT = 9000;
 const EVENT_BUS_PORT = 4000;
 
 // CORS
