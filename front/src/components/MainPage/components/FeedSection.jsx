@@ -58,7 +58,7 @@ export default function FeedSection() {
   };
 
   // O efeito roda apenas na montagem, e será re-executado quando a 'key' do componente mudar
-  useEffect(() => { 
+  useEffect(() => {
     fetchSuggestedRecipes()
   }, []);
 
@@ -71,15 +71,20 @@ export default function FeedSection() {
           {suggestedRecipes.length > 0 ? (
             suggestedRecipes.map((recipe, index) => (
               <div className="recipe-card" key={recipe._id || index}>
-                <div className="recipe-image bg-secondary text-white d-flex align-items-center justify-content-center rounded mb-3" style={{ height: '120px' }}>
+                <div className="recipe-image bg-secondary text-white d-flex align-items-center justify-content-center rounded mb-3">
                   {recipe.image_url ? (
-                    <img src={recipe.image_url} alt={recipe.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }} />
+                    <img src={recipe.image_url} alt={recipe.name} />
                   ) : (
                     '📷'
                   )}
                 </div>
                 <h5 className="fw-bold">{recipe.name}</h5>
-                <p className="text-muted small">{recipe.description ? recipe.description.substring(0, 50) + '...' : ''}</p>
+                {/* Container para a descrição com altura fixa */}
+                <div className="description-container">
+                  <p className="text-muted small description-text">
+                    {recipe.description ? recipe.description : ''}
+                  </p>
+                </div>
                 <div className="actions d-flex justify-content-center gap-2">
                   <button className="btn btn-sm">
                     <i className="pi pi-heart fs-5"></i>
@@ -93,11 +98,6 @@ export default function FeedSection() {
                   <button className="btn btn-sm">
                     <i className="pi pi-share-alt fs-5"></i>
                   </button>
-                  {/* Adicionar link para a página da receita 
-                    <Link to={`/recipe/${recipe._id}`} className="btn btn-sm">
-                      <i className="pi pi-share-alt fs-5"></i>
-                    </Link>
-                  */}
                 </div>
                 <div className="username mt-2 text-muted small">@{recipe.user_id}</div>
               </div>
