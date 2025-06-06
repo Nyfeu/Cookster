@@ -7,6 +7,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const jwt = require('jsonwebtoken');
 const morgan = require('morgan');
 const cors = require('cors');
+const axios = require('axios');
 
 const app = express();
 app.use(morgan('combined')); // Logging de requisições
@@ -20,24 +21,34 @@ app.use(cors({
 
 // 2. Configuração de Proxies para Microserviços
 const services = {
+
     auth: {
         target: 'http://localhost:3000',
         publicRoutes: ['/register', '/login'],
         requiresUserId: false
     },
-    debug: {
-        target: 'http://localhost:7000',
-        requiresUserId: true
-    },
+
     ingredient: {
         target: 'http://localhost:8000',
         publicRoutes: ['/health'],
         requiresUserId: false
     },
+
     profile: {
         target: 'http://localhost:5000',
         requiresUserId: true
+    },
+
+    pantry:{
+        target: 'http://localhost:3001',
+        requiresUserId: true
+    },
+    
+    recipe: {
+        target: 'http://localhost:9000',
+        requiresUserId: true
     }
+
 };
 
 // 3. Gerar lista de rotas públicas a partir de services
@@ -64,13 +75,19 @@ app.use(async (req, res, next) => {
     // Passo 3: Verificar se a rota atual é pública
     if (publicRoutes.includes(req.path)) return next();
 
+    // Se a rota não é pública e não há token, retorna 401
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized: Token not provided or invalid format.' });
+    }
+
     try {
 
         // Passo 4: Extrair o token do cabeçalho
         const token = authHeader.split(' ')[1];
 
-        // Passo 5: Validar o token (comunicação com Auth Service)
-        const decoded = await verifyToken(token);
+        // Passo 5: Delegar a validação do token ao Auth Service
+        const authServiceResponse = await axios.post(`${services.auth.target}/validate-token`, { token });
+        const decoded = authServiceResponse.data.user;
 
         // Passo 6: Adicionar dados do usuário à requisição
         req.user = decoded;
@@ -84,8 +101,9 @@ app.use(async (req, res, next) => {
 
     } catch (error) {
 
-        // Passo 7: Bloquear se houver qualquer erro
-        res.status(401).json({ error: 'Unauthorized' });
+        // Passo 9: Bloquear se houver qualquer erro na validação do token
+        console.error('Token validation error:', error.response ? error.response.data : error.message);
+        res.status(401).json({ error: 'Unauthorized: Invalid or expired token.' });
 
     }
 
@@ -104,10 +122,5 @@ Object.entries(services).forEach(([route, config]) => {
     }));
 });
 
-// 6. Função de Verificação de Token (Comunicação com Auth Service)
-async function verifyToken(token) {
-    return jwt.verify(token, process.env.JWT_SECRET);
-}
-
-// 7. Configura o gateway para escutar na porta 2000
+// 6. Configura o gateway para escutar na porta 2000
 app.listen(2000, () => console.log(`🟢 API-GATEWAY (2000): [OK]`));

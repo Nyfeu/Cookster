@@ -1,5 +1,5 @@
 {
-  "name": "api-gateway",
+  "name": "mss-recipe",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -14,8 +14,6 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "http-proxy-middleware": "^3.0.5",
-    "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0"
+    "mongoose": "^8.15.1"
   }
 }
