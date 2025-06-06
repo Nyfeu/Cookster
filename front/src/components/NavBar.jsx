@@ -28,13 +28,13 @@ const NavBar = () => {
             <div className={`collapse navbar-collapse ${isCollapsed ? '' : 'show'}`} id="navbarContent">
                 <ul className="navbar-nav mb-2 mb-lg-0">
                     <li className="nav-item">
-                        <Link className="nav-link" to="/" onClick={closeNavbar}>Home</Link>
+                        <Link className="nav-link" to="/#hero-section" onClick={closeNavbar}>Home</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/sobre">Sobre</Link>
+                        <Link className="nav-link" to="/#features">Funcionalidades</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/funcionalidades">Funcionalidades</Link>
+                        <Link className="nav-link" to="/#cta">Proposta</Link>
                     </li>
                 </ul>
 
