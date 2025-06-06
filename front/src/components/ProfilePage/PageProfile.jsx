@@ -79,8 +79,8 @@ const PageProfile = () => {
             setBio(profile.bio);
             setProfissao(profile.profissao);
             setFotoPerfil(profile.fotoPerfil);
-            setUsername(profile.userId.name);
-            setEmail(profile.userId.email)
+            setUsername(profile.name);
+            setEmail(profile.email)
             setDescricao(profile.descricao)
         }
     }, [profile]); 
@@ -121,18 +121,13 @@ const PageProfile = () => {
 
                 <div className="right__col">
                     <div className="seguir">
-                        <Link to={`/profile/${userId}`}>
+                        {(userId == comparador) ?
+                        <Link to={`/settings/${userId}`}>
                             <FontAwesomeIcon icon={faGear} className="gear-icon" />
                         </Link>
-
-                        <button>
-                            {
-                                (userId == comparador) ?
-                                    "Editar Perfil"
-                                    :
-                                    "Seguir"
-                            }
-                        </button>
+                        :
+                        <button>Seguir</button>
+                        }
                     </div>
                     <nav>
                         <ul>

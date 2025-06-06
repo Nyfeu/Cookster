@@ -5,6 +5,7 @@ import LandingPage from "./components/LandingPage/LandingPage"
 import AuthSuccess from "./components/AuthForm/components/AuthSuccess"
 import MainPage from "./components/MainPage/MainPage"
 import PageProfile from "./components/ProfilePage/PageProfile"
+import EditProfilePage from './components/EditProfilePage/EditProfilePage';
 
 import './theme.css'
 import RecipePage from './components/RecipePage/RecipePage';
@@ -30,7 +31,7 @@ function App() {
         <Route path="/recipe/:idReceita" element={<ProtectedRoute><RecipePage /></ProtectedRoute>} />
         <Route path="/login" element={<PublicRoute><AuthForm sign_in_mode="sign_in" /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><AuthForm sign_in_mode="sign_up" /></PublicRoute>} />
-
+        <Route path="/settings/:userId" element={<EditProfilePage />}></Route>
         <Route path="/auth-success" element={<AuthSuccess />} />
       </Routes>
     </Router>
