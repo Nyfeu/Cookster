@@ -20,6 +20,10 @@ import logging
 # Pydantic é usado para definir e validar dados
 from pydantic import BaseModel
 
+class Ingrediente(BaseModel):
+    nome: str
+    categoria: str
+
 # Para manipulação de variáveis de ambiente
 import os
 from dotenv import load_dotenv
@@ -41,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 class SugestoesResponse(BaseModel):
     termo: str
-    sugestoes: list[str]
+    sugestoes: list[Ingrediente]
     count: int
 
 # Carrega variáveis do .env ================================================
@@ -115,7 +119,10 @@ async def startup_db():
             for idx, item in enumerate(ingredientes):
                 doc = f"{item['nome']} | {' '.join(item['sinonimos'])}"
                 documentos.append(doc)
-                metadados.append({"nome": item["nome"]})
+                metadados.append({
+                    "nome": item["nome"],
+                    "categoria": item.get("categoria", "Outros")
+                })
             
             embeddings = model.encode(documentos).tolist()
             collection.add(
@@ -155,7 +162,7 @@ async def obter_sugestoes(
             include=["metadatas", "distances"]
         )
         
-        sugestoes = [item["nome"] for item in result["metadatas"][0]]
+        sugestoes = result["metadatas"][0]
         
         return {
             "termo": termo,

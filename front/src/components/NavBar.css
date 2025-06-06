@@ -80,12 +80,12 @@
 
 .profile-icon svg {
     color: var(--background-color);
+    transition: all 0.2s ease;
 }
 
 .profile-icon:hover svg {
     color: var(--secondary-color); 
     filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
-    transition: all 0.2s ease;
 }
 
 .p-confirm-dialog {
