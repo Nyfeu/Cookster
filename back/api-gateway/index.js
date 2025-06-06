@@ -12,6 +12,11 @@ const axios = require('axios');
 const app = express();
 app.use(morgan('combined')); // Logging de requisições
 
+app.use((req, res, next) => {
+    console.log(`[API_GATEWAY_DEBUG] Original URL: ${req.originalUrl}, Path: ${req.path}`);
+    next();
+});
+
 // 1. Configuração de CORS para permitir requisições do frontend
 app.use(cors({
     origin: 'http://localhost:5173',

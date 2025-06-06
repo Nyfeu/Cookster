@@ -1,32 +1,42 @@
 import React, { useState, useEffect } from "react";
 import "./SidePanel.css";
 
-export default function SidePanel({ show, onClose, ingredientes, setIngredientes }) {
+export default function SidePanel({ show, onClose, ingredientes, setIngredientes, onPantryChange }) {
+
   const [searchTerm, setSearchTerm] = useState("");
   const [sugestoes, setSugestoes] = useState([]);
 
   useEffect(() => {
+
     const fetchSugestoes = async () => {
+      
       if (searchTerm.trim().length < 2) {
         setSugestoes([]);
         return;
       }
 
       try {
+
         // This is still going to your suggestion service on port 8000, which is correct.
         const res = await fetch(`http://localhost:8000/sugestoes?termo=${encodeURIComponent(searchTerm)}`);
         const data = await res.json();
         setSugestoes(data.sugestoes || []);
+
       } catch (err) {
+
         console.error("Erro ao buscar sugestões:", err);
         setSugestoes([]);
+
       }
+
     };
 
     fetchSugestoes();
+
   }, [searchTerm]);
 
   const adicionarIngrediente = async (ingrediente) => {
+
     const token = localStorage.getItem("token");
 
     // Basic validation for the ingredient data
@@ -57,15 +67,19 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
       // So, we use that directly instead of making another GET request.
       const novaListaDeIngredientes = await res.json();
       setIngredientes(novaListaDeIngredientes);
+      if (onPantryChange) onPantryChange();
 
       // 🧼 Clears the search bar and hides the dropdown after adding
       setSearchTerm("");
       setSugestoes([]);
 
     } catch (err) {
+
       // Catch any network errors or issues before parsing the response
       console.error("Erro geral na requisição de adicionar ingrediente:", err);
+
     }
+
   };
 
   // --- NOVA FUNÇÃO PARA REMOVER INGREDIENTE ---
@@ -109,15 +123,19 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
         !(ing.nome === ingredienteParaRemover.nome && ing.categoria === ingredienteParaRemover.categoria)
       );
       setIngredientes(listaAtualizadaLocalmente);
+      if (onPantryChange) onPantryChange();
 
       // Opcional: feedback visual de sucesso
       console.log(`Ingrediente '${ingredienteParaRemover.nome}' removido com sucesso!`);
 
     } catch (err) {
+
       console.error("Erro geral na requisição de remover ingrediente:", err);
+
     }
+    
   };
-  
+
   // const ingredientesValidos = Array.isArray(ingredientes) ? ingredientes : [];
 
   // This grouping logic is already correct and will display categories

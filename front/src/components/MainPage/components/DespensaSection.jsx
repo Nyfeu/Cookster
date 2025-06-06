@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import './DespensaSection.css';
 import SidePanel from "./SidePanel";
 
-export default function DespensaSection() {
+export default function DespensaSection({ onPantryChange }) {
+  
   const [showPanel, setShowPanel] = useState(false);
   const [ingredientes, setIngredientes] = useState([]);
 
   const alternarDespensa = async () => {
-    if (showPanel) {
-      setShowPanel(false);
-    } else {
+
+    if (showPanel) setShowPanel(false);
+    else {
+
       setShowPanel(true);
 
       const token = localStorage.getItem("token");
@@ -28,10 +30,15 @@ export default function DespensaSection() {
 
         const data = await res.json();
         setIngredientes(data);
+
       } catch (err) {
+
         console.error("Erro ao buscar ingredientes:", err);
+
       }
+
     }
+
   };
 
   return (
@@ -51,6 +58,7 @@ export default function DespensaSection() {
               onClose={() => setShowPanel(false)}
               ingredientes={ingredientes}
               setIngredientes={setIngredientes}
+              onPantryChange={onPantryChange}
             />
           </div>
 

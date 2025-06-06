@@ -159,8 +159,6 @@ app.get('/suggest', async (req, res) => {
 
         const user_id = req.headers['user-id'];
 
-        console.log(req.headers);
-
         if (!user_id) {
             return res.status(400).json({ error: "user-id é obrigatório." });
         }
@@ -174,6 +172,8 @@ app.get('/suggest', async (req, res) => {
 
         // Extrai nomes dos ingredientes (em minúsculas)
         const ingredientList = pantry.ingredientes.map(ing => ing.nome.toLowerCase());
+
+        console.log(`Ingredientes na despensa: ${ingredientList}`)
 
         // Construção do pipeline
         const pipeline = [
@@ -207,6 +207,7 @@ app.get('/suggest', async (req, res) => {
 
         // Consulta ao banco de dados
         const recipes = await Recipe.aggregate(pipeline);
+        console.log(`Lista de receitas: ${recipes.map(r => r.name).join(', ')}`);
 
         // Retorna as receitas encontradas
         res.status(200).json(recipes);
