@@ -204,7 +204,7 @@ O microsserviço estará rodando na porta `5000` (ou na porta definida em `APP_P
 * **Método**: `GET`
 * **Descrição**: Sugere receitas com base nos ingredientes que o usuário possui em sua despensa. As receitas sugeridas devem ter *todos* os ingredientes presentes na despensa do usuário.
 * **Cabeçalhos (Headers)**:
-    * `user_id` (obrigatório): o ID do usuário para o qual a sugestão será feita.
+    * `user-id` (obrigatório): o ID do usuário para o qual a sugestão será feita.
 * **Parâmetros de Query**:
     * `page` (opcional): Número da página para paginação (padrão: `1`).
     * `limit` (opcional): Número de receitas por página (padrão: `10`).
