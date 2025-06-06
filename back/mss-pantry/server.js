@@ -6,7 +6,6 @@ if (process.env.NODE_ENV !== 'production') {
 const axios = require('axios')
 const express = require('express')
 const mongoose = require('mongoose')
-const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const Ingredient = require('./models/Ingredient')
 
@@ -14,7 +13,6 @@ const app = express()
 
 const dbUser = process.env.DB_USER
 const dbPass = process.env.DB_PASS
-const jwtSecret = process.env.JWT_SECRET
 
 // Configurações
 const SERVICE_ID = 'mss-pantry';
