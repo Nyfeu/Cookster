@@ -1,0 +1,185 @@
+
+.container {
+    padding: 20px; /* Added some padding for better spacing */
+    background: var(--background-color); /* Updated to new background color */
+    margin-top: 20px;
+    color: var(--text-color); /* Applying general text color */
+}
+
+.font-weight-bold {
+    font-weight: bold;
+    color: var(--primary-color); /* Adjusted heading color */
+}
+
+.py-3 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.ui-w-80 {
+    width : 80px !important;
+    height: auto;
+}
+
+.btn-default {
+    border-color: var(--transition-color); /* Adjusted border color */
+    background : transparent;
+    color : var(--text-color); /* Adjusted text color */
+}
+
+label.btn {
+    margin-bottom: 0;
+}
+
+.btn-outline-primary {
+    border-color: var(--secondary-color); /* Adjusted border color to secondary */
+    background : transparent;
+    color : var(--secondary-color); /* Adjusted text color to secondary */
+}
+
+.btn {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease-in-out; /* Added transition for hover effects */
+}
+
+.btn-primary {
+    background-color: var(--secondary-color); /* Primary action button uses secondary color */
+    border-color: var(--secondary-color);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-color); /* Hover state */
+    border-color: var(--accent-color);
+}
+
+.text-light {
+    color: var(--transition-color) !important; /* Adjusted to a lighter text color for hints */
+}
+
+/* Removed .btn-facebook and .btn-instagram as these tabs are no longer present */
+
+.card {
+    background-color: #fff; /* Card background set to white or a light variant of background-color */
+    border: 1px solid rgba(0, 0, 0, 0.05); /* Lighter border */
+    border-radius: 0.5rem;
+    background-clip: padding-box;
+    box-shadow : 0 1px 4px rgba(0, 0, 0, 0.05); /* Adjusted shadow */
+}
+
+.card-body {
+    padding: 1.25rem; /* Standard Bootstrap padding */
+}
+
+.card-media{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px
+}
+
+
+/* .media-body {
+    flex: 1;
+} */
+
+.ml-4 {
+    margin-left: 1.5rem !important;
+}
+
+.row-no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.row-bordered {
+    overflow: hidden;
+}
+
+.row-bordered > [class*="col-"] {
+    border-right: 1px solid rgba(0, 0, 0, 0.05); /* Lighter border */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Lighter border */
+}
+
+.row-bordered > [class*="col-"]:last-child {
+    border-right: 0;
+}
+
+.row-bordered:last-child > [class*="col-"] {
+    border-bottom: 0;
+}
+
+
+.account-settings-fileinput {
+    position : absolute;
+    visibility: hidden;
+    width : 1px;
+    height : 1px;
+    opacity : 0;
+}
+
+/* Removed all .account-settings-links related styles as the navigation is gone */
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--primary-color); /* Labels use primary color for emphasis */
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text-color); /* Input text color */
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid var(--transition-color); /* Input border uses transition color */
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: var(--accent-color); /* Focus border uses accent color */
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(99, 127, 104, 0.25); /* Adjusted shadow with accent color */
+}
+
+.alert-warning {
+    color: #856404; /* Standard warning text color */
+    background-color: #fff3cd; /* Standard warning background color */
+    border-color: #ffeeba; /* Standard warning border color */
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert-warning a {
+    color: #856404; /* Link inside warning */
+    text-decoration: underline;
+}
+
+.hr.border-light {
+    border-top: 1px solid rgba(0, 0, 0, 0.05) !important; /* Lighter horizontal rule */
+}
+
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
+.text-right {
+    text-align: right !important;
+}

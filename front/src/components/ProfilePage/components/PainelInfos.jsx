@@ -6,8 +6,8 @@ const PainelInfos = (props) => {
         <div className="left__col">
             <div className="img__container">
                 <Image
-                    src={props.fotoPerfil}
-                    zoomSrc={props.fotoPerfil}
+                    src={`../${props.fotoPerfil}`}
+                    zoomSrc={`../${props.fotoPerfil}`}
                     alt="Image"
                     width="120"
                     height="120"
@@ -32,14 +32,6 @@ const PainelInfos = (props) => {
                 <p>
                     {props.descricao}
                 </p>
-
-                <ul>
-                    <li><i className="fab fa-twitter social-icon"></i></li>
-                    <li><i className="fab fa-pinterest social-icon"></i></li>
-                    <li><i className="fab fa-facebook social-icon"></i></li>
-                    <li><i className="fab fa-instagram social-icon"></i></li>
-
-                </ul>
             </div>
         </div>
 

@@ -8,14 +8,13 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const Profile = require('./models/Profile');
-const User = require('./models/User');
 
 const app = express();
 
 const APP_PORT = 5000;
 const SERVICE_ID = 'mss-profile-service';
 const EVENT_BUS_URL = 'http://localhost:4000';
-
+const defaultImageUrl = 'default-profile.jpeg';
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
 const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/mss-profile-service?retryWrites=true&w=majority&appName=Cluster0`;
@@ -29,21 +28,68 @@ app.use(cors({
 
 app.use(express.json());
 
+const validateProfileUpdate = (req, res, next) => {
+    const { fotoPerfil, bio, descricao, email, username: name } = req.body;
+    console.log(req.body.username)
+
+    if (!name || !email) {
+        return res.status(400).json({ message: 'Nome e Email são campos obrigatórios.' });
+    }
+
+    if (email && !/.+@.+\..+/.test(email)) {
+        return res.status(400).json({ message: 'Por favor, insira um endereço de email válido.' });
+    }
+
+    next();
+};
+
+
+const eventHandlers = {
+    UserRegistered: async (userData) => {
+        try {
+            console.log(`[x] Evento 'UserCreated' recebido para:`, userData);
+
+            const { id: userId, name, email } = userData;
+
+            if (!userId) {
+                console.warn(`[!] Evento 'UserCreated' recebido sem userId. Ignorando.`);
+                return;
+            }
+
+            const existingProfile = await Profile.findOne({ userId: userId });
+
+            if (existingProfile) {
+                console.log(`[x] Perfil para o usuário ${userId} já existe. Ignorando criação duplicada.`);
+                return;
+            }
+
+            const newProfile = new Profile({
+                userId: userId,
+                bio: `Olá! Sou ${name || 'um novo usuário'}. Bem-vindo(a)!`,
+                profissao: 'Não informada',
+                fotoPerfil: defaultImageUrl,
+                email: email,
+                name: name,
+                descricao: 'Fale mais sobre você!'
+            });
+
+            await newProfile.save();
+            console.log(`[+] Perfil criado automaticamente para o usuário: ${userId} (Nome: ${name || 'N/A'})`);
+
+        } catch (error) {
+            console.error('Erro ao processar evento UserCreated ou criar perfil:', error);
+        }
+    }
+};
+
+
 
 app.get('/profile/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
 
 
-        const profile = await Profile.findOne({ userId: userId })
-            .populate({
-                path: 'userId',
-                model: 'User',
-                localField: 'userId',
-                foreignField: 'id',
-                select: 'name email'
-            })
-            .exec();
+        const profile = await Profile.findOne({ userId: userId });
 
         if (!profile) {
             return res.status(404).json({ message: `Perfil não encontrado para o usuário com ID: ${userId}` });
@@ -60,10 +106,10 @@ app.get('/profile/:userId', async (req, res) => {
     }
 });
 
-
 app.post('/profile', async (req, res) => {
     try {
-        const { userId, bio, profissao, fotoPerfil } = req.body;
+        console.log(req.body)
+        const { id: userId, bio, profissao, fotoPerfil, email, nome, descricao } = req.body;
 
         if (!userId) {
             return res.status(400).json({ message: 'O ID do usuário (userId) é obrigatório.' });
@@ -76,14 +122,15 @@ app.post('/profile', async (req, res) => {
         }
 
 
-        const defaultImageUrl = `default-profile.png`;
-
-
         const newProfile = new Profile({
             userId,
             bio: bio || '',
             profissao: profissao || '',
-            fotoPerfil: fotoPerfil || defaultImageUrl
+            fotoPerfil: fotoPerfil || defaultImageUrl,
+            email: email || '',
+            nome: nome || '',
+            descricao: descricao || ''
+
         });
 
         await newProfile.save();
@@ -99,6 +146,62 @@ app.post('/profile', async (req, res) => {
             return res.status(400).json({ message: err.message });
         }
         res.status(500).json({ message: 'Erro interno do servidor ao criar perfil.' });
+    }
+});
+
+app.put('/profile/:userId', validateProfileUpdate, async (req, res) => {
+    const { userId: paramUserId } = req.params;
+    const { fotoPerfil, name, email, bio, descricao } = req.body;
+
+    const updateFields = {};
+    if (fotoPerfil !== undefined) updateFields.fotoPerfil = fotoPerfil;
+    if (name !== undefined) updateFields.name = name;
+    if (email !== undefined) updateFields.email = email;
+    if (bio !== undefined) updateFields.bio = bio;
+    if (descricao !== undefined) updateFields.descricao = descricao;
+
+    try {
+        const updatedProfile = await Profile.findOneAndUpdate(
+            { userId: paramUserId },
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        ).select();
+
+        if (!updatedProfile) {
+            return res.status(404).json({ message: 'Perfil não encontrado.' });
+        }
+
+        res.status(200).json({
+            message: 'Perfil atualizado com sucesso!',
+            user: updatedProfile
+        });
+
+    } catch (err) {
+        console.error('Erro ao atualizar perfil no MongoDB:', err.message);
+
+        if (err.kind === 'ObjectId') {
+            return res.status(400).json({ message: 'ID de usuário fornecido é inválido.' });
+        }
+
+
+        res.status(500).json({ message: 'Erro interno do servidor ao atualizar o perfil.' });
+    }
+});
+
+app.post(`/events`, async (req, res) => {
+    try {
+        const evento = req.body;
+        console.log(`[Event Bus] Evento Recebido: Tipo=${evento.type}, Dados=`, evento.payload);
+
+        if (eventHandlers[evento.type]) {
+            await eventHandlers[evento.type](evento.payload);
+        } else {
+            console.warn(`[!] Tipo de evento desconhecido: ${evento.type}. Nenhuma função de tratamento encontrada.`);
+        }
+    } catch (e) {
+        console.error('Erro ao processar evento do Event Bus:', e);
+    } finally {
+        res.end();
     }
 });
 
