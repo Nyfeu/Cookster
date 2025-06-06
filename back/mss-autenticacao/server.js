@@ -155,7 +155,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     await user.save()
 
     try {
-      await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
+      await axios.post(`${EVENT_BUS_URL}/events`, {
         type: 'UserRegistered',
         payload: {
           id: user.id,

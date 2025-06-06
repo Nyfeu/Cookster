@@ -95,7 +95,7 @@ app.post('/ingredients', checkAuthenticated, async (req, res) => {
     await pantry.save()
 
     try {
-      await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
+      await axios.post(`${EVENT_BUS_URL}/events`, {
         type: 'IngredientAdded',
         payload: {
           userId: userId,
@@ -169,7 +169,7 @@ app.delete('/ingredients', checkAuthenticated, async (req, res) => {
     await pantry.save()
 
     try {
-      await axios.post(`http://localhost:${EVENT_BUS_PORT}/events`, {
+      await axios.post(`${EVENT_BUS_URL}/events`, {
         type: 'IngredientRemoved',
         payload: {
           userId: userId,
