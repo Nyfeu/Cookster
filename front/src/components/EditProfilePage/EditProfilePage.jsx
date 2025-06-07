@@ -136,6 +136,8 @@ const EditProfilePage = () => {
 
 
     return (
+        <div className="edit-page">
+
         <div className="container light-style flex-grow-1 container-p-y">
             <h4 className="font-weight-bold py-3 mb-4">
                 Account settings
@@ -208,6 +210,7 @@ const EditProfilePage = () => {
                 <button type="button" className="btn btn-primary" onClick={handleSaveChanges}>Salvar Alterações</button>&nbsp;
                 <button type="button" className="btn btn-default" onClick={cancel}>Cancel</button>
             </div>
+        </div>
         </div>
     )
 }
