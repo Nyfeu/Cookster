@@ -7,12 +7,11 @@ import NavBar_Auth from '../NavBar_Auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const PageProfile = () => {
-    const location = useLocation();
-    const token = location.state?.token;
-    const userId = location.state?.user.id
-
+    const comparador = JSON.parse(localStorage.getItem('user')).id
+    const userId = useParams().userId
 
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -78,8 +77,9 @@ const PageProfile = () => {
             setBio(profile.bio);
             setProfissao(profile.profissao);
             setFotoPerfil(profile.fotoPerfil);
-            setUsername(profile.userId.name);
-            setEmail(profile.userId.email)
+            setUsername(profile.name);
+            setEmail(profile.email)
+            setDescricao(profile.descricao)
         }
     }, [profile]); 
 
@@ -101,6 +101,8 @@ const PageProfile = () => {
     console.log(profile)
 
     return (
+        <div className="profile-page">
+
         <div className="header__wrapper">
             <NavBar_Auth />
             <div className='banner'></div>
@@ -119,18 +121,13 @@ const PageProfile = () => {
 
                 <div className="right__col">
                     <div className="seguir">
-                        <Link to="/profile">
+                        {(userId == comparador) ?
+                        <Link to={`/settings/${userId}`}>
                             <FontAwesomeIcon icon={faGear} className="gear-icon" />
                         </Link>
-
-                        <button>
-                            {
-                                (token) ?
-                                    "Editar Perfil"
-                                    :
-                                    "Seguir"
-                            }
-                        </button>
+                        :
+                        <button>Seguir</button>
+                        }
                     </div>
                     <nav>
                         <ul>
@@ -140,6 +137,7 @@ const PageProfile = () => {
                     <PainelReceitas />
                 </div>
             </div>
+        </div>
         </div>
     );
 };

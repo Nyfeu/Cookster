@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import "./SidePanel.css";
 
 export default function SidePanel({ show, onClose, ingredientes, setIngredientes, onPantryChange }) {
-
   const [searchTerm, setSearchTerm] = useState("");
   const [sugestoes, setSugestoes] = useState([]);
 
+  // This useEffect fetches suggestions based on searchTerm
   useEffect(() => {
-
     const fetchSugestoes = async () => {
 
       if (searchTerm.trim().length < 2) {
@@ -42,32 +41,39 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
 
         const data = await res.json();
         setSugestoes(data.sugestoes || []);
-
       } catch (err) {
-
         console.error("Erro ao buscar sugestões:", err);
         setSugestoes([]);
-
       }
-
     };
 
     fetchSugestoes();
-
   }, [searchTerm]);
 
-  const adicionarIngrediente = async (ingrediente) => {
+  // *** NEW useEffect to ensure ingredients are rendered when panel opens ***
+  // This useEffect will run when the 'show' prop changes.
+  // When 'show' becomes true, it effectively re-renders the component with the
+  // latest 'ingredientes' prop passed from DespensaSection.
+  useEffect(() => {
+    if (show) {
+      // You don't need to fetch again here because DespensaSection already fetches
+      // and sets 'ingredientes' before 'showPanel' is set to true.
+      // However, if you wanted to guarantee a fresh fetch *every time* the panel opens,
+      // regardless of whether DespensaSection fetched them, you could add it here.
+      // For now, simply relying on the prop is sufficient given your current setup.
+      console.log("SidePanel opened. Current ingredients:", ingredientes);
+    }
+  }, [show, ingredientes]); // Depend on 'show' and 'ingredientes'
 
+  const adicionarIngrediente = async (ingrediente) => {
     const token = localStorage.getItem("token");
 
-    // Basic validation for the ingredient data
     if (!ingrediente || !ingrediente.nome || !ingrediente.categoria) {
       console.error("Dados do ingrediente inválidos para adicionar.");
       return;
     }
 
     try {
-      // **CRITICAL FIX:** Changed port from 4000 to 6000 for your mss-pantry service
       const res = await fetch("http://localhost:2000/pantry/ingredients", {
         method: "POST",
         headers: {
@@ -78,32 +84,22 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
       });
 
       if (!res.ok) {
-        // If the response is not OK, try to parse the error message from the backend
         const errorData = await res.json();
         console.error("Erro ao adicionar ingrediente:", errorData.error || "Erro desconhecido");
-        return; // Stop execution if there's an error
+        return;
       }
 
-      // **OPTIMIZATION:** Your mss-pantry POST endpoint already returns the full updated list.
-      // So, we use that directly instead of making another GET request.
       const novaListaDeIngredientes = await res.json();
       setIngredientes(novaListaDeIngredientes);
       if (onPantryChange) onPantryChange();
 
-      // 🧼 Clears the search bar and hides the dropdown after adding
       setSearchTerm("");
       setSugestoes([]);
-
     } catch (err) {
-
-      // Catch any network errors or issues before parsing the response
       console.error("Erro geral na requisição de adicionar ingrediente:", err);
-
     }
-
   };
 
-  // --- NOVA FUNÇÃO PARA REMOVER INGREDIENTE ---
   const removerIngrediente = async (ingredienteParaRemover) => {
     const token = localStorage.getItem("token");
 
@@ -112,22 +108,19 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
       return;
     }
 
-    // O mss-pantry permite a categoria opcional no DELETE,
-    // mas é melhor enviá-la para exclusão exata se disponível.
     const body = {
       nome: ingredienteParaRemover.nome,
-      categoria: ingredienteParaRemover.categoria // Envie a categoria se tiver
+      categoria: ingredienteParaRemover.categoria,
     };
 
     try {
-      // ** Porta correta: 3001 para o mss-pantry DELETE **
       const res = await fetch("http://localhost:2000/pantry/ingredients", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(body), // Corpo com nome e categoria
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
@@ -136,32 +129,20 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
         return;
       }
 
-      // Se a remoção foi bem-sucedida, atualize a lista localmente
-      // Você pode refazer um GET para ter a lista mais recente, ou
-      // filtrar localmente se tiver certeza que o backend está consistente.
-      // Optamos por filtrar localmente para otimizar, como o backend já valida a remoção.
-      const listaAtualizadaLocalmente = ingredientes.filter(ing =>
-        !(ing.nome === ingredienteParaRemover.nome && ing.categoria === ingredienteParaRemover.categoria)
+      const listaAtualizadaLocalmente = ingredientes.filter(
+        (ing) => !(ing.nome === ingredienteParaRemover.nome && ing.categoria === ingredienteParaRemover.categoria)
       );
       setIngredientes(listaAtualizadaLocalmente);
       if (onPantryChange) onPantryChange();
 
-      // Opcional: feedback visual de sucesso
       console.log(`Ingrediente '${ingredienteParaRemover.nome}' removido com sucesso!`);
-
     } catch (err) {
-
       console.error("Erro geral na requisição de remover ingrediente:", err);
-
     }
-    
   };
 
-  // const ingredientesValidos = Array.isArray(ingredientes) ? ingredientes : [];
-
-  // This grouping logic is already correct and will display categories
   const agrupadoPorCategoria = (ingredientes || []).reduce((acc, item) => {
-    const cat = item.categoria || "Outros"; // Ensures ingredients without a category fall into "Outros"
+    const cat = item.categoria || "Outros";
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(item);
     return acc;
@@ -175,7 +156,9 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
 
   return (
     <div className={`side-panel ${show ? "open" : ""}`}>
-      <button className="close-btn" onClick={onClose}>×</button>
+      <button className="close-btn" onClick={onClose}>
+        ×
+      </button>
       <h4 className="mb-3">Sua Despensa</h4>
 
       <div className="search-wrapper mb-1">
@@ -196,7 +179,6 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
               key={index}
               className="dropdown-item d-flex align-items-center"
               onClick={() => {
-                // When an item is clicked, add it and clear the search/suggestions
                 adicionarIngrediente(item);
               }}
               style={{ cursor: "pointer" }}
@@ -219,7 +201,7 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
           <div key={categoria} className={`categoria-section mb-4 ${idx !== 0 ? "com-linha" : ""}`}>
             <h6 className="text-uppercase fw-bold">{categoria}</h6>
             <ul className="list-unstyled">
-              {itemsOrdenados.map((item, index) => ( // Usar itemsOrdenados aqui
+              {itemsOrdenados.map((item, index) => (
                 <li
                   key={index}
                   className="ingredient-item"

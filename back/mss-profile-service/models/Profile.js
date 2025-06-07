@@ -3,9 +3,7 @@ const mongoose = require('mongoose');
 const UserProfileSchema = new mongoose.Schema({
     userId: { 
         type: String,
-        ref: 'users',
-        required: true,
-        unique: true
+        default:  ''
     },
     bio: {
         type: String,
@@ -19,6 +17,18 @@ const UserProfileSchema = new mongoose.Schema({
         type: String, 
         default: ''
     },
+    email: {
+        type: String,
+        default: ''
+    },
+    name: {
+        type: String,
+        default: ''
+    },
+    descricao: {
+        type: String,
+        default: ''
+    }
 });
 
 module.exports = mongoose.model('profile', UserProfileSchema);

@@ -8,7 +8,6 @@ import { Toast } from 'primereact/toast';
 
 const NavBar_Auth = () => {
 
-    const userToken = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'))
 
     const navigate = useNavigate();
@@ -43,8 +42,7 @@ const NavBar_Auth = () => {
                     </a>
                 </div>
                 
-                <Link to="/profile" className="profile-icon"
-                 state={{ token: userToken, user: user }}>
+                <Link to={`/profile/${user.id}`} className="profile-icon">
                     <FaUserCircle size={28} />
                 </Link>
             </div>
