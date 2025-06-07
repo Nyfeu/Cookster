@@ -1,6 +1,6 @@
 import React from 'react'
 
-const PainelReceitas = (props) => {
+const PainelReceitas = () => {
 
     return (
         <div className="photos">

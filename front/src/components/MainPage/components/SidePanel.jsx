@@ -5,7 +5,6 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
   const [searchTerm, setSearchTerm] = useState("");
   const [sugestoes, setSugestoes] = useState([]);
 
-  // This useEffect fetches suggestions based on searchTerm
   useEffect(() => {
     const fetchSugestoes = async () => {
 
@@ -50,20 +49,11 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
     fetchSugestoes();
   }, [searchTerm]);
 
-  // *** NEW useEffect to ensure ingredients are rendered when panel opens ***
-  // This useEffect will run when the 'show' prop changes.
-  // When 'show' becomes true, it effectively re-renders the component with the
-  // latest 'ingredientes' prop passed from DespensaSection.
   useEffect(() => {
     if (show) {
-      // You don't need to fetch again here because DespensaSection already fetches
-      // and sets 'ingredientes' before 'showPanel' is set to true.
-      // However, if you wanted to guarantee a fresh fetch *every time* the panel opens,
-      // regardless of whether DespensaSection fetched them, you could add it here.
-      // For now, simply relying on the prop is sufficient given your current setup.
       console.log("SidePanel opened. Current ingredients:", ingredientes);
     }
-  }, [show, ingredientes]); // Depend on 'show' and 'ingredientes'
+  }, [show, ingredientes]); 
 
   const adicionarIngrediente = async (ingrediente) => {
     const token = localStorage.getItem("token");

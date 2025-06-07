@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 const AuthSuccess = () => {
     const navigate = useNavigate();
-    const hasProcessed = useRef(false); // 🔒 controla se já processou
+    const hasProcessed = useRef(false); 
 
     useEffect(() => {
-        if (hasProcessed.current) return; // evita execução duplicada
+        if (hasProcessed.current) return; 
         hasProcessed.current = true;
 
         const params = new URLSearchParams(window.location.search);
@@ -21,7 +21,7 @@ const AuthSuccess = () => {
         if (token) {
             localStorage.setItem('token', token);
             alert(`Bem-vindo, ${name || 'usuário'}!`);
-            navigate('/login'); // voltar para a tela de login por enquanto
+            navigate('/login'); 
         } else {
             alert('Erro ao autenticar com rede social.');
             navigate('/login');

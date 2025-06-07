@@ -16,7 +16,7 @@ export default class AuthForm extends Component {
         super(props);
         const mode = props.sign_in_mode;
         this.state = {
-            sign_in: mode === 'sign_in' // Corrigido para refletir o modo corretamente
+            sign_in: mode === 'sign_in'
         };
     }
 
