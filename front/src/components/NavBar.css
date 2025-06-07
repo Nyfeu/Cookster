@@ -134,6 +134,6 @@
 .p-confirm-dialog .p-dialog-header-close {
   position: absolute;
   left: auto;
-  right: 1rem; /* remove o posicionamento padrão */
+  right: 1rem; 
   top: 1rem;
 }

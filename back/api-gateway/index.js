@@ -10,8 +10,11 @@ const cors = require('cors');
 const axios = require('axios');
 
 const app = express();
-app.use(morgan('combined')); // Logging de requisições
 
+// Logging de requisições
+app.use(morgan('combined')); 
+
+// Middleware para debugging de URLs
 app.use((req, res, next) => {
     console.log(`[API_GATEWAY_DEBUG] Original URL: ${req.originalUrl}, Path: ${req.path}`);
     next();

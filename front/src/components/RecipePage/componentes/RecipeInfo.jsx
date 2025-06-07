@@ -6,7 +6,7 @@ const RecipeInfo = (props) => {
   return (
     <div className="recipe-hero-container"> 
       <img
-        src="https://lh6.googleusercontent.com/proxy/ykA2OCzir59Xamqk1awJ_17k3uYaXNDD8NWurWhlkuZIlEqJqlI3heuFsX6MHA4FLybzFEh64l_AWWYmKkNyTyNKX1VkhyMgOvbwfljtZS3m0-lXj4OOVqRsUDjSMttIYku7kleQYwsON_dOifBk5FuXjX7iLG_xKkGxnsi7CoO4cKeDKxB4M0aK8FpCLIMq7Glbd3me" // OU {props.image_url} vindo do seu estado de receita
+          src={props.imageUrl}
         className="img recipe-hero-img"
         alt="recipe"
       />

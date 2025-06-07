@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import './FeedSection.css'
+import { Link } from "react-router-dom";
 
 export default function FeedSection() {
 
@@ -78,7 +79,9 @@ export default function FeedSection() {
                     '📷'
                   )}
                 </div>
-                <h5 className="fw-bold">{recipe.name}</h5>
+                <Link to={`/recipe/${recipe._id}`} className="text-decoration-none text-dark">
+                  <h5 className="fw-bold">{recipe.name}</h5>
+                </Link>
                 {/* Container para a descrição com altura fixa */}
                 <div className="description-container">
                   <p className="text-muted small description-text">

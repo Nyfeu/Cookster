@@ -114,6 +114,7 @@ a {
   justify-content: space-between;
   position: relative;
   margin: 25px 0;
+  gap: 10px;
 }
 .header__wrapper .cols__container .left__col .about li {
   display: flex;

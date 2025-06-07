@@ -31,8 +31,8 @@ function App() {
         <Route path="/recipe/:idReceita" element={<ProtectedRoute><RecipePage /></ProtectedRoute>} />
         <Route path="/login" element={<PublicRoute><AuthForm sign_in_mode="sign_in" /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><AuthForm sign_in_mode="sign_up" /></PublicRoute>} />
-        <Route path="/settings/:userId" element={<EditProfilePage />}></Route>
-        <Route path="/auth-success" element={<AuthSuccess />} />
+        <Route path="/settings/:userId" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>}></Route>
+        <Route path="/auth-success" element={<ProtectedRoute><AuthSuccess /></ProtectedRoute>} />
       </Routes>
     </Router>
   )

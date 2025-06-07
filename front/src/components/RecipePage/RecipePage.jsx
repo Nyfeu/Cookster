@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { Component } from 'react'
 import './RecipePage.css'
 import NavBar_Auth from '../NavBar_Auth'
@@ -66,7 +67,7 @@ const RecipePage = () => {
     };
 
     fetchRecipe();
-  }, [idReceita]); // O efeito roda novamente se o ID na URL mudar
+  }, [idReceita]);
 
   useEffect(() => {
         if (recipeData) {
@@ -113,8 +114,9 @@ const RecipePage = () => {
               description = {description}
               prep_time = {prepTime}
               cook_time = {cookTime}
-              serving={servings}
-              />
+              serving= {servings}
+              imageUrl = {imageUrl}
+            />
           </section>
 
           <section className="recipe-content">

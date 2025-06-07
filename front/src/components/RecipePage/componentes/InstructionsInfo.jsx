@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react'
 import '../RecipePage.css'
 import SingleInstruction from './SingleInstruction'
