@@ -59,4 +59,93 @@ O Cookster contribui diretamente com o ODS 12 (Consumo e Produção Responsávei
 
 🌐 **Backend (Arquitetura de Microsserviços):**
 - Node.js
+- FastAPI
+- Python
 - Express.js
+
+## ▶️ Como Executar o Projeto
+
+Para colocar o Cookster em funcionamento, você precisará iniciar todos os microsserviços do back-end e rodar o frontend.
+
+### 1. Clonar o Repositório
+
+Primeiro, clone o repositório do Cookster para sua máquina local:
+
+```bash
+git clone https://github.com/Nyfeu/Cookster.git
+cd Cookster
+```
+
+### 2. Inicializar Serviços do Back-end
+
+Para cada serviço, deve-se instalar as depedências usando npm e colocá-lo em execução:
+- api-gateway
+- event-bus
+- mss-autenticacao
+- mss-ingredient-classifier (Python)
+- mss-pantry
+- mss-profile-service
+- mss-recipe
+
+Deve-se executar os seguintes comandos:
+
+```bash
+cd back/mss-a-ser-inicializado
+npm install
+npm run devStart
+```
+
+> ⚠️ Deve-se inicializar `event-bus` antes dos demais serviços. Para que eles possam se registrar para receber eventos do barramento.
+
+Com exceção de mss-ingredient-classifier que foi desenvolvido em Python. A metodologia para execução dele é descrita no README.md em [mss-ingredientes-classifier](https://github.com/Nyfeu/Cookster/back/mss-ingredient-classifier).
+
+Precisa-se também, colocar um arquivo `.env` para cada serviço, como o seguinte:
+```
+JWT_SECRET=sua_chave_secreta_jwt
+GOOGLE_CLIENT_ID=seu_client_id_google
+GOOGLE_CLIENT_SECRET=seu_client_secret_google
+FACEBOOK_CLIENT_ID=seu_client_id_facebook
+FACEBOOK_CLIENT_SECRET=seu_client_secret_facebook
+DB_USER=seu_db_user
+DB_PASS=seu_db_password
+```
+
+Caso se opte por utilizar containers Docker, um único arquivo `.env` é necessário na raíz.
+
+### 3. Inicializar Servidor Front-end
+
+```bash 
+cd front
+npm install
+npm run dev
+```
+
+### 4. Docker-Compose (Alternativamente)
+
+Para evitar ter que inicializar cada serviço individualmente, criou-se um arquivo `docker-compose.yml` na raiz do projeto, que realiza o deploy de todos os serviços - exceto o front-end. 
+
+Para isso, é necessário criar (build) as imagens e inicializar os containers. Pode-se realizar isso da seguinte forma:
+
+```bash
+docker-compose up --build
+```
+
+ou
+
+```bash
+docker-compose build
+docker-compose up
+```
+
+Deve-se adicionar à raíz do projeto o arquivo `.env`:
+```
+JWT_SECRET=sua_chave_secreta_jwt
+GOOGLE_CLIENT_ID=seu_client_id_google
+GOOGLE_CLIENT_SECRET=seu_client_secret_google
+FACEBOOK_CLIENT_ID=seu_client_id_facebook
+FACEBOOK_CLIENT_SECRET=seu_client_secret_facebook
+DB_USER=seu_db_user
+DB_PASS=seu_db_password
+```
+
+---
