@@ -1,13 +1,23 @@
-FROM python:3.11-slim
+# Usa uma imagem Python leve como base
+FROM python:3.10-slim
 
+# Define o diretório de trabalho dentro do container
 WORKDIR /app
 
-COPY requirements.txt .
-COPY script.py .
-COPY data/ ./data/
+# Copia o arquivo requirements.txt
+COPY requirements.txt ./
 
-# Instala as dependências do projeto
+# Instala as dependências Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expõe a porta 8000 e executa o servidor com auto-reload (--reload)
-CMD ["uvicorn", "script:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Copia o restante do código da aplicação
+COPY . .
+
+# Cria o diretório para ChromaDB persistência
+RUN mkdir -p ./data/chroma
+
+# Expõe a porta que a aplicação FastAPI escuta
+EXPOSE 8000
+
+# Comando para iniciar a aplicação usando uvicorn em modo de produção
+CMD ["uvicorn", "script:app", "--host", "0.0.0.0", "--port", "8000"]

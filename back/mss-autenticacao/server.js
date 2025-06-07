@@ -22,9 +22,11 @@ const dbUser = process.env.DB_USER
 const dbPass = process.env.DB_PASS
 
 // Configurações do servidor
-const APP_PORT = 3000
+const APP_PORT = process.env.SERVICE_PORT || 3000;
 const SERVICE_ID = 'mss-autenticacao';
-const EVENT_BUS_URL = 'http://localhost:4000';
+const EVENT_BUS_URL = process.env.EVENT_BUS_URL || 'http://localhost:4000';
+const SERVICE_URL = process.env.SERVICE_URL || 'http://localhost';
+const SERVICE_FULL_URL = SERVICE_URL + ':' + APP_PORT;
 
 // Configuração do MongoDB
 const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net/mss-autenticacao?retryWrites=true&w=majority&appName=Cluster0`
@@ -215,7 +217,7 @@ mongoose.connect(mongoURI)
 
         await axios.post(`${EVENT_BUS_URL}/register`, {
           serviceId: SERVICE_ID,
-          url: `http://localhost:${APP_PORT}/events`
+          url: `${SERVICE_FULL_URL}/events`
         });
 
         console.log('📡 EVENT-BUS: [REGISTERED]');

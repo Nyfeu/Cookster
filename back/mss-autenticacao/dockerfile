@@ -1,0 +1,20 @@
+# Usa uma imagem Node.js leve como base
+FROM node:18-slim
+
+# Define o diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copia os arquivos package.json e package-lock.json
+COPY package*.json ./
+
+# Instala as dependências
+RUN npm install
+
+# Copia todo o restante do código da aplicação
+COPY . .
+
+# Expõe a porta que a aplicação Express escuta
+EXPOSE 3000
+
+# Comando para iniciar a aplicação
+CMD ["node", "server.js"]

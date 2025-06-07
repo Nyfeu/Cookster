@@ -9,7 +9,7 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
   useEffect(() => {
 
     const fetchSugestoes = async () => {
-      
+
       if (searchTerm.trim().length < 2) {
         setSugestoes([]);
         return;
@@ -17,8 +17,29 @@ export default function SidePanel({ show, onClose, ingredientes, setIngredientes
 
       try {
 
-        // This is still going to your suggestion service on port 8000, which is correct.
-        const res = await fetch(`http://localhost:8000/sugestoes?termo=${encodeURIComponent(searchTerm)}`);
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.warn("Token não encontrado. Não é possível buscar sugestões.");
+            setSugestoes([]);
+            return;
+        }
+
+        const res = await fetch(`http://localhost:2000/ingredient/sugestoes?termo=${encodeURIComponent(searchTerm)}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}` 
+                }
+            });
+        
+        if (!res.ok) {
+
+                // Se a resposta não for OK, tente ler a mensagem de erro do backend
+                const errorData = await res.json();
+                console.error("Erro ao buscar sugestões:", errorData.error || `Erro HTTP: ${res.status}`);
+                setSugestoes([]);
+                return;
+                
+            }
+
         const data = await res.json();
         setSugestoes(data.sugestoes || []);
 

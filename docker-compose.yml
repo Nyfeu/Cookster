@@ -1,0 +1,140 @@
+version: '3.8'
+
+services:
+  event-bus:
+    build: ./back/event-bus
+    ports:
+      - "4000:4000"
+    networks:
+      - cookster-backend-network
+    restart: always
+    healthcheck:                                                   # Adiciona um healthcheck para o event-bus
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]  # Testa o endpoint /health
+      interval: 10s                                                # Verifica a cada 10 segundos
+      timeout: 5s                                                  # Timeout de 5 segundos para o teste
+      retries: 5                                                   # Tenta 5 vezes antes de considerar o serviço "unhealthy"
+      start_period: 20s                                            # Dá 20 segundos para o serviço iniciar antes de começar os testes
+
+  mss-autenticacao:
+    build: ./back/mss-autenticacao
+    ports:
+      - "3000:3000"
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      JWT_SECRET: ${JWT_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      FACEBOOK_CLIENT_ID: ${FACEBOOK_CLIENT_ID}
+      FACEBOOK_CLIENT_SECRET: ${FACEBOOK_CLIENT_SECRET}
+      EVENT_BUS_URL: http://event-bus:4000
+      SERVICE_PORT: 3000
+      SERVICE_URL: http://mss-autenticacao
+    depends_on:
+      event-bus: # Agora depende da saúde do event-bus
+        condition: service_healthy
+    networks:
+      - cookster-backend-network
+    restart: always
+
+  mss-ingredient-classifier:
+    build: ./back/mss-ingredient-classifier
+    ports:
+      - "8000:8000"
+    environment:
+      EMBEDDING_MODEL: "all-MiniLM-L6-v2"
+      CHROMA_DB_PATH: "/app/data/chroma"
+      CORS_ORIGINS: "http://localhost"
+    networks:
+      - cookster-backend-network
+    volumes:
+      - chroma_data:/app/data/chroma
+    restart: always
+
+  mss-pantry:
+    build: ./back/mss-pantry
+    ports:
+      - "3001:3001"
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      EVENT_BUS_URL: http://event-bus:4000
+      SERVICE_PORT: 3001
+      SERVICE_URL: http://mss-pantry
+    depends_on:
+      event-bus: # Agora depende da saúde do event-bus
+        condition: service_healthy
+    networks:
+      - cookster-backend-network
+    restart: always
+
+  mss-profile-service:
+    build: ./back/mss-profile-service
+    ports:
+      - "5000:5000"
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      EVENT_BUS_URL: http://event-bus:4000
+      SERVICE_PORT: 5000
+      SERVICE_URL: http://mss-profile-service
+    depends_on:
+      event-bus: # Agora depende da saúde do event-bus
+        condition: service_healthy
+    networks:
+      - cookster-backend-network
+    restart: always
+
+  mss-recipe:
+    build: ./back/mss-recipe
+    ports:
+      - "9000:9000"
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      EVENT_BUS_URL: http://event-bus:4000
+      SERVICE_PORT: 9000
+      SERVICE_URL: http://mss-recipe
+    depends_on:
+      event-bus: # Agora depende da saúde do event-bus
+        condition: service_healthy
+    networks:
+      - cookster-backend-network
+    restart: always
+
+  api-gateway:
+    build: ./back/api-gateway
+    ports:
+      - "2000:2000"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVICE_URL: http://mss-autenticacao:3000
+      INGREDIENT_SERVICE_URL: http://mss-ingredient-classifier:8000
+      PROFILE_SERVICE_URL: http://mss-profile-service:5000
+      PANTRY_SERVICE_URL: http://mss-pantry:3001
+      RECIPE_SERVICE_URL: http://mss-recipe:9000
+    depends_on:
+      event-bus:
+        condition: service_healthy
+      mss-autenticacao:
+        condition: service_started # mss-autenticacao não tem um healthcheck de app
+      mss-ingredient-classifier:
+        condition: service_started
+      mss-pantry:
+        condition: service_started # mss-pantry não tem um healthcheck de app
+      mss-profile-service:
+        condition: service_started # mss-profile-service não tem um healthcheck de app
+      mss-recipe:
+        condition: service_started # mss-recipe não tem um healthcheck de app
+    networks:
+      - cookster-backend-network
+    restart: always
+
+
+networks:
+  cookster-backend-network:
+    driver: bridge
+
+volumes:
+  chroma_data:
+    driver: local

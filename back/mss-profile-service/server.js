@@ -12,10 +12,14 @@ const User = require('./models/User');
 
 const app = express();
 
-const APP_PORT = 5000;
+// Configurações do servidor
+const APP_PORT = process.env.SERVICE_PORT || 5000;
 const SERVICE_ID = 'mss-profile-service';
-const EVENT_BUS_URL = 'http://localhost:4000';
+const EVENT_BUS_URL = process.env.EVENT_BUS_URL || 'http://localhost:4000';
+const SERVICE_URL = process.env.SERVICE_URL || 'http://localhost';
+const SERVICE_FULL_URL = SERVICE_URL + ':' + APP_PORT;
 
+// Configuração do MongoDB
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
 const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.fbrwz1j.mongodb.net/mss-profile-service?retryWrites=true&w=majority&appName=Cluster0`;
@@ -115,7 +119,7 @@ mongoose.connect(mongoURI)
 
                 await axios.post(`${EVENT_BUS_URL}/register`, {
                     serviceId: SERVICE_ID,
-                    url: `http://localhost:${APP_PORT}/events`
+                    url: `${SERVICE_FULL_URL}/events`
                 });
 
                 console.log('📡 EVENT-BUS: [REGISTERED]');

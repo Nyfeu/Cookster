@@ -16,8 +16,10 @@ app.use(express.json());
 
 // Configurações
 const SERVICE_ID = 'mss-recipe';
-const APP_PORT = 9000;
-const EVENT_BUS_URL = 'http://localhost:4000';
+const APP_PORT = process.env.SERVICE_PORT || 9000;
+const EVENT_BUS_URL = process.env.EVENT_BUS_URL || 'http://localhost:4000';
+const SERVICE_URL = process.env.SERVICE_URL || 'http://localhost';
+const SERVICE_FULL_URL = SERVICE_URL + ':' + APP_PORT;
 
 // CORS
 app.use(cors({
@@ -53,7 +55,7 @@ mongoose.connect(mongoURI)
 
                 await axios.post(`${EVENT_BUS_URL}/register`, {
                     serviceId: SERVICE_ID,
-                    url: `http://localhost:${APP_PORT}/events` 
+                    url: `${SERVICE_FULL_URL}/events`
                 });
 
                 console.log('📡 EVENT-BUS: [REGISTERED]');

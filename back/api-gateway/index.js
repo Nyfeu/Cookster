@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 
 // 1. Configuração de CORS para permitir requisições do frontend
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -28,29 +28,29 @@ app.use(cors({
 const services = {
 
     auth: {
-        target: 'http://localhost:3000',
+        target: process.env.AUTH_SERVICE_URL || 'http://localhost:3000',
         publicRoutes: ['/register', '/login'],
         requiresUserId: false
     },
 
     ingredient: {
-        target: 'http://localhost:8000',
+        target: process.env.INGREDIENT_SERVICE_URL || 'http://localhost:8000',
         publicRoutes: ['/health'],
         requiresUserId: false
     },
 
     profile: {
-        target: 'http://localhost:5000',
+        target: process.env.PROFILE_SERVICE_URL || 'http://localhost:5000',
         requiresUserId: true
     },
 
     pantry:{
-        target: 'http://localhost:3001',
+        target: process.env.PANTRY_SERVICE_URL || 'http://localhost:3001',
         requiresUserId: true
     },
     
     recipe: {
-        target: 'http://localhost:9000',
+        target: process.env.RECIPE_SERVICE_URL || 'http://localhost:9000',
         requiresUserId: true
     }
 

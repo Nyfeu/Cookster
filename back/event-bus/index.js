@@ -27,6 +27,17 @@ const baseEventos = {
 // Função auxiliar para atrasar a execução
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+// Endpoint de saúde para verificar se o Event Bus está funcionando
+app.get('/health', (_, res) => {
+
+    res.status(200).send({
+        status: 'online', 
+        subscribers: subscribers.size, 
+        events: baseEventos.events.length
+    });
+    
+});
+
 // Endpoint para registro de serviços
 app.post('/register', async (req, res) => {
 
