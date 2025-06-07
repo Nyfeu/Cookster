@@ -22,9 +22,9 @@ const PainelInfos = (props) => {
 
             <ul className="about">
                 <li><span>{props.seguidores}</span>Seguidores</li>
-                <div></div>
+                
                 <li><span>{props.seguindo}</span>Seguindo</li>
-                <div className='p-2'></div>
+                
                 <li><span >{props.posts}</span>Posts</li>
             </ul>
 

@@ -101,6 +101,8 @@ const PageProfile = () => {
     console.log(profile)
 
     return (
+        <div className="profile-page">
+
         <div className="header__wrapper">
             <NavBar_Auth />
             <div className='banner'></div>
@@ -135,6 +137,7 @@ const PageProfile = () => {
                     <PainelReceitas />
                 </div>
             </div>
+        </div>
         </div>
     );
 };
