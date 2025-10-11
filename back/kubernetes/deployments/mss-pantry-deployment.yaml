@@ -1,0 +1,43 @@
+# Deployment para o Microsserviço de Despensa (Pantry)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mss-pantry-deployment
+  labels:
+    app: mss-pantry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mss-pantry
+  template:
+    metadata:
+      labels:
+        app: mss-pantry
+    spec:
+      containers:
+      - name: mss-pantry-container
+        image: leoramadio/mss-pantry:latest # Sua imagem no Docker Hub
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3001
+        env:
+          # Variáveis de DB injetadas do Secret (cookster-auth-secrets)
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: DB_USER
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: DB_PASS
+          # URL do Event Bus (Comunicação interna via Service Name do Kubernetes)
+        - name: EVENT_BUS_URL
+          value: "http://event-bus-service:4000"
+        - name: SERVICE_PORT
+          value: "3001"
+        - name: SERVICE_URL
+          value: "http://mss-pantry-service" # Ajustado para o nome do Service interno
+        # O CMD do Dockerfile é usado automaticamente (node server.js)

@@ -1,0 +1,18 @@
+# Service do tipo NodePort para acesso EXTERNO ao API Gateway
+# Você precisará usar o IP do seu nó do Kubernetes:porta_alta_gerada
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway-service
+  labels:
+    app: api-gateway
+spec:
+  selector:
+    app: api-gateway
+  type: NodePort # Permite acesso externo
+  ports:
+    - name: http-api
+      protocol: TCP
+      port: 2000 # Porta interna do Service
+      targetPort: 2000 # Porta do container
+      # nodePort: <PORTA ALTA ENTRE 30000-32767 SERÁ ESCOLHIDA>

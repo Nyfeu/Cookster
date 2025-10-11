@@ -1,0 +1,43 @@
+# Deployment para o Microsserviço de Receitas (Recipe)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mss-recipe-deployment
+  labels:
+    app: mss-recipe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mss-recipe
+  template:
+    metadata:
+      labels:
+        app: mss-recipe
+    spec:
+      containers:
+      - name: mss-recipe-container
+        image: leoramadio/mss-recipe:latest # Sua imagem no Docker Hub
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9000
+        env:
+          # Variáveis de DB injetadas do Secret (cookster-auth-secrets)
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: DB_USER
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: DB_PASS
+          # URL do Event Bus (Comunicação interna via Service Name do Kubernetes)
+        - name: EVENT_BUS_URL
+          value: "http://event-bus-service:4000"
+        - name: SERVICE_PORT
+          value: "9000"
+        - name: SERVICE_URL
+          value: "http://mss-recipe-service"
+        # O CMD do Dockerfile é usado automaticamente (node index.js)

@@ -1,0 +1,17 @@
+# Service do tipo ClusterIP para comunicação INTERNA com o MSS Recipe
+# URL interna: http://mss-recipe-service:9000
+apiVersion: v1
+kind: Service
+metadata:
+  name: mss-recipe-service
+  labels:
+    app: mss-recipe
+spec:
+  selector:
+    app: mss-recipe
+  ports:
+    - name: http-recipe
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+  type: ClusterIP

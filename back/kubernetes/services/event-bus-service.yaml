@@ -1,0 +1,17 @@
+# Service do tipo ClusterIP para comunicação INTERNA
+# Este é o nome que os outros microsserviços usam (EVENT_BUS_URL: http://event-bus-service:4000)
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-bus-service # Nome interno que será usado na comunicação entre MSS
+  labels:
+    app: event-bus
+spec:
+  selector:
+    app: event-bus # Seleciona os Pods criados pelo Deployment do Event Bus
+  ports:
+    - name: http-event-bus
+      protocol: TCP
+      port: 4000 # Porta do Service (interna do Cluster)
+      targetPort: 4000 # Porta do contêiner
+  type: ClusterIP # Acessível apenas dentro do cluster

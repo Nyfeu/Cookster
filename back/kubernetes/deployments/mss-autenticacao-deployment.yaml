@@ -1,0 +1,70 @@
+# Deployment para o Microsserviço de Autenticação
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mss-autenticacao-deployment
+  labels:
+    app: mss-autenticacao
+spec:
+  replicas: 1 # Começamos com uma réplica; ajuste conforme a necessidade de escalabilidade
+  selector:
+    matchLabels:
+      app: mss-autenticacao
+  template:
+    metadata:
+      labels:
+        app: mss-autenticacao
+    spec:
+      containers:
+      - name: mss-autenticacao-container
+        image: sua-conta-dockerhub/mss-autenticacao:latest # TROCAR PELA SUA IMAGEM
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+          # Variáveis de ambiente carregadas do Secret
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: DB_USER
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: DB_PASS
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: JWT_SECRET
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: GOOGLE_CLIENT_ID
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: GOOGLE_CLIENT_SECRET
+        - name: FACEBOOK_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: FACEBOOK_CLIENT_ID
+        - name: FACEBOOK_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: FACEBOOK_CLIENT_SECRET
+
+          # Variáveis de comunicação interna - ajustadas para o nome do serviço Kubernetes
+        - name: EVENT_BUS_URL
+          value: "http://event-bus-service:4000" 
+        - name: SERVICE_PORT
+          value: "3000"
+        - name: SERVICE_URL
+          value: "http://mss-autenticacao-service" # Nome do Service interno
+        
+        # O Kubernetes garante o restart do contêiner se ele falhar, similar ao restart: always do Docker Compose.

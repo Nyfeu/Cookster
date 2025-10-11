@@ -1,0 +1,17 @@
+# Service do tipo ClusterIP para comunicação INTERNA com o MSS Pantry
+# URL interna: http://mss-pantry-service:3001
+apiVersion: v1
+kind: Service
+metadata:
+  name: mss-pantry-service
+  labels:
+    app: mss-pantry
+spec:
+  selector:
+    app: mss-pantry
+  ports:
+    - name: http-pantry
+      protocol: TCP
+      port: 3001
+      targetPort: 3001
+  type: ClusterIP

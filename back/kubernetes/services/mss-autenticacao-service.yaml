@@ -1,0 +1,17 @@
+# Service do tipo ClusterIP para comunicação interna
+# Este serviço é usado por outros microsserviços e pelo API Gateway.
+apiVersion: v1
+kind: Service
+metadata:
+  name: mss-autenticacao-service # Este é o nome que outros microsserviços usarão
+  labels:
+    app: mss-autenticacao
+spec:
+  selector:
+    app: mss-autenticacao # Seleciona os Pods criados pelo Deployment acima
+  ports:
+    - name: http-mss-autenticacao
+      protocol: TCP
+      port: 3000 # Porta do Service
+      targetPort: 3000 # Porta do contêiner (EXPOSE 3000 no Dockerfile)
+  type: ClusterIP # Acessível apenas dentro do cluster (default)

@@ -1,0 +1,57 @@
+# Deployment para o Microsserviço Classificador de Ingredientes (Python/FastAPI)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mss-ingredient-classifier-deployment
+  labels:
+    app: mss-ingredient-classifier
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mss-ingredient-classifier
+  template:
+    metadata:
+      labels:
+        app: mss-ingredient-classifier
+    spec:
+      volumes:
+        # Define o volume a ser usado no Pod, referenciando o PVC
+      - name: chroma-storage
+        persistentVolumeClaim:
+          claimName: chroma-pvc # Referencia o PVC criado abaixo
+      containers:
+      - name: mss-ingredient-classifier-container
+        image: leoramadio/mss-ingredient-classifier:latest # Sua imagem Python no Docker Hub
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+          # Monta o volume persistente no caminho /app/data/chroma
+        - name: chroma-storage
+          mountPath: /app/data/chroma
+        env:
+          # Variáveis de Configuração passadas diretamente
+        - name: EMBEDDING_MODEL
+          value: "all-MiniLM-L6-v2"
+        - name: CHROMA_DB_PATH
+          value: "/app/data/chroma"
+        - name: CORS_ORIGINS
+          value: "http://localhost"
+        # O CMD do Dockerfile é usado automaticamente (uvicorn script:app...)
+---
+# Persistent Volume Claim (PVC) para o ChromaDB
+# Ele solicita o Persistent Volume (PV) ao cluster.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: chroma-pvc
+  labels:
+    app: mss-ingredient-classifier
+spec:
+  # O volume pode ser montado para leitura/escrita por um único nó
+  accessModes:
+    - ReadWriteOnce 
+  resources:
+    requests:
+      storage: 1Gi # Solicita 1 Gigabyte de armazenamento

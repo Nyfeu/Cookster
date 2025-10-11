@@ -1,0 +1,42 @@
+# Deployment para o API Gateway
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway-deployment
+  labels:
+    app: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+      - name: api-gateway-container
+        image: leoramadio/api-gateway:latest # Sua imagem no Docker Hub
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 2000
+        env:
+          # Segredo JWT injetado do Secret
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: cookster-auth-secrets
+              key: JWT_SECRET
+          # URLs dos Microsserviços (usando Service Names internos)
+        - name: AUTH_SERVICE_URL
+          value: "http://mss-autenticacao-service:3000"
+        - name: INGREDIENT_SERVICE_URL
+          value: "http://mss-ingredient-classifier-service:8000"
+        - name: PROFILE_SERVICE_URL
+          value: "http://mss-profile-service-service:5000"
+        - name: PANTRY_SERVICE_URL
+          value: "http://mss-pantry-service:3001"
+        - name: RECIPE_SERVICE_URL
+          value: "http://mss-recipe-service:9000"
+        # O CMD do Dockerfile é usado automaticamente (node index.js)
