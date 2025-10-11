@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: api-gateway-container
-        image: leoramadio/api-gateway:latest # Sua imagem no Docker Hub
+        image: nyfeu/api-gateway:latest # Sua imagem no Docker Hub
         imagePullPolicy: Always
         ports:
         - containerPort: 2000
