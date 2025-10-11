@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: chroma-pvc # O mesmo nome que o pod está esperando
+spec:
+  accessModes:
+    - ReadWriteOnce # O volume pode ser montado como leitura/escrita por um único nó
+  resources:
+    requests:
+      storage: 1Gi # Tamanho do volume. Ajuste se necessário.

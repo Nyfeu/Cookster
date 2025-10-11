@@ -44,7 +44,7 @@ const PageProfile = () => {
                 setLoading(true);
                 setError(null);
 
-                const response = await fetch(`http://localhost:5000/profile/${userId}`, {
+                const response = await fetch(`http://localhost:2000/profile/${userId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

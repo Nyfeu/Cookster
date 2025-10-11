@@ -1,9 +1,9 @@
 # Service do tipo ClusterIP para comunicação INTERNA com o MSS Profile Service
-# URL interna: http://mss-profile-service-service:5000
+# URL interna: http://mss-profile-service:5000
 apiVersion: v1
 kind: Service
 metadata:
-  name: mss-profile-service-service
+  name: mss-profile-service
   labels:
     app: mss-profile-service
 spec:

@@ -15,29 +15,63 @@ spec:
       labels:
         app: mss-profile-service
     spec:
+      # Init container: espera o Event Bus ficar acessível na rede
+      initContainers:
+        - name: wait-for-event-bus
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o event-bus..."; sleep 2; done;']
+
       containers:
-      - name: mss-profile-service-container
-        image: leoramadio/mss-profile-service:latest # Sua imagem no Docker Hub
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 5000
-        env:
-          # Variáveis de DB injetadas do Secret (cookster-auth-secrets)
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: cookster-auth-secrets
-              key: DB_USER
-        - name: DB_PASS
-          valueFrom:
-            secretKeyRef:
-              name: cookster-auth-secrets
-              key: DB_PASS
-          # URL do Event Bus (Comunicação interna via Service Name do Kubernetes)
-        - name: EVENT_BUS_URL
-          value: "http://event-bus-service:4000"
-        - name: SERVICE_PORT
-          value: "5000"
-        - name: SERVICE_URL
-          value: "http://mss-profile-service-service"
-        # O CMD do Dockerfile é usado automaticamente (node server.js)
+        - name: mss-profile-service-container
+          image: leoramadio/mss-profile-service:latest  # Imagem do Docker Hub
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+
+          env:
+            # 🔹 Variáveis de banco de dados (vindas do Secret)
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cookster-auth-secrets
+                  key: DB_USER
+
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: cookster-auth-secrets
+                  key: DB_PASS
+
+            # 🔹 Configuração de comunicação entre serviços
+            - name: EVENT_BUS_URL
+              value: "http://event-bus-service:4000"
+
+            - name: SERVICE_PORT
+              value: "5000"
+
+            # Usa o nome do Service Kubernetes como hostname interno
+            - name: SERVICE_URL
+              value: "http://mss-profile-service"
+
+          # Opcional: saúde e restart automático
+          livenessProbe:
+            httpGet:
+              path: /profile/health
+              port: 5000
+            initialDelaySeconds: 20
+            periodSeconds: 15
+
+          readinessProbe:
+            httpGet:
+              path: /profile/health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

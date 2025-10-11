@@ -15,6 +15,10 @@ spec:
       labels:
         app: mss-recipe
     spec:
+      initContainers:
+      - name: wait-for-event-bus
+        image: busybox:1.36
+        command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o Event Bus..."; sleep 2; done; echo "✅ Event Bus disponível!";']
       containers:
       - name: mss-recipe-container
         image: leoramadio/mss-recipe:latest # Sua imagem no Docker Hub
