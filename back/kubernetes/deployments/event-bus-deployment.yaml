@@ -6,7 +6,7 @@ metadata:
   labels:
     app: event-bus
 spec:
-  replicas: 1 # O Event Bus é o hub central. Podemos aumentar se houver muito tráfego.
+  replicas: 1
   selector:
     matchLabels:
       app: event-bus
@@ -17,30 +17,14 @@ spec:
     spec:
       containers:
       - name: event-bus-container
-        image: leoramadio/event-bus:latest # Imagem que você construirá com 'docker build -t leoramadio/event-bus:latest'
+        image: leoramadio/event-bus:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 4000 # Porta que o contêiner escuta
-        # Não precisa carregar secrets aqui, pois o Event Bus não usa diretamente as chaves.
-
-        # Definição do healthcheck (equivalente ao do docker-compose)
-        # Atenção: O endpoint /health deve estar implementado no seu Event Bus
-        livenessProbe:
+        - containerPort: 4000
+        # --- Adicione esta sonda de inicialização ---
+        startupProbe:
           httpGet:
-            path: /health
+            path: /health # O endpoint de saúde do seu event-bus
             port: 4000
-          initialDelaySeconds: 20 # Dá 20s para o serviço iniciar (start_period)
-          periodSeconds: 10 # Verifica a cada 10s (interval)
-          timeoutSeconds: 5 # Timeout de 5s
-          failureThreshold: 5 # Tenta 5 vezes (retries)
-        
-        # O readinessProbe é útil para o Kubernetes saber quando o pod está pronto para receber tráfego.
-        # Neste caso, usamos a mesma checagem de liveness, mas pode ser diferente se necessário.
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 4000
-          initialDelaySeconds: 20
+          failureThreshold: 30
           periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 5

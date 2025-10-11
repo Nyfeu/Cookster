@@ -1,4 +1,4 @@
-# Deployment para o Microsserviço de Perfil
+# Deployment para o Microsserviço de Perfil (Profile)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,12 +15,16 @@ spec:
       labels:
         app: mss-profile-service
     spec:
+      initContainers:
+      - name: wait-for-event-bus
+        image: busybox:1.36
+        command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o Event Bus..."; sleep 2; done; echo "✅ Event Bus disponível!";']
       containers:
       - name: mss-profile-service-container
-        image: leoramadio/mss-profile-service:latest # Sua imagem no Docker Hub
+        image: nyfeu/mss-profile-service:latest # Sua imagem no Docker Hub
         imagePullPolicy: Always
         ports:
-        - containerPort: 5000
+        - containerPort: 3001
         env:
           # Variáveis de DB injetadas do Secret (cookster-auth-secrets)
         - name: DB_USER
@@ -37,7 +41,7 @@ spec:
         - name: EVENT_BUS_URL
           value: "http://event-bus-service:4000"
         - name: SERVICE_PORT
-          value: "5000"
+          value: "3001"
         - name: SERVICE_URL
-          value: "http://mss-profile-service-service"
+          value: "http://mss-profile-service-service" # Ajustado para o nome do Service interno
         # O CMD do Dockerfile é usado automaticamente (node server.js)
