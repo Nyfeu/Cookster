@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; // Importe o pacote de fontes
+import 'package:google_fonts/google_fonts.dart';
 import 'screens/onboarding/onboarding_screen.dart';
-import 'theme/app_theme.dart'; // Importe o nosso tema
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cookster',
       theme: ThemeData(
-        // Define as cores principais e de fundo baseadas no nosso tema
+        // Define as cores principais e de fundo baseadas no AppTheme
         colorScheme: ColorScheme.fromSeed(seedColor: AppTheme.secondaryColor),
         scaffoldBackgroundColor: AppTheme.backgroundColor,
         // Define a fonte 'Poppins' como padrão para todo o app
