@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/onboarding/onboarding_screen.dart';
+import 'screens/onboarding/onboarding_screen.dart'; // Sua tela inicial (onboarding)
+import 'screens/auth/auth_screen.dart'; // A nova tela de login
 import 'theme/app_theme.dart';
 
 void main() {
@@ -15,18 +16,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cookster',
       theme: ThemeData(
-        // Define as cores principais e de fundo baseadas no AppTheme
         colorScheme: ColorScheme.fromSeed(seedColor: AppTheme.secondaryColor),
         scaffoldBackgroundColor: AppTheme.backgroundColor,
-        // Define a fonte 'Poppins' como padrão para todo o app
         textTheme: GoogleFonts.poppinsTextTheme(
           Theme.of(context).textTheme,
         ),
         useMaterial3: true,
       ),
-      home: const OnboardingScreen(),
       debugShowCheckedModeBanner: false,
+      initialRoute: OnboardingScreen.routeName,
+      routes: {
+        OnboardingScreen.routeName: (context) => const OnboardingScreen(),
+        LoginScreen.routeName: (context) => const LoginScreen(),
+        // Se você tiver uma tela principal após o login
+        // '/home': (context) => const HomeScreen(),
+      },
     );
   }
 }
-

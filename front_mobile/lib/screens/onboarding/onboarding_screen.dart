@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+// --- MUDANÇA 1: Importar a nova tela de login ---
+import '../auth/auth_screen.dart'; 
 import '../../theme/app_theme.dart'; 
 
 class OnboardingScreen extends StatelessWidget {
+  // --- MUDANÇA 2: Adicionar o nome da rota ---
+  static const String routeName = '/';
+
   const OnboardingScreen({super.key});
 
   @override
@@ -12,11 +17,11 @@ class OnboardingScreen extends StatelessWidget {
       titleTextStyle: GoogleFonts.poppins(
         fontSize: 28.0,
         fontWeight: FontWeight.w700,
-        color: AppTheme.textColor,
+        color: AppTheme.primaryColor, // Ajustei para uma cor com melhor contraste
       ),
       bodyTextStyle: GoogleFonts.poppins(
         fontSize: 19.0,
-        color: AppTheme.primaryColor,
+        color: AppTheme.primaryColor.withOpacity(0.8),
       ),
       bodyPadding: const EdgeInsets.symmetric(horizontal: 40.0),
       titlePadding: const EdgeInsets.fromLTRB(40.0, 24.0, 40.0, 24.0),
@@ -28,7 +33,6 @@ class OnboardingScreen extends StatelessWidget {
 
     return IntroductionScreen(
       globalBackgroundColor: AppTheme.backgroundColor,
-      // Lista de páginas do onboarding
       pages: [
         PageViewModel(
           title: "Despensa Inteligente",
@@ -52,12 +56,17 @@ class OnboardingScreen extends StatelessWidget {
           decoration: pageDecoration,
         ),
       ],
-      // Ação ao finalizar
+
+      // --- MUDANÇA 3: Atualizar a navegação para usar rotas nomeadas ---
       onDone: () {
-        print("Onboarding finalizado!");
-        // Aqui navegaremos para a próxima tela, como a de login
-        // Navigator.of(context).pushReplacement(...);
+        // Navega para a tela de login, substituindo a tela de onboarding
+        Navigator.pushReplacementNamed(context, LoginScreen.routeName);
       },
+      onSkip: () {
+        // Também navega ao pular
+        Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+      },
+
       showSkipButton: true,
       skip: Text(
         'Pular',
@@ -70,30 +79,21 @@ class OnboardingScreen extends StatelessWidget {
         style: GoogleFonts.poppins(
             fontWeight: FontWeight.w600, color: AppTheme.secondaryColor),
       ),
-      // Estilo dos indicadores de página (bolinhas)
       dotsDecorator: const DotsDecorator(
         size: Size(10.0, 10.0),
-        color: AppTheme.transitionColor,
+        color: Colors.black26, // Cor mais sutil para os pontos inativos
         activeColor: AppTheme.secondaryColor,
         activeSize: Size(22.0, 10.0),
         activeShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(25.0)),
         ),
       ),
-      dotsContainerDecorator: const ShapeDecoration(
-        color: AppTheme.backgroundColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-        ),
-      ),
     );
   }
 
-  // Widget para centralizar e ajustar o tamanho das imagens
   Widget _buildImage(String assetName) {
     return Center(
       child: Image.asset(assetName, width: 250),
     );
   }
 }
-
