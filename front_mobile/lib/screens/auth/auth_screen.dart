@@ -12,137 +12,126 @@ class AuthScreen extends StatefulWidget {
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
-  // Controla se a visão de Login está ativa. false = visão de Criar Conta
-  bool _isLoginViewVisible = false;
+class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateMixin {
+  bool _isSignUpView = true;
+
+  late AnimationController _imageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _imageController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+      lowerBound: 0.0,
+      upperBound: 1.0,
+    );
+    // Inicia a animação já na posição correta para o painel inicial
+    if (_isSignUpView) _imageController.forward();
+  }
+
+  @override
+  void dispose() {
+    _imageController.dispose();
+    super.dispose();
+  }
 
   void _toggleView() {
     setState(() {
-      _isLoginViewVisible = !_isLoginViewVisible;
+      _isSignUpView = !_isSignUpView;
+    });
+    // Reinicia a animação do pop-up quando o painel muda
+    _imageController.reset();
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (mounted) _imageController.forward();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final double panelHeight = _isSignUpView ? size.height * 0.4 : size.height * 0.48;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // Container para o formulário de Cadastro (metade de cima)
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              height: size.height,
-              width: size.width,
-              // MUDANÇA: Cor de fundo similar à da web
-              color: const Color(0xFFf6f5f7),
-              child: _buildFormContainer(
-                height: size.height / 2,
-                isVisible: _isLoginViewVisible,
-                child: _buildSignUpForm(),
-              ),
-            ),
-          ),
-          // Container para o formulário de Login (metade de baixo)
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              height: size.height / 2,
-              width: size.width,
-              // MUDANÇA: Cor de fundo similar à da web
-              color: const Color(0xFFf6f5f7),
-              child: _buildFormContainer(
-                height: size.height / 2,
-                isVisible: !_isLoginViewVisible,
-                child: _buildSignInForm(),
-              ),
-            ),
-          ),
-          // Painel animado que desliza verticalmente
-          _buildAnimatedOverlay(
-            containerHeight: size.height,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Container para os formulários
-  Widget _buildFormContainer({
-    required double height,
-    required bool isVisible,
-    required Widget child,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 40),
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 400),
-        opacity: isVisible ? 1.0 : 0.0,
-        child: IgnorePointer(
-          ignoring: !isVisible,
-          child: SingleChildScrollView(
-            child: SizedBox(
-              height: height,
-              child: child,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Painel animado com bordas que deslizam de fora da tela
-  AnimatedPositioned _buildAnimatedOverlay({
-    required double containerHeight,
-  }) {
-    // MUDANÇA: Raio da borda aumentado
-    const double panelBorderRadius = 50.0;
-    const double panelOffset = panelBorderRadius;
-
-    return AnimatedPositioned(
-      duration: const Duration(milliseconds: 600),
-      curve: Curves.fastOutSlowIn,
-      top: _isLoginViewVisible ? (containerHeight / 2) : -panelOffset,
-      left: 0,
-      right: 0,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.fastOutSlowIn,
-        height: (containerHeight / 2) + panelOffset,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(panelBorderRadius)),
-          gradient: LinearGradient(
-            colors: [AppTheme.secondaryColor, Color(0xFFE68A41)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+      backgroundColor: AppTheme.backgroundColor,
+      body: SizedBox(
+        width: size.width,
+        height: size.height,
         child: Stack(
-          alignment: Alignment.center,
           children: [
-            // Conteúdo para a visão de "Criar Conta"
+            // Formulário de CADASTRO
             AnimatedOpacity(
-              duration: const Duration(milliseconds: 400),
-              opacity: _isLoginViewVisible ? 1.0 : 0.0,
-              child: _buildOverlayContent(
-                imagePath: 'assets/images/reg.png',
-                title: 'Não tem uma conta?',
-                text: 'Crie uma agora e comece a cozinhar!',
-                buttonText: 'Criar Conta',
-                onPressed: _toggleView,
+              duration: const Duration(milliseconds: 300),
+              opacity: _isSignUpView ? 1.0 : 0.0,
+              child: IgnorePointer(
+                ignoring: !_isSignUpView,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: size.height * 0.1,
+                      bottom: 160, // Espaço extra para a imagem do painel
+                    ),
+                    child: _buildFormContent(isSignUp: true),
+                  ),
+                ),
               ),
             ),
-            // Conteúdo para a visão de "Entrar"
+
+            // Formulário de LOGIN
             AnimatedOpacity(
-              duration: const Duration(milliseconds: 400),
-              opacity: _isLoginViewVisible ? 0.0 : 1.0,
-              child: _buildOverlayContent(
-                imagePath: 'assets/images/log.png',
-                title: 'Já é um de nós?',
-                text: 'Faça o login para ver suas receitas favoritas.',
-                buttonText: 'Entrar',
-                onPressed: _toggleView,
+              duration: const Duration(milliseconds: 300),
+              opacity: _isSignUpView ? 0.0 : 1.0,
+              child: IgnorePointer(
+                ignoring: _isSignUpView,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: size.height * 0.1),
+                    child: _buildFormContent(isSignUp: false),
+                  ),
+                ),
+              ),
+            ),
+
+            // Painel animado
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 700),
+              curve: Curves.fastOutSlowIn,
+              top: _isSignUpView ? size.height - panelHeight + 60 : -60,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 700),
+                curve: Curves.fastOutSlowIn,
+                width: size.width,
+                height: panelHeight,
+                decoration: BoxDecoration(
+                  color: AppTheme.accentColor,
+                  borderRadius: BorderRadius.circular(60),
+                ),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    _buildPanelContent(
+                      isVisible: _isSignUpView,
+                      title: 'Já é um de nós?',
+                      text:
+                          'Faça login e desfrute das vantagens da nossa comunidade.',
+                      buttonText: 'Acesse',
+                      imagePath: 'assets/images/reg.png',
+                      onPressed: _toggleView,
+                      isPanelAtBottom: true,
+                    ),
+                    _buildPanelContent(
+                      isVisible: !_isSignUpView,
+                      title: 'Novo por aqui?',
+                      text: 'Crie uma conta agora mesmo e aproveite as vantagens.',
+                      buttonText: 'Registre-se',
+                      imagePath: 'assets/images/log.png',
+                      onPressed: _toggleView,
+                      isPanelAtBottom: false,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -151,134 +140,146 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  // Conteúdo do painel animado
-  Widget _buildOverlayContent({
-    required String imagePath,
+  Widget _buildFormContent({required bool isSignUp}) {
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              isSignUp ? 'Criar Conta' : 'Acesse',
+              style: GoogleFonts.poppins(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryColor,
+              ),
+            ),
+            const SizedBox(height: 15),
+            _buildSocialIcons(),
+            const SizedBox(height: 15),
+            Text(
+              isSignUp
+                  ? 'ou use seu email para registrar'
+                  : 'ou acesse com sua conta',
+              style: GoogleFonts.poppins(color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 15),
+            if (isSignUp) ...[
+              _buildTextField(Icons.person_outline, 'Nome'),
+              const SizedBox(height: 10),
+            ],
+            _buildTextField(Icons.email_outlined, 'Email'),
+            const SizedBox(height: 10),
+            _buildTextField(Icons.lock_outline, 'Senha', isPassword: true),
+            const SizedBox(height: 20),
+            _buildActionButton(isSignUp ? 'Criar' : 'Acessar'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPanelContent({
+    required bool isVisible,
     required String title,
     required String text,
     required String buttonText,
+    required String imagePath,
     required VoidCallback onPressed,
+    required bool isPanelAtBottom,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(imagePath, height: 180),
-          const SizedBox(height: 15),
-          Text(title,
-              style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
-          const SizedBox(height: 10),
-          Text(text,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                  fontSize: 14, color: Colors.white.withOpacity(0.9))),
-          const SizedBox(height: 15),
-          OutlinedButton(
-            onPressed: onPressed,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.white,
-              side: const BorderSide(color: Colors.white, width: 2),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 400),
+      opacity: isVisible ? 1.0 : 0.0,
+      child: IgnorePointer(
+        ignoring: !isVisible,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            // --- IMAGEM COM ANIMAÇÃO POP-UP --- //
+            Positioned(
+              top: isPanelAtBottom ? -90 : null,
+              bottom: !isPanelAtBottom ? -70 : null,
+              left: 0,
+              right: 0,
+              child: ScaleTransition(
+                scale: CurvedAnimation(
+                  parent: _imageController,
+                  curve: Curves.easeOutBack,
+                ),
+                child: Image.asset(
+                  imagePath,
+                  height: 160,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
-            child: Text(buttonText,
-                style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-          ),
-        ],
+
+            // --- CONTEÚDO DO PAINEL --- //
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 25),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    text,
+                    style: GoogleFonts.poppins(color: Colors.white, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 25),
+                  OutlinedButton(
+                    onPressed: onPressed,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.white, width: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    ),
+                    child: Text(
+                      buttonText,
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  // Formulário de Login
-  Widget _buildSignInForm() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('Login',
-            style: GoogleFonts.poppins(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.primaryColor)),
-        const SizedBox(height: 15),
-        _buildSocialIcons(),
-        const SizedBox(height: 15),
-        Text('ou use sua conta',
-            style: GoogleFonts.poppins(color: Colors.grey[600])),
-        const SizedBox(height: 15),
-        _buildTextField(Icons.email_outlined, 'Email'),
-        const SizedBox(height: 10),
-        _buildTextField(Icons.lock_outline, 'Senha', isPassword: true),
-        // MUDANÇA: Espaçamento aumentado para consistência
-        const SizedBox(height: 20),
-        _buildGradientButton('Entrar'),
-      ],
-    );
-  }
-
-  // Formulário de Cadastro
-  Widget _buildSignUpForm() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Spacer(flex: 2),
-        Text('Criar Conta',
-            style: GoogleFonts.poppins(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.primaryColor)),
-        const SizedBox(height: 15),
-        _buildSocialIcons(),
-        const SizedBox(height: 15),
-        Text('ou use seu email para registrar',
-            style: GoogleFonts.poppins(color: Colors.grey[600])),
-        const SizedBox(height: 15),
-        _buildTextField(Icons.person_outline, 'Nome'),
-        const SizedBox(height: 10),
-        _buildTextField(Icons.email_outlined, 'Email'),
-        const SizedBox(height: 10),
-        _buildTextField(Icons.lock_outline, 'Senha', isPassword: true),
-        const SizedBox(height: 20),
-        _buildGradientButton('Criar'),
-        const Spacer(),
-      ],
-    );
-  }
-
-  Widget _buildGradientButton(String text) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        gradient: const LinearGradient(
-          colors: [AppTheme.secondaryColor, Color(0xFFE68A41)],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.secondaryColor.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          )
-        ],
+  Widget _buildActionButton(String text) {
+    return ElevatedButton(
+      onPressed: () {},
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppTheme.secondaryColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
       ),
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
+      child: Text(
+        text,
+        style: GoogleFonts.poppins(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
         ),
-        child: Text(text,
-            style: GoogleFonts.poppins(
-                color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -288,9 +289,9 @@ class _AuthScreenState extends State<AuthScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildSocialButton(FontAwesomeIcons.facebookF),
-        const SizedBox(width: 15),
+        const SizedBox(width: 20),
         _buildSocialButton(FontAwesomeIcons.google),
-        const SizedBox(width: 15),
+        const SizedBox(width: 20),
         _buildSocialButton(FontAwesomeIcons.linkedinIn),
       ],
     );
@@ -298,39 +299,35 @@ class _AuthScreenState extends State<AuthScreen> {
 
   Widget _buildSocialButton(IconData icon) {
     return CircleAvatar(
-      radius: 20,
-      // MUDANÇA: Fundo branco para contrastar com o novo background
+      radius: 22,
       backgroundColor: Colors.white,
-      child: FaIcon(icon, size: 18, color: AppTheme.primaryColor),
+      child: FaIcon(icon, size: 20, color: AppTheme.textColor),
     );
   }
 
-  Widget _buildTextField(IconData icon, String hintText,
-      {bool isPassword = false}) {
+  Widget _buildTextField(IconData icon, String hintText, {bool isPassword = false}) {
     return TextField(
       obscureText: isPassword,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: GoogleFonts.poppins(color: Colors.grey),
-        prefixIcon: Icon(icon, color: Colors.grey[400], size: 20),
+        prefixIcon: Icon(icon, color: AppTheme.transitionColor, size: 22),
         filled: true,
-        // MUDANÇA: Fundo branco para contrastar
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(vertical: 15),
+        contentPadding: const EdgeInsets.symmetric(vertical: 18),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide(color: Colors.grey[300]!),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide(color: Colors.grey[300]!),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(30),
           borderSide: const BorderSide(color: AppTheme.secondaryColor),
         ),
       ),
     );
   }
 }
-

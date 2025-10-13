@@ -36,7 +36,7 @@ class OnboardingScreen extends StatelessWidget {
         PageViewModel(
           title: "Despensa Inteligente",
           body:
-              "Adicione os ingredientes que você tem em casa e nunca mais se pergunte 'o que eu faço para o jantar?'.",
+              "Adicione os ingredientes que você tem em casa e nunca mais se pergunte o que eu fazer para o jantar!",
           image: _buildImage('assets/images/cesta.png'),
           decoration: pageDecoration,
         ),
