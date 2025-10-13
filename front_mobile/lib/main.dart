@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/onboarding/onboarding_screen.dart'; // Sua tela inicial (onboarding)
-import 'screens/auth/auth_screen.dart'; // A nova tela de login
+import 'screens/onboarding/onboarding_screen.dart'; 
+import 'screens/auth/auth_screen.dart'; 
 import 'theme/app_theme.dart';
 
 void main() {
@@ -24,13 +24,15 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
+      // A rota inicial continua sendo a de onboarding
       initialRoute: OnboardingScreen.routeName,
+      // Definimos as rotas nomeadas para a navegação
       routes: {
         OnboardingScreen.routeName: (context) => const OnboardingScreen(),
-        LoginScreen.routeName: (context) => const LoginScreen(),
-        // Se você tiver uma tela principal após o login
-        // '/home': (context) => const HomeScreen(),
+        // CORREÇÃO: Usando o nome correto da rota e da tela (AuthScreen)
+        AuthScreen.routeName: (context) => const AuthScreen(),
       },
     );
   }
 }
+

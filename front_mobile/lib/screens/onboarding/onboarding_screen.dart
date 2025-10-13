@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-// --- MUDANÇA 1: Importar a nova tela de login ---
+import '../../theme/app_theme.dart';
 import '../auth/auth_screen.dart'; 
-import '../../theme/app_theme.dart'; 
 
 class OnboardingScreen extends StatelessWidget {
-  // --- MUDANÇA 2: Adicionar o nome da rota ---
-  static const String routeName = '/';
+  // Adicionamos um nome de rota para esta tela
+  static const String routeName = '/onboarding';
 
   const OnboardingScreen({super.key});
 
@@ -17,11 +16,11 @@ class OnboardingScreen extends StatelessWidget {
       titleTextStyle: GoogleFonts.poppins(
         fontSize: 28.0,
         fontWeight: FontWeight.w700,
-        color: AppTheme.primaryColor, // Ajustei para uma cor com melhor contraste
+        color: AppTheme.textColor,
       ),
       bodyTextStyle: GoogleFonts.poppins(
         fontSize: 19.0,
-        color: AppTheme.primaryColor.withOpacity(0.8),
+        color: AppTheme.primaryColor,
       ),
       bodyPadding: const EdgeInsets.symmetric(horizontal: 40.0),
       titlePadding: const EdgeInsets.fromLTRB(40.0, 24.0, 40.0, 24.0),
@@ -56,17 +55,13 @@ class OnboardingScreen extends StatelessWidget {
           decoration: pageDecoration,
         ),
       ],
-
-      // --- MUDANÇA 3: Atualizar a navegação para usar rotas nomeadas ---
+      // CORREÇÃO: Usando a rota nomeada correta para navegar
       onDone: () {
-        // Navega para a tela de login, substituindo a tela de onboarding
-        Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+        Navigator.pushReplacementNamed(context, AuthScreen.routeName);
       },
       onSkip: () {
-        // Também navega ao pular
-        Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+        Navigator.pushReplacementNamed(context, AuthScreen.routeName);
       },
-
       showSkipButton: true,
       skip: Text(
         'Pular',
@@ -81,11 +76,17 @@ class OnboardingScreen extends StatelessWidget {
       ),
       dotsDecorator: const DotsDecorator(
         size: Size(10.0, 10.0),
-        color: Colors.black26, // Cor mais sutil para os pontos inativos
+        color: AppTheme.transitionColor,
         activeColor: AppTheme.secondaryColor,
         activeSize: Size(22.0, 10.0),
         activeShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(25.0)),
+        ),
+      ),
+      dotsContainerDecorator: const ShapeDecoration(
+        color: AppTheme.backgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
       ),
     );
@@ -97,3 +98,4 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 }
+
