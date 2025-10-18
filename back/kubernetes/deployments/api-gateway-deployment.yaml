@@ -34,7 +34,7 @@ spec:
         - name: INGREDIENT_SERVICE_URL
           value: "http://mss-ingredient-classifier-service:8000"
         - name: PROFILE_SERVICE_URL
-          value: "http://mss-profile-service-service:5000"
+          value: "http://mss-profile-service-dart-service:5000"
         - name: PANTRY_SERVICE_URL
           value: "http://mss-pantry-service:3001"
         - name: RECIPE_SERVICE_URL
