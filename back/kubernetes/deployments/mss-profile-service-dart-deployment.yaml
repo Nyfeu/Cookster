@@ -1,20 +1,20 @@
 # Deployment para o Microsserviço de Perfil (Dart)
-# Caminho: back/kubernetes/deployments/mss-profile-service-dart-deployment.yaml
+# Caminho: back/kubernetes/deployments/mss-profile-service-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mss-profile-service-dart-deployment
+  name: mss-profile-service-deployment
   labels:
-    app: mss-profile-service-dart
+    app: mss-profile-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mss-profile-service-dart
+      app: mss-profile-service
   template:
     metadata:
       labels:
-        app: mss-profile-service-dart
+        app: mss-profile-service
     spec:
       initContainers:
       - name: wait-for-event-bus
@@ -22,9 +22,9 @@ spec:
         # Aguarda o Event Bus estar disponível (event-bus-service na porta 4000)
         command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o Event Bus..."; sleep 2; done; echo "✅ Event Bus disponível!";']
       containers:
-      - name: mss-profile-service-container-dart
+      - name: mss-profile-service-container
         # 🚨 IMPORTANTE: SUBSTITUA ESTA TAG PELA SUA IMAGEM ENVIADA AO REGISTRY (Docker Hub, GCR, etc.)
-        image: sua_imagem_registry/mss-profile-service-dart:latest 
+        image: lucaspaga/mss-profile-service:latest 
         imagePullPolicy: Always
         ports:
         - containerPort: 5000 # Porta que o servidor Dart escuta
@@ -47,4 +47,4 @@ spec:
           value: "5000"
           # Define o Service URL para o registro no Event Bus
         - name: SERVICE_URL
-          value: "http://mss-profile-service-dart-service"
+          value: "http://mss-profile-service-service"

@@ -1,17 +1,17 @@
 # Service do tipo ClusterIP para comunicação INTERNA com o MSS Profile Dart
-# URL interna no K8s: http://mss-profile-service-dart-service:5000
-# Caminho: back/kubernetes/services/mss-profile-service-dart-service.yaml
+# URL interna no K8s: http://mss-profile-service-service:5000
+# Caminho: back/kubernetes/services/mss-profile-service-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: mss-profile-service-dart-service # Nome do Service para o DNS do K8s
+  name: mss-profile-service-service # Nome do Service para o DNS do K8s
   labels:
-    app: mss-profile-service-dart
+    app: mss-profile-service
 spec:
   selector:
-    app: mss-profile-service-dart # Deve corresponder ao label no Deployment
+    app: mss-profile-service # Deve corresponder ao label no Deployment
   ports:
-    - name: http-profile-dart
+    - name: http-profile
       protocol: TCP
       port: 5000       # Porta interna do Service
       targetPort: 5000 # Porta do contêiner (Dart app)

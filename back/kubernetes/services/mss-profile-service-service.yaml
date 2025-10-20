@@ -1,17 +1,17 @@
-# Service para expor o MSS Profile DIRETAMENTE para fora do cluster (temporário)
-apiVersion: v1
-kind: Service
-metadata:
-  name: mss-profile-service-service
-  labels:
-    app: mss-profile-service
-spec:
-  type: NodePort 
-  selector:
-    app: mss-profile-service
-  ports:
-    - name: http-profile
-      protocol: TCP
-      port: 3001       # Porta interna do serviço no cluster
-      targetPort: 3001 # Porta do seu contêiner
-      nodePort: 30005  # Porta exposta no nó (30000-32767)
+# # Service para expor o MSS Profile DIRETAMENTE para fora do cluster (temporário)
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mss-profile-service-service
+#   labels:
+#     app: mss-profile-service
+# spec:
+#   type: NodePort 
+#   selector:
+#     app: mss-profile-service
+#   ports:
+#     - name: http-profile
+#       protocol: TCP
+#       port: 3001       # Porta interna do serviço no cluster
+#       targetPort: 3001 # Porta do seu contêiner
+#       nodePort: 30005  # Porta exposta no nó (30000-32767)
