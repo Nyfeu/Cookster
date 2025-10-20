@@ -1,47 +1,47 @@
-# Deployment para o Microsserviço de Perfil (Profile)
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mss-profile-service-deployment
-  labels:
-    app: mss-profile-service
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mss-profile-service
-  template:
-    metadata:
-      labels:
-        app: mss-profile-service
-    spec:
-      initContainers:
-      - name: wait-for-event-bus
-        image: busybox:1.36
-        command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o Event Bus..."; sleep 2; done; echo "✅ Event Bus disponível!";']
-      containers:
-      - name: mss-profile-service-container
-        image: nyfeu/mss-profile-service:latest # Sua imagem no Docker Hub
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 3001
-        env:
-          # Variáveis de DB injetadas do Secret (cookster-auth-secrets)
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: cookster-auth-secrets
-              key: DB_USER
-        - name: DB_PASS
-          valueFrom:
-            secretKeyRef:
-              name: cookster-auth-secrets
-              key: DB_PASS
-          # URL do Event Bus (Comunicação interna via Service Name do Kubernetes)
-        - name: EVENT_BUS_URL
-          value: "http://event-bus-service:4000"
-        - name: SERVICE_PORT
-          value: "3001"
-        - name: SERVICE_URL
-          value: "http://mss-profile-service-service" # Ajustado para o nome do Service interno
-        # O CMD do Dockerfile é usado automaticamente (node server.js)
+# # Deployment para o Microsserviço de Perfil (Profile)
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: mss-profile-service-deployment
+#   labels:
+#     app: mss-profile-service
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: mss-profile-service
+#   template:
+#     metadata:
+#       labels:
+#         app: mss-profile-service
+#     spec:
+#       initContainers:
+#       - name: wait-for-event-bus
+#         image: busybox:1.36
+#         command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o Event Bus..."; sleep 2; done; echo "✅ Event Bus disponível!";']
+#       containers:
+#       - name: mss-profile-service-container
+#         image: lucaspaga/mss-profile-service:latest # Sua imagem no Docker Hub
+#         imagePullPolicy: Always
+#         ports:
+#         - containerPort: 3001
+#         env:
+#           # Variáveis de DB injetadas do Secret (cookster-auth-secrets)
+#         - name: DB_USER
+#           valueFrom:
+#             secretKeyRef:
+#               name: cookster-auth-secrets
+#               key: DB_USER
+#         - name: DB_PASS
+#           valueFrom:
+#             secretKeyRef:
+#               name: cookster-auth-secrets
+#               key: DB_PASS
+#           # URL do Event Bus (Comunicação interna via Service Name do Kubernetes)
+#         - name: EVENT_BUS_URL
+#           value: "http://event-bus-service:4000"
+#         - name: SERVICE_PORT
+#           value: "3001"
+#         - name: SERVICE_URL
+#           value: "http://mss-profile-service-service" # Ajustado para o nome do Service interno
+#         # O CMD do Dockerfile é usado automaticamente (node server.js)
