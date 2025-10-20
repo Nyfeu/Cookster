@@ -1,0 +1,38 @@
+# Stage 1: Build (Ambiente de compilação com Dart SDK)
+FROM dart:stable AS build
+
+# Define o diretório de trabalho
+WORKDIR /app
+
+# 1. Copia os arquivos de dependência (pubspec.yaml e pubspec.lock)
+COPY pubspec.* ./
+
+# 2. Copia o restante do código para ter acesso ao diretório .dart_tool (se existir)
+COPY . .
+
+# 3. LIMPEZA: Remove o cache/configuração de pacotes local que aponta para caminhos do Windows.
+# Esta é a etapa crucial para corrigir o erro.
+RUN rm -rf .dart_tool/
+
+# 4. Baixa as dependências e gera um novo package_config.json VÁLIDO para o container
+RUN dart pub get
+
+# 5. Compila para executável nativo. O binário de saída será 'app_server'.
+RUN dart compile exe bin/main.dart -o /app/bin/app_server
+
+# ----------------------------------------------------
+# Stage 2: Imagem de Produção (Minimalista e Estável)
+# Usamos o debian-slim para garantir que o executável nativo tenha as bibliotecas C necessárias
+FROM debian:bookworm-slim
+
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Copia o executável compilado do estágio 'build'
+COPY --from=build /app/bin/app_server /app/app_server
+
+# O microsserviço Dart escuta na porta 5000
+EXPOSE 5000
+
+# Comando de entrada para iniciar o executável
+CMD ["/app/app_server"]

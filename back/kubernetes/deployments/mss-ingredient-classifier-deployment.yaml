@@ -22,7 +22,7 @@ spec:
           claimName: chroma-pvc # Referencia o PVC criado abaixo
       containers:
       - name: mss-ingredient-classifier-container
-        image: leoramadio/mss-ingredient-classifier:latest # Sua imagem Python no Docker Hub
+        image: lucaspaga/mss-ingredient-classifier:latest # Sua imagem Python no Docker Hub
         imagePullPolicy: Always
         ports:
         - containerPort: 8000

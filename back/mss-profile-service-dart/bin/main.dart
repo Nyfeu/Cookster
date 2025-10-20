@@ -9,11 +9,7 @@ import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 
 void main(List<String> args) async {
 
-  final isProduction = const bool.fromEnvironment('dart.vm.product');
-  if (!isProduction) {
-    DotEnv().load();
-  }
-  final env = DotEnv()..load();
+  final env = DotEnv(includePlatformEnvironment: true)..load();
 
   final String appPort = env['SERVICE_PORT'] ?? '5000';
   final String serviceId = 'mss-profile-service';
@@ -24,6 +20,13 @@ void main(List<String> args) async {
 
   final dbUser = env['DB_USER'];
   final dbPassword = env['DB_PASS'];
+  
+  // Adicionando um check para logar o erro caso a variável não seja carregada
+  if (dbUser == null || dbPassword == null) {
+      print('❌ Erro de Configuração: DB_USER ou DB_PASS não foram carregados do ambiente.');
+      return;
+  }
+  
   final mongoUri =
       'mongodb+srv://$dbUser:$dbPassword@cluster0.fbrwz1j.mongodb.net/mss-profile-service?retryWrites=true&w=majority&appName=Cluster0';
 
