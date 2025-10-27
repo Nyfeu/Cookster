@@ -124,6 +124,17 @@ Object.entries(services).forEach(([route, config]) => {
         target: config.target,
         changeOrigin: true,
         pathRewrite: { [`^/${route}`]: '' },
+
+        // ADICIONE ESTA FUNÇÃO:
+        onProxyRes: function (proxyRes, req, res) {
+          // Remove cabeçalhos existentes que possam conflitar
+          delete proxyRes.headers['access-control-allow-origin'];
+          delete proxyRes.headers['access-control-allow-credentials']; 
+
+          // Define o cabeçalho para permitir qualquer origem
+          proxyRes.headers['access-control-allow-origin'] = '*';
+        },
+
         onError: (err, req, res) => {
             console.error(`Service ${route} error:`, err);
             res.status(503).json({ error: 'Service unavailable' });
