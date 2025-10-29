@@ -4,10 +4,17 @@ import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/auth/auth_screen.dart'; 
 import 'screens/user/profile_screen.dart';
 import 'theme/app_theme.dart';
+import 'package:provider/provider.dart'; // [NOVO] Importe o provider
+import 'providers/auth_provider.dart';
 
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AuthProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -34,7 +41,13 @@ class MyApp extends StatelessWidget {
         // CORREÇÃO: Usando o nome correto da rota e da tela (AuthScreen)
         AuthScreen.routeName: (context) => const AuthScreen(),
 
-        ProfileScreen.routeName: (context) => ProfileScreen(userId: '1749171330622')
+        ProfileScreen.routeName: (context) {
+          // Pega o ID passado como argumento
+          final userId = ModalRoute.of(context)!.settings.arguments as String?;
+          
+          // Retorna a tela de perfil, mas verifica se o ID não é nulo
+          return ProfileScreen(userId: userId ?? 'ID_PADRAO_OU_ERRO');
+        },
       },
     );
   }

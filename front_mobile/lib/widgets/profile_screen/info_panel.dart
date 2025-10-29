@@ -90,19 +90,10 @@ class InfoPanel extends StatelessWidget {
 
   // Avatar com funcionalidade de zoom ao clicar
   Widget _buildAvatar(BuildContext context) {
-    // URL da imagem de perfil
-    // O seu código React usa `../${props.fotoPerfil}`
-    // Em Flutter, se a imagem vier da API, usamos NetworkImage
-    // Se for local (assets), usamos AssetImage
-    final imageProvider = (profile.fotoPerfil.isNotEmpty)
-        ? NetworkImage(profile.fotoPerfil)
-        // Imagem placeholder caso não haja foto
-        : const AssetImage('assets/images/avatar_placeholder.png')
-            as ImageProvider;
+    final imageProvider = const AssetImage('assets/images/default-profile.jpeg');
 
     return GestureDetector(
       onTap: () {
-        // Simula o 'zoomSrc' do PrimeReact ao mostrar um Dialog
         showDialog(
           context: context,
           builder: (ctx) => Dialog(

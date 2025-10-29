@@ -107,8 +107,10 @@ void main(List<String> args) async {
   };
 
 
-  router.get('/profile/<userId>', (Request req, String userId) async {
+  router.get('/<userId>', (Request req, String userId) async {
     try {
+      final requesterId = req.headers['user-id'];
+      
       final profile = await profiles.findOne(where.eq('userId', userId));
       if (profile == null) {
         return Response(404,
@@ -116,9 +118,14 @@ void main(List<String> args) async {
             headers: {'Content-Type': 'application/json'});
       }
 
+      final isOwner = (requesterId == profile['userId']);
+      print(requesterId);
+      print(profile['userId']);
+      print(isOwner);
       if (profile.containsKey('_id')) {
         profile['_id'] = profile['_id'].toString();
       }
+      profile['isOwner'] = isOwner;
 
       return Response.ok(
           jsonEncode({'message': 'Perfil encontrado com sucesso!', 'data': profile}),
@@ -131,7 +138,7 @@ void main(List<String> args) async {
     }
   });
 
-  router.post('/profile', (Request req) async {
+  router.post('/', (Request req) async {
     try {
       final body = jsonDecode(await req.readAsString()) as Map<String, dynamic>;
       final userId = body['id'];
@@ -176,8 +183,18 @@ void main(List<String> args) async {
     }
   });
 
-  router.put('/profile/<userId>', (Request req, String userId) async {
+  router.put('/<userId>', (Request req, String userId) async {
     try {
+
+      final requesterId = req.headers['user-id'];
+
+      // Se não houver ID de requisitante ou se ele for diferente do ID do perfil
+      if (requesterId == null || requesterId != userId) {
+        return Response(403, // 403 Forbidden (Acesso Negado)
+            body: jsonEncode({'message': 'Acesso negado. Você só pode editar o seu próprio perfil.'}),
+            headers: {'Content-Type': 'application/json'});
+      }
+      
       final body = jsonDecode(await req.readAsString()) as Map<String, dynamic>;
       final validation = validateProfileUpdate(body);
       if (validation.statusCode != 200) return validation;

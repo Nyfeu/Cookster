@@ -3,13 +3,17 @@ import 'package:http/http.dart' as http;
 import '../../models/user_profile.dart'; // Ajuste o caminho
 
 class ProfileService {
-  final String _baseUrl = 'http://localhost:5000/profile'; // Use 10.0.2.2 para emulador Android
+  // Apontando para o Gateway local
+  final String _baseUrl = 'http://localhost:2000/profile'; 
 
-  Future<UserProfile> fetchUserProfile(String userId) async {
+  // [MUDANÇA 1] O método agora precisa aceitar o 'token'
+  Future<UserProfile> fetchUserProfile(String userId, String token) async {
     final response = await http.get(
       Uri.parse('$_baseUrl/$userId'),
       headers: {
         'Content-Type': 'application/json',
+        // [MUDANÇA 2] Enviar o token no header para o Gateway
+        'Authorization': 'Bearer $token',
       },
     );
 

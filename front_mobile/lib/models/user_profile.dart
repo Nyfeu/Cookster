@@ -8,6 +8,7 @@ class UserProfile {
   final String email;
   final String fotoPerfil;
   final String descricao;
+  final bool isOwner;
   // Adicione seguidores, seguindo, etc., se eles vierem da API
   // final int seguidores;
   // final int seguindo;
@@ -20,6 +21,7 @@ class UserProfile {
     required this.email,
     required this.fotoPerfil,
     required this.descricao,
+    required this.isOwner,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -33,6 +35,7 @@ class UserProfile {
       email: data['email'] ?? 'Sem email',
       fotoPerfil: data['fotoPerfil'] ?? '',
       descricao: data['descricao'] ?? 'Sem descrição.',
+      isOwner: data['isOwner'] ?? false,
     );
   }
 }
