@@ -1,4 +1,6 @@
+// [NOVO] Importe a tela de receita para ter acesso ao 'routeName'
 import 'package:flutter/material.dart';
+import '../../screens/recipe/recipe_screen.dart'; 
 
 class RecipesGrid extends StatelessWidget {
   const RecipesGrid({super.key});
@@ -32,36 +34,33 @@ class RecipesGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final recipe = recipes[index];
         
-        // GestureDetector substitui o <a> (link)
-        return GestureDetector(
-          onTap: () {
-            // Lógica de navegação para a tela da receita
-            print('Navegar para receita: ${recipe['id']}');
-            // Ex: Navigator.push(context, MaterialPageRoute(builder: (c) => RecipeScreen(id: recipe['id'])));
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Material(
-              color: Colors.transparent, // Necessário para o InkWell funcionar
-              child: InkWell(
-                onTap: () {
-                  // Lógica de navegação (a mesma que você tinha)
-                  print('Navegar para receita: ${recipe['id']}');
-                  // Ex: Navigator.push(context, MaterialPageRoute(builder: (c) => RecipeScreen(id: recipe['id'])));
-                },
-                child: GridTile(
-                  // O restante do seu código permanece igual
-                  footer: GridTileBar(
-                    backgroundColor: Colors.black.withOpacity(0.6),
-                    title: const Text(
-                      'Ver Mais',
-                      textAlign: TextAlign.center,
-                    ),
+        // [REMOVIDO] O GestureDetector não é necessário,
+        // pois o InkWell já cuida do toque e da animação.
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Material(
+            color: Colors.transparent, // Necessário para o InkWell funcionar
+            child: InkWell(
+              onTap: () {
+                // [NOVO] Lógica de navegação para a tela da receita
+                Navigator.pushNamed(
+                  context,
+                  RecipePage.routeName,
+                  arguments: recipe['id']!, // Passa o ID da receita clicada
+                );
+              },
+              child: GridTile(
+                // O restante do seu código permanece igual
+                footer: GridTileBar(
+                  backgroundColor: Colors.black.withOpacity(0.6),
+                  title: const Text(
+                    'Ver Mais',
+                    textAlign: TextAlign.center,
                   ),
-                  child: Image.asset(
-                    recipe['image']!,
-                    fit: BoxFit.cover,
-                  ),
+                ),
+                child: Image.asset(
+                  recipe['image']!,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
