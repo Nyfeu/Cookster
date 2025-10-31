@@ -41,18 +41,28 @@ class RecipesGrid extends StatelessWidget {
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            // GridTile é perfeito para uma imagem com barra de título/rodapé
-            child: GridTile(
-              footer: GridTileBar(
-                backgroundColor: Colors.black.withOpacity(0.6),
-                title: const Text(
-                  'Ver Mais',
-                  textAlign: TextAlign.center,
+            child: Material(
+              color: Colors.transparent, // Necessário para o InkWell funcionar
+              child: InkWell(
+                onTap: () {
+                  // Lógica de navegação (a mesma que você tinha)
+                  print('Navegar para receita: ${recipe['id']}');
+                  // Ex: Navigator.push(context, MaterialPageRoute(builder: (c) => RecipeScreen(id: recipe['id'])));
+                },
+                child: GridTile(
+                  // O restante do seu código permanece igual
+                  footer: GridTileBar(
+                    backgroundColor: Colors.black.withOpacity(0.6),
+                    title: const Text(
+                      'Ver Mais',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  child: Image.asset(
+                    recipe['image']!,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              child: Image.asset(
-                recipe['image']!,
-                fit: BoxFit.cover,
               ),
             ),
           ),
