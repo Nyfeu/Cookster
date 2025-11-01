@@ -28,7 +28,7 @@ class InfoPanel extends StatelessWidget {
         Container(
           width: double.infinity,
           margin: const EdgeInsets.only(top: 60),
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0), // Padding aplicado a tudo
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(8),
@@ -38,49 +38,76 @@ class InfoPanel extends StatelessWidget {
                 blurRadius: 10,
                 offset: const Offset(0, 5),
               ),
-            ],
+           ],
           ),
-          child: Column(
+          // [MUDANÇA] Usamos um Stack para posicionar os botões
+          child: Stack(
             children: [
-              // Espaço vazio para a metade de baixo do avatar
-              const SizedBox(height: 60),
-
-              // Informações
-              Text(profile.name, style: textTheme.headlineSmall),
-              const SizedBox(height: 4),
-              Text(profile.bio, style: textTheme.bodySmall),
-              const SizedBox(height: 4),
-              Text(profile.email, style: textTheme.bodySmall),
-              const SizedBox(height: 20),
-
-              // Estatísticas (ul.about)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              // 1. O conteúdo original (Column)
+              Column(
                 children: [
-                  _buildStatColumn('Seguidores', seguidores),
-                  _buildStatColumn('Seguindo', seguindo),
-                  _buildStatColumn('Posts', posts),
+                 // Espaço vazio para a metade de baixo do avatar
+                  const SizedBox(height: 60),
+
+                  // Informações
+                  Text(profile.name, style: textTheme.headlineSmall),
+                  const SizedBox(height: 4),
+                  Text(profile.bio, style: textTheme.bodySmall),
+                  const SizedBox(height: 4),
+                  Text(profile.email, style: textTheme.bodySmall),
+                  const SizedBox(height: 20),
+
+                  // Estatísticas (ul.about)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildStatColumn('Seguidores', seguidores),
+                      _buildStatColumn('Seguindo', seguindo),
+                      _buildStatColumn('Posts', posts),
+                  	],
+                  ),
+                  const SizedBox(height: 20),
+                  const Divider(),
+                  const SizedBox(height: 10),
+
+                  // Descrição (div.content)
+                  Text(
+                    profile.descricao,
+                    textAlign: TextAlign.justify,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF1D1D1D), // Cor específica do CSS
+                     height: 1.8, // line-height
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 20),
-              const Divider(),
-              const SizedBox(height: 10),
 
-              // Descrição (div.content)
-              Text(
-                profile.descricao,
-                textAlign: TextAlign.justify,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF1D1D1D), // Cor específica do CSS
-                  height: 1.8, // line-height
-                ),
+              // 2. [MUDANÇA] Os botões posicionados no canto superior direito
+             // O padding do Container pai (16.0) fá-los-á
+              // ficar corretamente espaçados.
+              Positioned(
+                top: 0,
+                right: 0,
+                child: profile.isOwner
+                  ? IconButton(
+                      icon: const Icon(Icons.settings), // Ícone de engrenagem
+                      onPressed: () {
+                        // Navegar para Configurações
+                     },
+                    )
+                  : ElevatedButton(
+                      onPressed: () {
+                        // Lógica de "Seguir"
+                      },
+                    	child: const Text('Seguir'),
+                    ),
               ),
             ],
           ),
         ),
 
         // O Avatar (position: absolute, top: -60px)
-        Positioned(
+       Positioned(
           top: 0,
           child: _buildAvatar(context),
         ),
@@ -107,7 +134,7 @@ class InfoPanel extends StatelessWidget {
         radius: 60,
         backgroundImage: imageProvider,
         backgroundColor: Colors.grey[200],
-      ),
+    ),
     );
   }
 
@@ -119,17 +146,17 @@ class InfoPanel extends StatelessWidget {
         Text(
           count.toString(),
           style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF4D6B5B), // text-color
-            fontSize: 16,
-          ),
+             fontWeight: FontWeight.w600,
+              color: Color(0xFF4D6B5B), // text-color
+              fontSize: 16,
+            ),
         ),
         Text(
           label,
           style: const TextStyle(
             color: Color(0xFF818181),
             fontSize: 14,
-          ),
+            ),
         ),
       ],
     );

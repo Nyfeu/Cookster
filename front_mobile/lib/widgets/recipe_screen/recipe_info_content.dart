@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../../models/recipe_model.dart';
 import '../../theme/recipe_theme.dart';
+import '../../screens/user/profile_screen.dart';
 
 class RecipeInfoContent extends StatelessWidget {
   final Recipe recipe;
@@ -15,14 +16,23 @@ class RecipeInfoContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start, // align-items:flex-start
       children: [
         // <h2>
-        Text(recipe.name, style: textTheme.headlineMedium),
-        // <Link> .user-link
-        TextButton(
-          onPressed: () {
-            print('Navegar para perfil: ${recipe.userId}');
-            // Ex: Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilePage(userId: recipe.userId)));
-          },
-          child: Text(recipe.userId),
+        Center( // Adicionado o widget Center aqui
+          child: Text(recipe.name, 
+          style: textTheme.headlineMedium,
+          textAlign: TextAlign.center,),
+        ),
+
+        Center( // Adicionado o widget Center aqui
+          child: TextButton(
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                ProfileScreen.routeName,
+                arguments: recipe.userId // Passa o ID do usuário para a rota
+              );
+            },
+            child: Text("Perfil do Autor"),
+          ),
         ),
         const SizedBox(height: 10),
         // <p> (descrição)

@@ -71,25 +71,6 @@ class ProfileScreenState extends State<ProfileScreen> {
             return Scaffold(
               appBar: AppBar(
                 title: const Text('Perfil'),
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    // [MUDANÇA] Lógica agora usa 'profile.isOwner' vindo da API!
-                    child: profile.isOwner
-                        ? IconButton(
-                            icon: const Icon(Icons.settings), // Ícone de engrenagem
-                            onPressed: () {
-                              // Navegar para Configurações
-                            },
-                          )
-                        : ElevatedButton(
-                            onPressed: () {
-                              // Lógica de "Seguir"
-                            },
-                            child: const Text('Seguir'),
-                          ),
-                  ),
-                ],
               ),
               // O body é o mesmo layout de antes
               body: buildProfileLayout(context, profile),
