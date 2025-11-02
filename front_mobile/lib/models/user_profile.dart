@@ -28,7 +28,7 @@ class UserProfile {
     // A API do código React retorna um objeto { data: { ... } }
     final data = json['data']; 
     return UserProfile(
-      id: data['_id'], // Supondo que o ID venha como _id
+      id: data['userId'], // Supondo que o ID venha como _id
       name: data['name'] ?? 'Nome de usuário',
       bio: data['bio'] ?? 'Sem bio',
       profissao: data['profissao'] ?? 'Sem profissão',

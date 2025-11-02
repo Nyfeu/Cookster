@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/user_profile.dart'; // Ajuste o caminho
+import '../../screens/user/edit_screen.dart';
 
 class InfoPanel extends StatelessWidget {
   final UserProfile profile;
@@ -92,7 +93,12 @@ class InfoPanel extends StatelessWidget {
                   ? IconButton(
                       icon: const Icon(Icons.settings), // Ícone de engrenagem
                       onPressed: () {
-                        // Navegar para Configurações
+                        print(profile.id);                                               
+                        Navigator.pushNamed(
+                          context,
+                          EditProfileScreen.routeName,
+                          arguments: profile.id, // Passa o ID da receita clicada
+                        );
                      },
                     )
                   : ElevatedButton(

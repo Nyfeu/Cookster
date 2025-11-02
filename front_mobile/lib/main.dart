@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'screens/onboarding/onboarding_screen.dart'; 
 import 'screens/auth/auth_screen.dart'; 
 import 'screens/user/profile_screen.dart';
+import 'screens/user/edit_screen.dart';
 import 'screens/recipe/recipe_screen.dart';
 import 'theme/app_theme.dart';
 import 'package:provider/provider.dart'; // [NOVO] Importe o provider
@@ -47,6 +48,13 @@ class MyApp extends StatelessWidget {
           final userId = ModalRoute.of(context)!.settings.arguments as String?;
 
           return ProfileScreen(userId: userId ?? 'ID_PADRAO_OU_ERRO');
+        },
+
+        EditProfileScreen.routeName: (context){
+
+          final profileId = ModalRoute.of(context)!.settings.arguments as String?;
+
+          return EditProfileScreen(userId: profileId ?? 'ID_PADRAO_OU_ERRO');
         },
 
         // [NOVO] Adicionando a rota da página de receita

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../models/user_profile.dart'; // Ajuste o caminho
 
+
 class ProfileService {
   // Apontando para o Gateway local
   final String _baseUrl = 'http://localhost:2000/profile'; 
@@ -29,4 +30,33 @@ class ProfileService {
       }
     }
   }
+
+
+  Future<void> updateProfileData(String userId, Map<String, dynamic> formData, String token) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$_baseUrl/$userId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',},
+        body: json.encode(formData),
+      );
+
+      if (!response.ok) {
+        final errorData = json.decode(response.body);
+        // [MUDANÇA] Trocado ErrorDescription por Exception
+        throw Exception(errorData['message'] ?? 'Erro ao salvar as alterações.');
+      }
+      
+      // Se chegou aqui, foi bem-sucedido (não precisa retornar nada)
+    } catch (err) {
+      // Propaga o erro
+      throw Exception('Falha ao atualizar o perfil: ${err.toString()}');
+    }
+  }
+}
+
+// Extensão para simplificar a verificação de (!response.ok)
+extension on http.Response {
+  bool get ok => statusCode >= 200 && statusCode < 300;
 }
