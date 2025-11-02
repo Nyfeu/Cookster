@@ -189,13 +189,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ElevatedButton(
                                 style: primaryButtonStyle,
                                 onPressed: () {},
-                                child: const Text('Upload new photo'),
+                                child: const Text('Trocar imagem!'),
                               ),
                               const SizedBox(width: 8),
                               OutlinedButton(
                                 style: defaultButtonStyle,
                                 onPressed: () {},
-                                child: const Text('Reset'),
+                                child: const Text('Formatar'),
                               ),
                             ],
                           ),
