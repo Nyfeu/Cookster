@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: event-bus-container
-        image: leoramadio/event-bus:latest
+        image: lucaspaga/event-bus:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 4000

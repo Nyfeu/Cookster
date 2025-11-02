@@ -33,9 +33,9 @@ const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@cluster0.fbrwz1j.mongodb.net
 
 // Permitir acesso do front-end
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: '*', // <-- A mudança principal: permite qualquer origem
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
 initializePassport(
