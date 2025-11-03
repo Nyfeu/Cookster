@@ -44,8 +44,7 @@ const services = {
 
     profile: {
         target: process.env.PROFILE_SERVICE_URL || 'http://localhost:5000',
-        requiresUserId: false,
-        publicRoutes: ['/profile', '/profile/:userId']
+        requiresUserId: true
     },
 
     pantry:{
