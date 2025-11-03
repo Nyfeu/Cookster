@@ -3,6 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../theme/app_theme.dart';
 import '../../services/auth_service.dart'; // <-- 1. Importar o serviço
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart'; // Ajuste o caminho se necessário
+import '../../screens/user/profile_screen.dart';
+
 
 class AuthScreen extends StatefulWidget {
   static const String routeName = '/auth';
@@ -106,7 +110,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   }
   // ---------------------------------- //
   
-  // --- 3. Lógica de API (Handle Sign Up) --- //
+// --- 3. Lógica de API (Handle Sign Up) --- //
   Future<void> _handleSignUp() async {
     print('[DEBUG] Botão REGISTRAR pressionado!');
     setState(() {
@@ -115,28 +119,28 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     });
 
     try {
-      final result = await _authService.register(
+      // [MUDANÇA] Chamar o provider em vez do serviço direto
+      await Provider.of<AuthProvider>(context, listen: false).register(
         _nameController.text,
         _emailController.text,
         _passwordController.text,
       );
 
-      print('Registro bem-sucedido! Usuário: ${result['user']['name']}');
+      // [MUDANÇA] Checagem de segurança
+      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result['message'] ?? 'Usuário cadastrado com sucesso!'),
+        const SnackBar(
+          content: Text('Usuário cadastrado com sucesso! Faça o login.'),
           backgroundColor: Colors.green,
         ),
       );
       
-      // Limpa campos e troca para a tela de login
-      _toggleView();
+      _toggleView(); // Troca para a tela de login
 
     } catch (e) {
       print('[DEBUG] ERRO NO REGISTRO: $e');
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      // Chama o nosso novo pop-up!
       _showErrorSnackBar(errorMessage);
     } finally {
       setState(() {
@@ -154,27 +158,33 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     });
 
     try {
-      final result = await _authService.login(
-        _emailController.text,
-        _passwordController.text,
-      );
-
-      print('Login bem-sucedido! Token: ${result['token']}');
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Login bem-sucedido! Bem-vindo, ${result['user']['name']}!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+          // [MUDANÇA] Chamar o provider para salvar o estado de login
+          final authProvider = Provider.of<AuthProvider>(context, listen: false);
+          await authProvider.login(
+            _emailController.text,
+            _passwordController.text,
+          );
 
       // TODO: Implementar navegação para a tela principal
       // Ex: Navigator.pushReplacementNamed(context, '/home');
 
+      // [MUDANÇA] Pegar o ID do usuário que acabou de logar
+      final loggedInUserId = authProvider.userId;
+
+      // [MUDANÇA] Checagem de segurança
+      if (!mounted) return;
+
+      // [MUDANÇA] NAVEGAR PARA A TELA DE PERFIL!
+      // Usamos 'pushReplacementNamed' para que o usuário não possa
+      // apertar "Voltar" e retornar para a tela de login.
+      Navigator.of(context).pushReplacementNamed(
+        ProfileScreen.routeName,
+        arguments: loggedInUserId, // Passa o ID do usuário para a rota
+      );
+
     } catch (e) {
       print('[DEBUG] ERRO NO LOGIN: $e');
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      // Chama o nosso novo pop-up!
       _showErrorSnackBar(errorMessage);
     } finally {
       setState(() {
