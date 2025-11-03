@@ -18,7 +18,7 @@ RUN rm -rf .dart_tool/
 RUN dart pub get
 
 # 5. Compila para executável nativo. O binário de saída será 'app_server'.
-RUN dart compile exe bin/main.dart -o /app/bin/app_server
+RUN dart compile exe bin/mss_profile_service.dart -o /app/bin/app_server
 
 # ----------------------------------------------------
 # Stage 2: Imagem de Produção (Minimalista e Estável)
