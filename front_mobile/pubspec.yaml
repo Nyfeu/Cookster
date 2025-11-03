@@ -39,6 +39,7 @@ dependencies:
   introduction_screen: ^3.1.14
   http: ^1.2.1
   shared_preferences: ^2.5.3
+  rxdart: ^0.28.0
 
 dev_dependencies:
   flutter_test:

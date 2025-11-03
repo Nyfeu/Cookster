@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // Para AuthProvider
-import '../../services/profile_service.dart'; // [MUDANÇA] Importa o serviço
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
+// [MUDANÇA] Imports do Provider removidos
+// import 'package:provider/provider.dart'; 
+import '../../services/profile_service.dart';
+// [MUDANÇA] Import do BLoC global
+import '../../providers/auth_bloc.dart';
 import '../../models/user_profile.dart'; // Ajuste caminhos
 import '../../screens/user/profile_screen.dart';
 
@@ -21,10 +22,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _bioController = TextEditingController();
   final _descricaoController = TextEditingController();
 
-  // [MUDANÇA] Instância do serviço
   final ProfileService _profileService = ProfileService();
 
-  String? token = '';
+  String? token = ''; // Esta variável local continua útil
 
   late Future<UserProfile> _profileFuture;
   bool _isSaving = false;
@@ -34,7 +34,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
 
-    token = Provider.of<AuthProvider>(context, listen: false).token;
+    // [MUDANÇA] O token agora vem do 'authBloc' global
+    // Em vez de: Provider.of<AuthProvider>(context, listen: false).token;
+    token = authBloc.currentToken;
 
     if (token != null) {
       // Passa o token para o serviço
@@ -54,28 +56,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
-  // [MUDANÇA] Nova função que chama o serviço e preenche os controladores
+  // [SEM MUDANÇAS]
+  // Esta função já depende da variável 'token' do 'State',
+  // que preenchemos corretamente no initState.
   Future<UserProfile> _loadProfile() async {
     setState(() {
       _error = null;
     });
     try {
       // Chama o serviço
-      final profileData = await _profileService.fetchUserProfile(widget.userId, token!);
+      final profileData =
+          await _profileService.fetchUserProfile(widget.userId, token!);
 
       // Preenche os controladores
       _usernameController.text = profileData.name;
       _emailController.text = profileData.email;
       _bioController.text = profileData.bio;
       _descricaoController.text = profileData.descricao;
-      
+
       return profileData; // Retorna os dados para o FutureBuilder
     } catch (err) {
       throw Exception('Erro ao carregar o perfil: ${err.toString()}');
     }
   }
 
-  // [MUDANÇA] Atualizado para usar o serviço
+  // [SEM MUDANÇAS]
+  // Esta função também já depende da variável 'token' do 'State'.
   Future<bool> _handleSaveChanges() async {
     setState(() {
       _isSaving = true;
@@ -95,10 +101,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       // 5. Sucesso
       return true; // Retorna sucesso
-
     } catch (e) {
       // 6. Erro
-      // [MUDANÇA] Relança a exceção para ser tratada no onPressed
       rethrow;
     } finally {
       // 7. Parar loading
@@ -114,9 +118,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Navigator.of(context).pop();
   }
 
-
   @override
   Widget build(BuildContext context) {
+    // [SEM MUDANÇAS]
+    // O seu método build e todos os seus helpers (FutureBuilder, _buildTextFormField, etc.)
+    // já estão perfeitamente configurados para usar o estado local (_isSaving)
+    // e o _profileFuture. Nada aqui precisa ser alterado.
+    
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -136,7 +144,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         title: const Text("Account settings"),
       ),
-      // [MUDANÇA] FutureBuilder agora espera Map<String, dynamic>
       body: FutureBuilder<UserProfile>(
         future: _profileFuture,
         builder: (context, snapshot) {
@@ -159,7 +166,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             );
           }
 
-          // Sucesso (constrói o formulário, pois os controladores já foram preenchidos)
+          // Sucesso (constrói o formulário)
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -251,65 +258,57 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           const SizedBox(width: 8),
                           ElevatedButton(
                             style: primaryButtonStyle,
-                                                onPressed: _isSaving
-                        ? null
-                        : () async {
-                            // [CORREÇÃO] Obter dependências do context ANTES do async gap
-                            final navigator = Navigator.of(context);
-                            final scaffoldMessenger =
-                                ScaffoldMessenger.of(context);
+                                onPressed: _isSaving
+                            ? null
+                            : () async {
+                              final navigator = Navigator.of(context);
+                              final scaffoldMessenger =
+                                  ScaffoldMessenger.of(context);
 
-                            // 1. Ações ANTES de salvar
-                            print("Botão pressionado, validando dados...");
-                            FocusScope.of(context)
-                                .unfocus(); // OK antes do gap
+                              print("Botão pressionado, validando dados...");
+                              FocusScope.of(context)
+                                  .unfocus(); 
 
-                            bool success = false;
-                            String? errorMessage;
+                              bool success = false;
+                              String? errorMessage;
 
-                            try {
-                              // 2. Chamar a função principal e esperar o resultado
-                              success = await _handleSaveChanges();
-                            } catch (e) {
-                              success = false;
-                              errorMessage = e
-                                  .toString()
-                                  .replaceFirst("Exception: ", "");
-                            }
+                              try {
+                                success = await _handleSaveChanges();
+                              } catch (e) {
+                                success = false;
+                                errorMessage = e
+                                    .toString()
+                                    .replaceFirst("Exception: ", "");
+                              }
 
-                            // 3. Ações DEPOIS de salvar, baseadas no sucesso
-                            // [CORREÇÃO] Usar 'mounted' (do State) para guardar o código
-                            if (!mounted)
-                              return; // Parar se o widget foi desmontado
+                              if (!mounted)
+                                return; 
 
-                            if (success) {
-                              // [CORREÇÃO] Usar a variável local 'scaffoldMessenger'
-                              scaffoldMessenger.showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        "Perfil atualizado com sucesso!"),
-                                    backgroundColor: Colors.green),
-                              );
+                              if (success) {
+                                scaffoldMessenger.showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          "Perfil atualizado com sucesso!"),
+                                      backgroundColor: Colors.green),
+                                );
+                                
+                                navigator.pushNamedAndRemoveUntil(
+                                  ProfileScreen.routeName,
+                                  (route) =>
+                                      false, 
+                                  arguments: widget.userId,
+                                );
+                              } else if (errorMessage != null) {
+                                scaffoldMessenger.showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          "Falha ao atualizar: $errorMessage"),
+                                      backgroundColor: Colors.red),
+                                );
+                              }
 
-                              // [CORREÇÃO] Usar a variável local 'navigator'
-                              navigator.pushNamedAndRemoveUntil(
-                                ProfileScreen.routeName,
-                                (route) =>
-                                    false, // Remove todas as rotas anteriores
-                                arguments: widget.userId,
-                              );
-                            } else if (errorMessage != null) {
-                              // [CORREÇÃO] Usar a variável local 'scaffoldMessenger'
-                              scaffoldMessenger.showSnackBar(
-                                SnackBar(
-                                    content: Text(
-                                        "Falha ao atualizar: $errorMessage"),
-                                    backgroundColor: Colors.red),
-                              );
-                            }
-
-                            print("Processo de salvar concluído no clique.");
-                          },
+                              print("Processo de salvar concluído no clique.");
+                            },
                             child: _isSaving
                                 ? const SizedBox(
                                     width: 20,
@@ -334,7 +333,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  // Helper (sem alteração)
+  // --- Helper _buildTextFormField (sem alteração) ---
   Widget _buildTextFormField({
     required TextEditingController controller,
     required String label,
@@ -382,4 +381,3 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 }
-

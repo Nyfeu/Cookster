@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../theme/app_theme.dart';
-import '../../services/auth_service.dart'; // <-- 1. Importar o serviço
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart'; // Ajuste o caminho se necessário
-import '../../screens/user/profile_screen.dart';
 
+// [MUDANÇA] Remova as importações de AuthService e Provider
+// import '../../services/auth_service.dart'; 
+// import 'package:provider/provider.dart';
+// import '../../providers/auth_bloc.dart'; // <-- Este caminho estava errado de qualquer forma
+
+// [MUDANÇA] Importe o seu BLoC global
+import '../../providers/auth_bloc.dart'; 
+
+import '../../screens/user/profile_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   static const String routeName = '/auth';
@@ -17,21 +22,21 @@ class AuthScreen extends StatefulWidget {
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateMixin {
+class _AuthScreenState extends State<AuthScreen>
+    with SingleTickerProviderStateMixin {
   bool _isSignUpView = true;
 
   late AnimationController _imageController;
 
-  // --- 2. Variáveis de Estado e Controladores --- //
-  final AuthService _authService = AuthService();
-  
+  // [MUDANÇA] Remove a instância local do AuthService. O BLoC já cuida disso.
+  // final AuthService _authService = AuthService();
+
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
-  String _errorMessage = '';
-  // --------------------------------------------- //
+  String _errorMessage = ''; // O estado local da tela continua aqui, isso está correto!
 
   @override
   void initState() {
@@ -60,57 +65,45 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       _errorMessage = ''; // Limpa erros ao trocar
       _isLoading = false; // Cancela loading
     });
-    
+
     // Limpa campos de texto
     _nameController.clear();
     _emailController.clear();
     _passwordController.clear();
-    
+
     _imageController.reset();
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) _imageController.forward();
     });
   }
 
-  // --- ADICIONE ESTA NOVA FUNÇÃO --- //
+  // --- Função _showErrorSnackBar (sem alterações) --- //
   void _showErrorSnackBar(String message) {
-    // Esconde qualquer SnackBar que já esteja visível
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-    // Cria o SnackBar customizado
     final snackBar = SnackBar(
-      // Conteúdo principal: o texto do erro
       content: Text(
         message,
-        style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w500),
+        style: GoogleFonts.poppins(
+            color: Colors.white, fontWeight: FontWeight.w500),
       ),
-      // Cor de fundo vermelha
       backgroundColor: Colors.red[600],
-      // Faz o SnackBar "flutuar" acima do conteúdo
       behavior: SnackBarBehavior.floating,
-      // Margens para o efeito flutuante
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      // Bordas arredondadas
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      // O seu botão "X"
       action: SnackBarAction(
         label: 'X',
         textColor: Colors.white,
         onPressed: () {
-          // Ação para fechar o SnackBar
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
         },
       ),
-      // Duração
       duration: const Duration(seconds: 5),
     );
-
-    // Mostra o SnackBar
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
   // ---------------------------------- //
-  
-// --- 3. Lógica de API (Handle Sign Up) --- //
+
+  // --- Lógica de API (Handle Sign Up) --- //
   Future<void> _handleSignUp() async {
     print('[DEBUG] Botão REGISTRAR pressionado!');
     setState(() {
@@ -119,14 +112,13 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     });
 
     try {
-      // [MUDANÇA] Chamar o provider em vez do serviço direto
-      await Provider.of<AuthProvider>(context, listen: false).register(
+      // [MUDANÇA] Chamar o 'authBloc' global em vez do Provider
+      await authBloc.register(
         _nameController.text,
         _emailController.text,
         _passwordController.text,
       );
 
-      // [MUDANÇA] Checagem de segurança
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -135,21 +127,21 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           backgroundColor: Colors.green,
         ),
       );
-      
-      _toggleView(); // Troca para a tela de login
 
+      _toggleView(); // Troca para a tela de login
     } catch (e) {
       print('[DEBUG] ERRO NO REGISTRO: $e');
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
       _showErrorSnackBar(errorMessage);
     } finally {
+      // O 'setState' local para o loading continua aqui
       setState(() {
         _isLoading = false;
       });
     }
   }
 
-  // --- 4. Lógica de API (Handle Sign In) --- //
+  // --- Lógica de API (Handle Sign In) --- //
   Future<void> _handleSignIn() async {
     print('[DEBUG] Botão ACESSAR pressionado!');
     setState(() {
@@ -158,35 +150,27 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     });
 
     try {
-          // [MUDANÇA] Chamar o provider para salvar o estado de login
-          final authProvider = Provider.of<AuthProvider>(context, listen: false);
-          await authProvider.login(
-            _emailController.text,
-            _passwordController.text,
-          );
+      // [MUDANÇA] Chamar o 'authBloc' global
+      await authBloc.login(
+        _emailController.text,
+        _passwordController.text,
+      );
 
-      // TODO: Implementar navegação para a tela principal
-      // Ex: Navigator.pushReplacementNamed(context, '/home');
+      // [MUDANÇA] Pegar o ID do usuário que acabou de logar a partir do BLoC
+      final loggedInUserId = authBloc.currentUserId; 
 
-      // [MUDANÇA] Pegar o ID do usuário que acabou de logar
-      final loggedInUserId = authProvider.userId;
-
-      // [MUDANÇA] Checagem de segurança
       if (!mounted) return;
 
-      // [MUDANÇA] NAVEGAR PARA A TELA DE PERFIL!
-      // Usamos 'pushReplacementNamed' para que o usuário não possa
-      // apertar "Voltar" e retornar para a tela de login.
       Navigator.of(context).pushReplacementNamed(
         ProfileScreen.routeName,
         arguments: loggedInUserId, // Passa o ID do usuário para a rota
       );
-
     } catch (e) {
       print('[DEBUG] ERRO NO LOGIN: $e');
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
       _showErrorSnackBar(errorMessage);
     } finally {
+      // O 'setState' local para o loading continua aqui
       setState(() {
         _isLoading = false;
       });
@@ -194,9 +178,15 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   }
   // ------------------------------------------ //
 
-
   @override
   Widget build(BuildContext context) {
+    // ... todo o seu método build permanece
+    // ... EXATAMENTE IGUAL ...
+    // ... (Vou omitir por ser muito longo, mas NADA muda aqui) ...
+
+    // O código abaixo é apenas o final do seu build,
+    // garantindo que as funções de 'onPressed' estão corretas
+    // (elas já estavam)
     final size = MediaQuery.of(context).size;
     final double panelHeight = _isSignUpView ? size.height * 0.4 : size.height * 0.48;
     
@@ -290,6 +280,13 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
+  // --- O restante dos seus widgets _build (sem alterações) --- //
+  // ... _buildFormContent, _buildPanelContent, _buildActionButton, 
+  // ... _buildSocialIcons, _buildSocialButton, _buildTextField
+  // ... NENHUM DELES PRECISA MUDAR!
+  // ... (Omitidos para economizar espaço)
+
+  // --- Widget _buildFormContent (copiado para garantir) --- //
   Widget _buildFormContent({required bool isSignUp}) {
     return SingleChildScrollView(
       child: Container(
@@ -317,7 +314,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             ),
             const SizedBox(height: 15),
             
-            // --- 5. Conectar campos aos controladores --- //
             if (isSignUp) ...[
               _buildTextField(
                 controller: _nameController,
@@ -340,18 +336,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             ),
             const SizedBox(height: 30),
             
-            // // --- 6. Exibir Mensagem de Erro --- //
-            // if (_errorMessage.isNotEmpty)
-            //   Padding(
-            //     padding: const EdgeInsets.symmetric(vertical: 10.0),
-            //     child: Text(
-            //       _errorMessage,
-            //       style: GoogleFonts.poppins(color: Colors.red, fontSize: 14),
-            //       textAlign: TextAlign.center,
-            //     ),
-            //   ),
-            
-            // const SizedBox(height: 10),
             _buildActionButton(isSignUp ? 'Criar' : 'Acessar'),
           ],
         ),
@@ -359,7 +343,34 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
-  // Painel _buildPanelContent (sem alterações)
+  // --- Widget _buildActionButton (copiado para garantir) --- //
+  Widget _buildActionButton(String text) {
+    return ElevatedButton(
+      // A sua lógica aqui já estava perfeita e funciona com o BLoC.
+      onPressed: _isLoading 
+          ? null 
+          : (_isSignUpView ? _handleSignUp : _handleSignIn),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppTheme.secondaryColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
+      ),
+      child: _isLoading 
+          ? const CircularProgressIndicator(color: Colors.white)
+          : Text(
+              text,
+              style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+    );
+  }
+
+  // --- O resto dos seus métodos _build (omitidos) --- //
+  // ... (eles não mudam) ...
+  
   Widget _buildPanelContent({
     required bool isVisible,
     required String title,
@@ -444,33 +455,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
-  // --- 7. Atualizar o Botão de Ação --- //
-  Widget _buildActionButton(String text) {
-    return ElevatedButton(
-      // Conecta a ação correta (Login ou Registro)
-      // Desabilita o botão se _isLoading for true
-      onPressed: _isLoading 
-          ? null 
-          : (_isSignUpView ? _handleSignUp : _handleSignIn),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppTheme.secondaryColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
-      ),
-      child: _isLoading 
-          ? const CircularProgressIndicator(color: Colors.white)
-          : Text(
-              text,
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-    );
-  }
-
-  // Ícones Sociais (sem alterações)
   Widget _buildSocialIcons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -484,7 +468,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
-  // Ícones Sociais (sem alterações)
   Widget _buildSocialButton(IconData icon) {
     return CircleAvatar(
       radius: 22,
@@ -493,7 +476,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
-  // --- 8. Atualizar o _buildTextField --- //
   Widget _buildTextField(
     {required TextEditingController controller,
     required IconData icon, 

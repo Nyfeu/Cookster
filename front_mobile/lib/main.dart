@@ -6,17 +6,29 @@ import 'screens/user/profile_screen.dart';
 import 'screens/user/edit_screen.dart';
 import 'screens/recipe/recipe_screen.dart';
 import 'theme/app_theme.dart';
-import 'package:provider/provider.dart'; // [NOVO] Importe o provider
-import 'providers/auth_provider.dart';
+
+// --- [ALTERAÇÕES] ---
+// 1. REMOVA as importações do Provider
+// import 'package:provider/provider.dart';
+// import 'providers/auth_provider.dart';
+
+// 2. ADICIONE a importação do seu BLoC global
+import 'providers/auth_bloc.dart'; 
+// --- [FIM DAS ALTERAÇÕES] ---
 
 
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => AuthProvider(),
-      child: const MyApp(),
-    ),
-  );
+// 3. Transforme o 'main' em 'async'
+void main() async {
+  
+  // 4. Garanta que o Flutter esteja inicializado antes de chamadas 'await'
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 5. Chame o 'tryAutoLogin' ANTES de rodar o app
+  // Isso popula o BLoC com dados do SharedPreferences.
+  await authBloc.tryAutoLogin();
+
+  // 6. Remova o 'ChangeNotifierProvider'
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -24,6 +36,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // O MaterialApp e todas as suas rotas permanecem EXATAMENTE IGUAIS.
     return MaterialApp(
       title: 'Cookster',
       theme: ThemeData(
@@ -35,39 +48,26 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      // A rota inicial continua sendo a de onboarding
       initialRoute: OnboardingScreen.routeName,
-      // Definimos as rotas nomeadas para a navegação
       routes: {
         OnboardingScreen.routeName: (context) => const OnboardingScreen(),
-        // CORREÇÃO: Usando o nome correto da rota e da tela (AuthScreen)
         AuthScreen.routeName: (context) => const AuthScreen(),
 
         ProfileScreen.routeName: (context) {
-          // Pega o ID passado como argumento
           final userId = ModalRoute.of(context)!.settings.arguments as String?;
-
           return ProfileScreen(userId: userId ?? 'ID_PADRAO_OU_ERRO');
         },
 
         EditProfileScreen.routeName: (context){
-
           final profileId = ModalRoute.of(context)!.settings.arguments as String?;
-
           return EditProfileScreen(userId: profileId ?? 'ID_PADRAO_OU_ERRO');
         },
 
-        // [NOVO] Adicionando a rota da página de receita
         RecipePage.routeName: (context) {
-          // Ela funciona exatamente como a ProfileScreen: precisa de um argumento
           final recipeId = ModalRoute.of(context)!.settings.arguments as String?;
-          // Passamos o ID para o construtor da RecipeScreen (que adaptamos)
-          // (Estou assumindo que o widget que adaptamos se chama 'RecipeScreen'
-          // e que o nome do parâmetro é 'idReceita')
           return RecipePage(idReceita: recipeId ?? 'ID_RECEITA_PADRAO_OU_ERRO');
+        },
       },
-    },
     );
   }
 }
-

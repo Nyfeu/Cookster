@@ -3,8 +3,12 @@ import '../../models/user_profile.dart'; // Ajuste caminhos
 import '../../services/profile_service.dart';
 import '../../widgets/profile_screen/info_panel.dart';
 import '../../widgets/profile_screen/recipes_grid.dart';
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
+
+// [MUDANÇA] Imports do Provider removidos
+// import 'package:provider/provider.dart';
+
+// [MUDANÇA] Import do BLoC global (ajustei o caminho para 'blocs')
+import '../../providers/auth_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const String routeName = '/profile';
@@ -23,7 +27,9 @@ class ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
 
-    final token = Provider.of<AuthProvider>(context, listen: false).token;
+    // [MUDANÇA] O token agora é pego diretamente do BLoC global
+    // Em vez de: Provider.of<AuthProvider>(context, listen: false).token;
+    final token = authBloc.currentToken;
 
     if (token != null) {
       // Passa o token para o serviço
@@ -36,7 +42,9 @@ class ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-      // [MUDANÇA] O FutureBuilder agora constrói o Scaffold inteiro.
+      // [SEM MUDANÇAS]
+      // O seu FutureBuilder e o restante da lógica do build
+      // já funcionam perfeitamente com a mudança no initState.
       return FutureBuilder<UserProfile>(
         future: profileFuture,
         builder: (context, snapshot) {
@@ -66,8 +74,6 @@ class ProfileScreenState extends State<ProfileScreen> {
           if (snapshot.hasData) {
             final profile = snapshot.data!;
 
-            // [MUDANÇA] O Scaffold e a AppBar são construídos AQUI,
-            // pois agora temos acesso ao objeto 'profile'.
             return Scaffold(
               appBar: AppBar(
                 title: const Text('Perfil'),
@@ -86,15 +92,13 @@ class ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    // Constrói o layout principal da página
-    // [MUDANÇA] Este método não foi alterado.
+    // [SEM MUDANÇAS]
+    // Este método não foi alterado.
     Widget buildProfileLayout(BuildContext context, UserProfile profile) {
       // Altura do banner (30% da tela)
       final bannerHeight = MediaQuery.of(context).size.height * 0.3;
 
-      // Ponto de início do InfoPanel (metade do avatar para cima,
-      // a partir do fim do banner)
-      // (Altura do Banner) - 60 (metade do avatar de 120)
+      // Ponto de início do InfoPanel
       final infoPanelTopMargin = bannerHeight - 60;
 
       // O SingleChildScrollView agora engloba TUDO
@@ -102,12 +106,10 @@ class ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           children: [
             // 1. O Stack para sobreposição
-            // Este Stack agora está DENTRO da Column rolável.
             Stack(
               clipBehavior: Clip.none, // Permite o avatar "vazar"
               children: [
-                // 1.a. O Banner (Filho 1, no fundo do Stack)
-                // Não está mais "Positioned", é apenas um item no Stack
+                // 1.a. O Banner
                 Container(
                   height: bannerHeight,
                   width: double.infinity,
@@ -119,9 +121,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                // 1.b. O Painel de Informações (Filho 2, na frente do Stack)
-                // Usamos uma Column com um SizedBox para "empurrar" o painel
-                // para a posição correta sobre o banner.
+                // 1.b. O Painel de Informações
                 Column(
                   children: [
                     // Este SizedBox empurra o InfoPanel para baixo
@@ -142,8 +142,6 @@ class ProfileScreenState extends State<ProfileScreen> {
             ),
 
             // 2. O Painel de Receitas
-            // Está na Column principal, APÓS o Stack.
-            // O espaçamento agora é entre o Stack (InfoPanel) e este widget.
             Padding(
               padding: const EdgeInsets.only(
                 top: 24.0, // Espaço entre o InfoPanel e o título "Receitas"
