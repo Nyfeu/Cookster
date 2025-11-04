@@ -21,7 +21,7 @@ spec:
         command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o Event Bus..."; sleep 2; done; echo "✅ Event Bus disponível!";']
       containers:
       - name: mss-pantry-container
-        image: lucaspaga/mss-pantry:latest # Sua imagem no Docker Hub
+        image: nyfeu/mss-pantry:latest # Sua imagem no Docker Hub
         imagePullPolicy: Always
         ports:
         - containerPort: 3001

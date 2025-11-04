@@ -21,7 +21,7 @@
 #         command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o Event Bus..."; sleep 2; done; echo "✅ Event Bus disponível!";']
 #       containers:
 #       - name: mss-profile-service-container
-#         image: lucaspaga/mss-profile-service:latest # Sua imagem no Docker Hub
+#         image: nyfeu/mss-profile-service:latest # Sua imagem no Docker Hub
 #         imagePullPolicy: Always
 #         ports:
 #         - containerPort: 3001
