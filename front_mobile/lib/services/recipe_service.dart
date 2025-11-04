@@ -2,19 +2,21 @@
 import 'package:http/http.dart' as http;
 import '../../models/recipe_model.dart';
 
-
 class RecipeService {
-  Future<Recipe> fetchRecipe(String idReceita) async {
+  Future<Recipe> fetchRecipe(String idReceita, String token) async {
     if (idReceita.isEmpty) {
       throw Exception("ID da receita não encontrado.");
     }
 
-    final url = Uri.parse('http://localhost:9000/recipes/$idReceita');
+    final url = Uri.parse('http://localhost:2000/recipe/recipes/$idReceita');
 
     try {
       final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
       );
 
       if (response.statusCode == 200) {

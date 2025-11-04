@@ -6,6 +6,8 @@ import '../../widgets/recipe_screen/recipe_hero_section.dart';
 import '../../widgets/recipe_screen/instructions_info.dart';
 import '../../widgets/recipe_screen/ingredients_info.dart';
 import '../../widgets/recipe_screen/tools_info.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 
 class RecipePage extends StatefulWidget {
   static const String routeName = '/recipe';
@@ -25,8 +27,15 @@ class _RecipePageState extends State<RecipePage> {
   @override
   void initState() {
     super.initState();
-    // Chama o fetch (seu primeiro useEffect)
-    _recipeFuture = _recipeService.fetchRecipe(widget.idReceita);
+    
+    final token = Provider.of<AuthProvider>(context, listen: false).token;
+
+    if (token != null) {
+      _recipeFuture = _recipeService.fetchRecipe(widget.idReceita, token);
+    } else {
+      // Se não há token, o Future já retorna um erro.
+      _recipeFuture = Future.error('Usuário não autenticado. Token nulo.');
+    }
   }
 
   @override
