@@ -44,10 +44,18 @@ const PageProfile = () => {
                 setLoading(true);
                 setError(null);
 
-                const response = await fetch(`http://localhost:30005/profile/${userId}`, {
+                const token = localStorage.getItem("token");
+
+                if (!token) {
+                    console.error("Token não encontrado. Usuário pode não estar autenticado.");
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:2000/profile/${userId}`, {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
                     }
                 });
 

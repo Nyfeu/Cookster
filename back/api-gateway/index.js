@@ -122,7 +122,11 @@ Object.entries(services).forEach(([route, config]) => {
     app.use(`/${route}`, createProxyMiddleware({
         target: config.target,
         changeOrigin: true,
-        pathRewrite: { [`^/${route}`]: '' },
+        pathRewrite: (path, req) => {
+            const newPath = path.replace(new RegExp(`^/${route}(?=/|$)`), '');
+            console.log(`[GATEWAY_DEBUG] ${path} -> ${newPath}`);
+            return newPath || '/';
+        },
 
         // ADICIONE ESTA FUNÇÃO:
         onProxyRes: function (proxyRes, req, res) {

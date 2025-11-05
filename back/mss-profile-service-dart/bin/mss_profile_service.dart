@@ -27,8 +27,10 @@ void main(List<String> args) async {
       return;
   }
   
-  final mongoUri =
-      'mongodb+srv://$dbUser:$dbPassword@cluster0.fbrwz1j.mongodb.net/mss-profile-service?retryWrites=true&w=majority&appName=Cluster0';
+  final encodedUser = Uri.encodeComponent(dbUser.trim());
+  final encodedPass = Uri.encodeComponent(dbPassword.trim());
+  final mongoUri = 'mongodb+srv://$encodedUser:$encodedPass@cluster0.fbrwz1j.mongodb.net/mss-profile-service?retryWrites=true&w=majority&appName=Cluster0';
+  print ('🔑 MongoDB URI: $mongoUri');
 
   late final Db db;
   try {
