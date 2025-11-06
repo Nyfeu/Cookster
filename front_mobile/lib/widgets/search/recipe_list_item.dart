@@ -21,9 +21,7 @@ class RecipeListItem extends StatelessWidget {
           Navigator.pushNamed(
             context,
             RecipePage.routeName,
-            arguments: recipe.userId, // Atenção: O modelo Recipe não tem ID da receita
-                                     // Estou usando userId como fallback
-                                     // O ideal é que o modelo Recipe tenha o `_id` da receita
+            arguments: recipe.id
           );
         },
         child: Row(

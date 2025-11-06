@@ -5,6 +5,7 @@ import 'dart:convert';
 Recipe recipeFromJson(String str) => Recipe.fromJson(json.decode(str));
 
 class Recipe {
+  final String id;
   final String userId;
   final String name;
   final String description;
@@ -18,6 +19,7 @@ class Recipe {
   final List<String> utensils;
 
   Recipe({
+    required this.id,
     required this.userId,
     required this.name,
     required this.description,
@@ -32,6 +34,7 @@ class Recipe {
   });
 
   factory Recipe.fromJson(Map<String, dynamic> json) => Recipe(
+        id: json["_id"] ?? '',
         userId: json["user_id"] ?? 'Usuário',
         name: json["name"] ?? 'Sem nome',
         description: json["description"] ?? '',

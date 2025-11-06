@@ -179,28 +179,45 @@ class _RecipeHeroSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
+    // --- Definindo a imagem de fallback ---
+    // Vamos usar isso em caso de erro ou URL vazia.
+    final Widget fallbackImage = Image.asset(
+      'assets/images/bolo.png',
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        // Se até o asset falhar (o que é raro), mostra um ícone
+        return Container(
+          color: Colors.grey[300],
+          child: const Icon(
+            Icons.broken_image,
+            size: 50,
+            color: Colors.grey,
+          ),
+        );
+      },
+    );
+    // --- Fim do fallback ---
+
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
-        // A Imagem (Agora usando Image.asset direto)
+        // A Imagem (CORRIGIDA)
         Container(
           height: 400,
           width: double.infinity,
-          child: Image.asset(
-            'assets/images/bolo.png', 
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              // Se a imagem não for encontrada nos assets
-              return Container(
-                color: Colors.grey[300],
-                child: const Icon(
-                  Icons.broken_image,
-                  size: 50,
-                  color: Colors.grey,
-                ),
-              );
-            },
-          ),
+          // 1. Verifica se a URL da imagem não está vazia
+          child: recipe.imageUrl.isNotEmpty
+              // 2. Se tiver URL, usa Image.network
+              ? Image.network(
+                  recipe.imageUrl,
+                  fit: BoxFit.cover,
+                  // 3. Se o Image.network falhar (ex: 404), usa o fallback
+                  errorBuilder: (context, error, stackTrace) {
+                    return fallbackImage;
+                  },
+                )
+              // 4. Se a URL estiver vazia, usa o fallback direto
+              : fallbackImage,
         ),
 
         // O "Scrim" (degradê para o texto ficar legível)
