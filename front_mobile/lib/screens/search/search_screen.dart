@@ -178,11 +178,21 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     if (_results.isEmpty) {
-      return const Center(
-        child: Text(
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+        Image.asset(
+          'assets/images/reg.png', 
+          height: 160,
+        ),
+        const SizedBox(height: 24),
+        const Text(
           'Nenhuma receita encontrada.\nFaça uma busca!',
           style: TextStyle(fontSize: 16, color: Colors.grey),
           textAlign: TextAlign.center,
+        )
+          ]
         ),
       );
     }
