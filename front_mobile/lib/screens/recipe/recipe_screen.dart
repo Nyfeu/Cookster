@@ -1,17 +1,18 @@
-// lib/pages/recipe_page.dart
+// lib/screens/recipe/recipe_screen.dart (OU lib/pages/recipe_page.dart)
+// [ARQUIVO ATUALIZADO E CORRIGIDO]
+
 import 'package:flutter/material.dart';
 import '../../models/recipe_model.dart';
 import '../../services/recipe_service.dart';
-import '../../widgets/recipe_screen/recipe_hero_section.dart';
-import '../../widgets/recipe_screen/instructions_info.dart';
-import '../../widgets/recipe_screen/ingredients_info.dart';
-import '../../widgets/recipe_screen/tools_info.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 
+// Seus imports antigos de widgets (recipe_hero_section, etc.)
+// devem ser removidos se ainda estiverem aqui.
+
 class RecipePage extends StatefulWidget {
   static const String routeName = '/recipe';
-  final String idReceita; // Recebe o ID (como o useParams)
+  final String idReceita;
 
   const RecipePage({super.key, required this.idReceita});
 
@@ -20,119 +21,438 @@ class RecipePage extends StatefulWidget {
 }
 
 class _RecipePageState extends State<RecipePage> {
-  // O Future armazena o estado da requisição (loading, data, error)
   late Future<Recipe> _recipeFuture;
+  String? _token;
   final RecipeService _recipeService = RecipeService();
 
   @override
   void initState() {
     super.initState();
-    
-    final token = Provider.of<AuthProvider>(context, listen: false).token;
+    _token = Provider.of<AuthProvider>(context, listen: false).token;
 
-    if (token != null) {
-      _recipeFuture = _recipeService.fetchRecipe(widget.idReceita, token);
-    } else {
-      // Se não há token, o Future já retorna um erro.
-      _recipeFuture = Future.error('Usuário não autenticado. Token nulo.');
+    if (_token != null) {
+      _recipeFuture = _recipeService.fetchRecipe(widget.idReceita, _token!);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Scaffold é a base da página
+    if (_token == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Cookster'),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.lock_outline, size: 80, color: Colors.grey[400]),
+              const SizedBox(height: 24),
+              Text(
+                'Ops! Login Necessário',
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Você precisa estar logado para ver os detalhes desta receita.',
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
-      // Seu <NavBar_Auth />
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Cookster'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CircleAvatar(
+            backgroundColor: Colors.black.withOpacity(0.4),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ),
       ),
-      // FutureBuilder gerencia os estados de loading/error/data
       body: FutureBuilder<Recipe>(
         future: _recipeFuture,
         builder: (context, snapshot) {
-          // if (loading)
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // if (error)
           if (snapshot.hasError) {
             return Center(
               child: Text(
                 'Erro: ${snapshot.error}',
                 style: const TextStyle(color: Colors.red, fontSize: 18),
+                textAlign: TextAlign.center,
               ),
             );
           }
 
-          // if (!recipeData)
           if (!snapshot.hasData) {
             return const Center(child: Text('Receita não encontrada.'));
           }
 
-          // Sucesso! Temos os dados.
           final recipe = snapshot.data!;
 
-          // Seu return <div> ... </div>
-          // SingleChildScrollView permite rolar a página
           return SingleChildScrollView(
-            // Padding do seu .page
-            padding: const EdgeInsets.all(32.0), // 2rem
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // <section className="recipe-hero">
-                RecipeHeroSection(recipe: recipe),
+                // Usamos os novos Widgets (definidos abaixo)
+                _RecipeHeroSection(recipe: recipe),
 
-                const SizedBox(height: 32), // 2rem gap
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      bool isDesktop = constraints.maxWidth > 768;
 
-                // <section className="recipe-content">
-                // LayoutBuilder para o grid responsivo
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    bool isDesktop = constraints.maxWidth > 768;
-
-                    if (isDesktop) {
-                      // Grid 2fr 1fr
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Coluna 1 (Instruções)
-                          Expanded(
-                            flex: 2, // 2fr
-                            child: InstructionsInfo(steps: recipe.steps),
-                          ),
-                          const SizedBox(width: 32), // 2rem gap
-                          // Coluna 2 (Ingredientes e Utensílios)
-                          Expanded(
-                            flex: 1, // 1fr
-                            child: Column(
-                              children: [
-                                IngredientsInfo(ingredients: recipe.ingredients),
-                                const SizedBox(height: 16), // 1rem
-                                ToolsInfo(utensils: recipe.utensils),
-                              ],
+                      if (isDesktop) {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: _InstructionsInfo(steps: recipe.steps),
                             ),
-                          ),
-                        ],
-                      );
-                    } else {
-                      // Mobile: Grid 1fr (coluna única)
-                      return Column(
-                        children: [
-                          InstructionsInfo(steps: recipe.steps),
-                          const SizedBox(height: 32), // 2rem
-                          IngredientsInfo(ingredients: recipe.ingredients),
-                          const SizedBox(height: 16), // 1rem
-                          ToolsInfo(utensils: recipe.utensils),
-                        ],
-                      );
-                    }
-                  },
+                            const SizedBox(width: 24),
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  _IngredientsInfo(
+                                      ingredients: recipe.ingredients),
+                                  const SizedBox(height: 24),
+                                  _ToolsInfo(utensils: recipe.utensils),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                        // Mobile:
+                        return Column(
+                          children: [
+                            _IngredientsInfo(ingredients: recipe.ingredients),
+                            const SizedBox(height: 24),
+                            _ToolsInfo(utensils: recipe.utensils),
+                            const SizedBox(height: 24),
+                            _InstructionsInfo(steps: recipe.steps),
+                          ],
+                        );
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+// =========================================================================
+// == NOVOS WIDGETS DE UI (NO MESMO ARQUIVO) ==
+// =========================================================================
+
+// --- WIDGET 1: A SEÇÃO "HERO" (IMAGEM E TÍTULO) ---
+
+class _RecipeHeroSection extends StatelessWidget {
+  final Recipe recipe;
+  const _RecipeHeroSection({required this.recipe});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        // A Imagem (Agora usando Image.asset direto)
+        Container(
+          height: 400,
+          width: double.infinity,
+          child: Image.asset(
+            'assets/images/bolo.png', 
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              // Se a imagem não for encontrada nos assets
+              return Container(
+                color: Colors.grey[300],
+                child: const Icon(
+                  Icons.broken_image,
+                  size: 50,
+                  color: Colors.grey,
+                ),
+              );
+            },
+          ),
+        ),
+
+        // O "Scrim" (degradê para o texto ficar legível)
+        Container(
+          height: 400,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Colors.black.withOpacity(0.4),
+                Colors.black.withOpacity(0.8),
+              ],
+              stops: const [0.5, 0.7, 1.0],
+            ),
+          ),
+        ),
+
+        // O Conteúdo (Texto e Infos)
+        Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                recipe.name,
+                style: textTheme.headlineLarge
+                    ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Por ${recipe.userId}',
+                style: textTheme.titleMedium?.copyWith(color: Colors.white70),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _InfoChip(
+                    icon: Icons.timer_outlined,
+                    label: '${recipe.prepTime} min',
+                  ),
+                  _InfoChip(
+                    icon: Icons.restaurant_menu_outlined,
+                    label: '${recipe.servings} porções',
+                  ),
+                  _InfoChip(
+                    icon: Icons.star_outline,
+                    label: '4.5 (22)', // TODO: Adicionar rating ao modelo
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// --- WIDGET 2: O CARD DE INSTRUÇÕES ---
+
+class _InstructionsInfo extends StatelessWidget {
+  final List<String> steps;
+  const _InstructionsInfo({required this.steps});
+
+  @override
+  Widget build(BuildContext context) {
+    return _StyledCard(
+      title: 'Modo de Preparo',
+      child: ListView.separated(
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: steps.length,
+        separatorBuilder: (context, index) => Divider(color: Colors.grey[300]),
+        itemBuilder: (context, index) {
+          return _StepTile(
+            stepNumber: index + 1,
+            instruction: steps[index],
+          );
+        },
+      ),
+    );
+  }
+}
+
+// --- WIDGET 3: O CARD DE INGREDIENTES ---
+
+class _IngredientsInfo extends StatelessWidget {
+  final List<Ingredient> ingredients;
+  const _IngredientsInfo({required this.ingredients});
+
+  @override
+  Widget build(BuildContext context) {
+    return _StyledCard(
+      title: 'Ingredientes',
+      child: Column(
+        children: ingredients.map((ingredient) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.check_circle_outline,
+                    color: Theme.of(context).primaryColor, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    // Usando o 'dynamic quantity' do seu model
+                    '${ingredient.quantity} ${ingredient.unit} - ${ingredient.name}',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// --- WIDGET 4: O CARD DE UTENSÍLIOS ---
+
+class _ToolsInfo extends StatelessWidget {
+  final List<String> utensils;
+  const _ToolsInfo({required this.utensils});
+
+  @override
+  Widget build(BuildContext context) {
+    if (utensils.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return _StyledCard(
+      title: 'Utensílios',
+      child: Wrap(
+        spacing: 8.0,
+        runSpacing: 8.0,
+        children: utensils.map((tool) {
+          return Chip(
+            avatar: Icon(Icons.kitchen_outlined, color: Colors.grey[700]),
+            label: Text(tool),
+            backgroundColor: Colors.grey[200],
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// =========================================================================
+// == WIDGETS DE AJUDA (Helpers) ==
+// =========================================================================
+
+class _StyledCard extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _StyledCard({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.all(20.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: textTheme.headlineSmall
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Divider(color: Colors.grey[300]),
+          const SizedBox(height: 12),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _InfoChip({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white, size: 28),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      ],
+    );
+  }
+}
+
+class _StepTile extends StatelessWidget {
+  final int stepNumber;
+  final String instruction;
+
+  const _StepTile({required this.stepNumber, required this.instruction});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: Theme.of(context).primaryColor,
+            child: Text(
+              '$stepNumber',
+              style:
+                  const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              instruction,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(height: 1.5),
+            ),
+          ),
+        ],
       ),
     );
   }
