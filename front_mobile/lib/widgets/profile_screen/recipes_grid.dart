@@ -7,12 +7,12 @@ class RecipesGrid extends StatelessWidget {
 
   // Lista de receitas (hardcoded como no seu exemplo)
   final List<Map<String, String>> recipes = const [
-    {'id': '68418757ea0cf6733b142a67', 'image': 'assets/images/Prato_1.jpeg'},
-    {'id': '68418757ea0cf6733b142a67', 'image': 'assets/images/Prato_2.jpg'},
-    {'id': '68418757ea0cf6733b142a67', 'image': 'assets/images/Prato_3.jpg'},
-    {'id': '68418757ea0cf6733b142a67', 'image': 'assets/images/Prato_1.jpeg'},
-    {'id': '68418757ea0cf6733b142a67', 'image': 'assets/images/Prato_2.jpg'},
-    {'id': '68418757ea0cf6733b142a67', 'image': 'assets/images/Prato_3.jpg'},
+    {'id': '68418757ea0cf6733b142a67', 'image': 'assets/images/Prato_1.webp'},
+    {'id': '68418757ea0cf6733b142a68', 'image': 'assets/images/Prato_2.jpg'},
+    {'id': '68430bc1181c530646ed2e92', 'image': 'assets/images/Prato_3.jpeg'},
+    {'id': '68430c79181c530646ed2e93', 'image': 'assets/images/Prato_4.webp'},
+    {'id': '690c3a21457837bb5cf42193', 'image': 'assets/images/Prato_5.jpg'},
+    {'id': '690c3a21457837bb5cf42194', 'image': 'assets/images/Prato_6.jpg'},
   ];
 
   @override
