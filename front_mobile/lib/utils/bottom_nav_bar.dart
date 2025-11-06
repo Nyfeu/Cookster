@@ -16,7 +16,7 @@ class CustomBottomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
-      type: BottomNavigationBarType.fixed, // Para mostrar o label de todos os ícones
+      type: BottomNavigationBarType.fixed,
       backgroundColor: AppTheme.primaryColor,
       selectedItemColor: AppTheme.accentColor,
       unselectedItemColor: AppTheme.backgroundColor.withOpacity(0.7),
@@ -30,11 +30,6 @@ class CustomBottomNavBar extends StatelessWidget {
           icon: Icon(Icons.search_outlined),
           activeIcon: Icon(Icons.search),
           label: 'Buscar',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.add_circle_outline, size: 32),
-          activeIcon: Icon(Icons.add_circle, size: 32),
-          label: 'Postar',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.kitchen_outlined),
