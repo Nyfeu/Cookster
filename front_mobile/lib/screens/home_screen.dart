@@ -6,11 +6,11 @@ import 'package:front_mobile/providers/auth_provider.dart';
 import 'package:front_mobile/screens/feed/feed_screen.dart';
 import 'package:front_mobile/screens/search/search_screen.dart';
 import 'package:front_mobile/screens/user/profile_screen.dart';
+import 'package:front_mobile/screens/pantry/pantry_screen.dart';
 
 // Páginas de exemplo para cada aba da navegação
 const Center pageAddRecipe =
     Center(child: Text('Página para Adicionar Receita'));
-const Center pagePantry = Center(child: Text('Página da Despensa'));
 
 class MyProfileTab extends StatelessWidget {
   const MyProfileTab({super.key});
@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     FeedScreen(),
     SearchScreen(),
     pageAddRecipe,
-    pagePantry,
+    PantryScreen(),
     MyProfileTab(), 
   ];
 

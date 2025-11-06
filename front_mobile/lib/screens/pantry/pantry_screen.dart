@@ -1,5 +1,3 @@
-// lib/screens/pantry/pantry_screen.dart
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:front_mobile/models/ingredient.dart';
@@ -9,9 +7,8 @@ import 'package:front_mobile/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class PantryScreen extends StatefulWidget {
-
   static const String routeName = '/pantry';
-  
+
   const PantryScreen({super.key});
 
   @override
@@ -29,6 +26,24 @@ class _PantryScreenState extends State<PantryScreen> {
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+
+    // --- CORREÇÃO ADICIONADA AQUI ---
+    // Garante que o contexto esteja disponível antes de chamar o provider
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Dispara a busca inicial pelos ingredientes da despensa
+      // Usamos context.read (ou listen: false) dentro do initState
+      context.read<PantryProvider>().fetchIngredientes().catchError((e) {
+        // Opcional: Tratar erro do fetch inicial, se necessário
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Erro ao carregar despensa inicial: $e'),
+                backgroundColor: Colors.red),
+          );
+        }
+      });
+    });
+    // --- FIM DA CORREÇÃO ---
   }
 
   @override
@@ -44,38 +59,43 @@ class _PantryScreenState extends State<PantryScreen> {
     _debounce = Timer(const Duration(milliseconds: 400), () async {
       final termo = _searchController.text;
       if (termo.length < 2) {
-        setState(() {
-          _sugestoes = [];
-          _isSearching = false;
-        });
+        if (mounted) {
+          setState(() {
+            _sugestoes = [];
+            _isSearching = false;
+          });
+        }
         return;
       }
-      
-      setState(() { _isSearching = true; });
+
+      if (mounted) setState(() { _isSearching = true; });
       try {
         final results = await _pantryService.getSuggestions(termo);
         if (mounted) {
-           setState(() {
-             _sugestoes = results;
-             _isSearching = false;
-           });
+          setState(() {
+            _sugestoes = results;
+            _isSearching = false;
+          });
         }
       } catch (e) {
-         if (mounted) setState(() { _isSearching = false; });
-         print("Erro ao buscar sugestões: $e");
+        if (mounted) setState(() { _isSearching = false; });
+        debugPrint("Erro ao buscar sugestões: $e");
       }
     });
   }
 
   Future<void> _adicionarIngrediente(Ingrediente ingrediente) async {
     // Chama o provider para adicionar
+    // O provider (espera-se) já chama fetchIngredientes após adicionar
     await context.read<PantryProvider>().adicionarIngrediente(ingrediente);
-    
+
     // Limpa a busca
     _searchController.clear();
-    setState(() {
-      _sugestoes = [];
-    });
+    if (mounted) {
+      setState(() {
+        _sugestoes = [];
+      });
+    }
   }
 
   Future<void> _removerIngrediente(Ingrediente ingrediente) async {
@@ -100,6 +120,7 @@ class _PantryScreenState extends State<PantryScreen> {
 
     if (confirmar == true) {
       // Chama o provider para remover
+      // O provider (espera-se) já chama fetchIngredientes após remover
       await context.read<PantryProvider>().removerIngrediente(ingrediente);
     }
   }
@@ -119,23 +140,27 @@ class _PantryScreenState extends State<PantryScreen> {
               decoration: InputDecoration(
                 hintText: 'Buscar ingrediente...',
                 prefixIcon: const Icon(Icons.search),
-                suffixIcon: _isSearching 
-                  ? const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ) 
-                  : null,
+                suffixIcon: _isSearching
+                    ? const Padding(
+                        padding: EdgeInsets.all(12.0), // Ajuste no padding
+                        child: SizedBox( // Tamanho definido
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
+                    : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
               ),
             ),
-            
+
             // 2. Lista de Sugestões
             _buildSugestoesList(),
 
             const SizedBox(height: 16),
-            
+
             // 3. Lista da Despensa
             Expanded(
               child: _buildPantryList(),
@@ -162,9 +187,11 @@ class _PantryScreenState extends State<PantryScreen> {
           itemBuilder: (context, index) {
             final sug = _sugestoes[index];
             return ListTile(
-              leading: const Icon(Icons.add_circle_outline, color: AppTheme.accentColor),
+              leading:
+                  const Icon(Icons.add_circle_outline, color: AppTheme.accentColor),
               title: Text(sug.nome),
-              subtitle: Text(sug.categoria, style: const TextStyle(color: Colors.grey)),
+              subtitle:
+                  Text(sug.categoria, style: const TextStyle(color: Colors.grey)),
               onTap: () => _adicionarIngrediente(sug),
             );
           },
@@ -176,12 +203,15 @@ class _PantryScreenState extends State<PantryScreen> {
   Widget _buildPantryList() {
     return Consumer<PantryProvider>(
       builder: (context, provider, child) {
+        // Mostra o loading APENAS se a lista estiver vazia
         if (provider.isLoading && provider.ingredientes.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
         if (provider.error.isNotEmpty) {
-          return Center(child: Text(provider.error, style: const TextStyle(color: Colors.red)));
+          return Center(
+              child:
+                  Text(provider.error, style: const TextStyle(color: Colors.red)));
         }
 
         if (provider.ingredientes.isEmpty) {
@@ -189,7 +219,7 @@ class _PantryScreenState extends State<PantryScreen> {
         }
 
         final categorias = provider.categoriasOrdenadas;
-        
+
         return RefreshIndicator(
           onRefresh: () => provider.fetchIngredientes(),
           child: ListView.builder(
@@ -219,7 +249,8 @@ class _PantryScreenState extends State<PantryScreen> {
                         title: Text(item.nome),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                         trailing: IconButton(
-                          icon: const Icon(Icons.remove_circle_outline, color: Colors.redAccent),
+                          icon: const Icon(Icons.remove_circle_outline,
+                              color: Colors.redAccent),
                           onPressed: () => _removerIngrediente(item),
                         ),
                         onTap: () => _removerIngrediente(item), // Permite clicar no item todo
