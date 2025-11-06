@@ -5,16 +5,22 @@ import 'screens/auth/auth_screen.dart';
 import 'screens/user/profile_screen.dart';
 import 'screens/user/edit_screen.dart';
 import 'screens/recipe/recipe_screen.dart';
+import 'screens/pantry/pantry_screen.dart';
 import 'screens/home_screen.dart'; // Import da HomeScreen
 import 'theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
+import 'providers/pantry_provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AuthProvider(),
-      child: const MyApp(),
+    // 1. Use MultiProvider para fornecer TODOS os seus providers
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => PantryProvider()), // <-- 2. ADICIONE O PANTRYPROVIDER AQUI
+      ],
+      child: const MyApp(), // <-- 3. O child é o MyApp
     ),
   );
 }
@@ -41,6 +47,8 @@ class MyApp extends StatelessWidget {
         OnboardingScreen.routeName: (context) => const OnboardingScreen(),
         AuthScreen.routeName: (context) => const AuthScreen(),
         HomeScreen.routeName: (context) => const HomeScreen(), // [CORRETO] Rota adicionada
+
+        PantryScreen.routeName: (context) => const PantryScreen(),
 
         ProfileScreen.routeName: (context) {
           final userId = ModalRoute.of(context)!.settings.arguments as String?;

@@ -1,129 +1,101 @@
+// lib/providers/pantry_provider.dart
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:front_mobile/models/ingredient.dart';
+import 'package:front_mobile/services/pantry_service.dart';
+import 'dart:collection'; // Para o SplayTreeMap
 
 class PantryProvider with ChangeNotifier {
-  // --- 1. VARIÁVEIS PARA RECEBER DADOS ---
-  String? _token;
+  final PantryService _pantryService = PantryService();
+
   List<Ingrediente> _ingredientes = [];
   bool _isLoading = false;
+  String _error = '';
 
-  // --- 2. CONSTRUTOR ATUALIZADO ---
-  // Este construtor permite que o main.dart injete o token e a lista anterior
-  PantryProvider(this._token, this._ingredientes);
-
-  // Getters
   List<Ingrediente> get ingredientes => _ingredientes;
   bool get isLoading => _isLoading;
+  String get error => _error;
 
-  // Mapa agrupado (seu código original, está correto)
+  // Getter para agrupar ingredientes, similar ao React
   Map<String, List<Ingrediente>> get agrupadoPorCategoria {
-    final Map<String, List<Ingrediente>> acc = {};
+    final map = <String, List<Ingrediente>>{};
     for (var item in _ingredientes) {
-      final cat = item.categoria.isEmpty ? "Outros" : item.categoria;
-      if (!acc.containsKey(cat)) {
-        acc[cat] = [];
+      final cat = item.categoria;
+      if (!map.containsKey(cat)) {
+        map[cat] = [];
       }
-      acc[cat]!.add(item);
+      map[cat]!.add(item);
     }
-    acc.forEach((key, value) {
-      value.sort((a, b) => a.nome.compareTo(b.nome));
+    
+    // Ordena os itens dentro de cada categoria
+    map.forEach((categoria, lista) {
+      lista.sort((a, b) => a.nome.compareTo(b.nome));
     });
-    return acc;
+    
+    return map;
   }
 
-  // Categorias ordenadas (seu código original, está correto)
+  // Getter para ordenar as categorias, similar ao React
   List<String> get categoriasOrdenadas {
-    final keys = agrupadoPorCategoria.keys.toList();
-    keys.sort((a, b) {
-      if (a == "Outros") return 1;
-      if (b == "Outros") return -1;
-      return a.compareTo(b);
-    });
+    // Usamos SplayTreeMap para ordenar as chaves (categorias) automaticamente
+    // e depois movemos "Outros" para o final.
+    final sortedMap = SplayTreeMap<String, List<Ingrediente>>.from(
+      agrupadoPorCategoria,
+      (a, b) => a.compareTo(b),
+    );
+
+    final keys = sortedMap.keys.toList();
+    if (keys.contains("Outros")) {
+      keys.remove("Outros");
+      keys.add("Outros");
+    }
     return keys;
   }
 
-  // --- 3. (INCONGRUÊNCIA 1 CORRIGIDA) ---
-  // Remove o placeholder e usa o token real
-  Future<String?> _getToken() async {
-    return _token;
-  }
-
-  // Esta função ainda precisa ser implementada (Incongruência 3)
   Future<void> fetchIngredientes() async {
-    // (IMPLEMENTAÇÃO FUTURA: Fazer um GET para 'http://localhost:2000/pantry/ingredients'
-    // usando o _getToken() e atualizar _ingredientes com a resposta)
-    
-    // Por enquanto, mantemos os dados de exemplo para a UI funcionar
     _isLoading = true;
+    _error = '';
     notifyListeners();
-    _ingredientes = [
-      Ingrediente(nome: "Farinha", categoria: "Grãos e Cereais"),
-      Ingrediente(nome: "Ovos", categoria: "Laticínios e Ovos"),
-      Ingrediente(nome: "Leite", categoria: "Laticínios e Ovos"),
-      Ingrediente(nome: "Alho", categoria: "Legumes"),
-    ];
+    try {
+      _ingredientes = await _pantryService.getPantryIngredients();
+    } catch (e) {
+      _error = "Falha ao carregar despensa: $e";
+    }
     _isLoading = false;
     notifyListeners();
   }
 
-  // As funções abaixo agora usarão o token correto
   Future<void> adicionarIngrediente(Ingrediente ingrediente) async {
-    final token = await _getToken();
-    if (token == null) {
-      print("Não é possível adicionar: Token nulo.");
-      return;
-    }
-
+    _error = '';
     try {
-      final res = await http.post(
-        Uri.parse("http://localhost:2000/pantry/ingredients"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-        body: json.encode(ingrediente.toJson()),
-      );
-
-      if (res.statusCode == 200) {
-        final List<dynamic> data = json.decode(res.body);
-        _ingredientes = data.map((item) => Ingrediente.fromJson(item)).toList();
-        notifyListeners();
-      } else {
-        print("Erro ao adicionar ingrediente: ${res.body}");
-      }
-    } catch (err) {
-      print("Erro geral ao adicionar ingrediente: $err");
+      // O backend retorna a lista atualizada
+      _ingredientes = await _pantryService.addIngredient(ingrediente);
+    } catch (e) {
+      _error = "Falha ao adicionar ingrediente: $e";
+      // Se falhar, recarregamos a lista original para garantir consistência
+      await fetchIngredientes(); 
     }
+    notifyListeners(); // Notifica a FeedScreen e a PantryScreen
   }
 
   Future<void> removerIngrediente(Ingrediente ingrediente) async {
-    final token = await _getToken();
-    if (token == null) {
-      print("Não é possível remover: Token nulo.");
-      return;
-    }
+    _error = '';
+    
+    // Remosão otimista (atualiza a UI primeiro)
+    final int index = _ingredientes.indexOf(ingrediente);
+    if (index == -1) return; // Não encontrou
+    
+    _ingredientes.removeAt(index);
+    notifyListeners(); // Notifica a FeedScreen e a PantryScreen
 
     try {
-      final res = await http.delete(
-        Uri.parse("http://localhost:2000/pantry/ingredients"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-        body: json.encode(ingrediente.toJson()),
-      );
-
-      if (res.statusCode == 200) {
-        _ingredientes.removeWhere((ing) => ing.nome == ingrediente.nome && ing.categoria == ingrediente.categoria);
-        notifyListeners();
-        print("Ingrediente '${ingrediente.nome}' removido com sucesso!");
-      } else {
-        print("Erro ao remover ingrediente: ${res.body}");
-      }
-    } catch (err) {
-      print("Erro geral ao remover ingrediente: $err");
+      // Tenta remover no backend
+      await _pantryService.removeIngredient(ingrediente);
+    } catch (e) {
+      _error = "Falha ao remover ingrediente: $e";
+      // Se falhar, adiciona de volta na UI
+      _ingredientes.insert(index, ingrediente);
+      notifyListeners();
     }
   }
 }

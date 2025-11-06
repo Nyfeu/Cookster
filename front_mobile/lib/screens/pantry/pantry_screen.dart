@@ -1,80 +1,75 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:provider/provider.dart';
-import 'package:front_mobile/models/ingredient.dart'; // Importe o modelo
-import 'package:front_mobile/providers/pantry_provider.dart';
-import 'package:front_mobile/providers/auth_provider.dart'; // Importe o provider // Você precisará do package 'provider'
-// import 'package:shared_preferences/shared_preferences.dart'; // Para buscar o token
+// lib/screens/pantry/pantry_screen.dart
 
-// --- A Tela da Despensa (PantryScreen) ---
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:front_mobile/models/ingredient.dart';
+import 'package:front_mobile/providers/pantry_provider.dart';
+import 'package:front_mobile/services/pantry_service.dart';
+import 'package:front_mobile/theme/app_theme.dart';
+import 'package:provider/provider.dart';
+
 class PantryScreen extends StatefulWidget {
+
   static const String routeName = '/pantry';
-  const PantryScreen({Key? key}) : super(key: key);
+  
+  const PantryScreen({super.key});
 
   @override
-  _PantryScreenState createState() => _PantryScreenState();
+  State<PantryScreen> createState() => _PantryScreenState();
 }
 
 class _PantryScreenState extends State<PantryScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final PantryService _pantryService = PantryService();
   List<Ingrediente> _sugestoes = [];
-  bool _isLoadingSugestoes = false;
-  
-  // Debouncer simples para evitar chamadas de API em cada tecla
-  Future<void> _onSearchChanged(String searchTerm) async {
-    if (searchTerm.trim().length < 2) {
-      setState(() {
-        _sugestoes = [];
-      });
-      return;
-    }
+  bool _isSearching = false;
+  Timer? _debounce;
 
-    setState(() {
-      _isLoadingSugestoes = true;
-    });
-
-    // Simulação de como o token seria pego
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // final token = prefs.getString("token");
-    final token = Provider.of<AuthProvider>(context, listen: false).token;
-    if (token == null) {
-       print("Token não encontrado");
-       setState(() { _isLoadingSugestoes = false; });
-       return;
-    }
-
-    try {
-      final res = await http.get(
-        Uri.parse("http://localhost:2000/ingredient/sugestoes?termo=${Uri.encodeComponent(searchTerm)}"),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (res.statusCode == 200) {
-        final data = json.decode(res.body);
-        final List<dynamic> sugestoesData = data['sugestoes'] ?? [];
-        setState(() {
-          _sugestoes = sugestoesData.map((item) => Ingrediente.fromJson(item)).toList();
-        });
-      } else {
-        print("Erro ao buscar sugestões: ${res.body}");
-        setState(() { _sugestoes = []; });
-      }
-    } catch (err) {
-      print("Erro de rede ao buscar sugestões: $err");
-      setState(() { _sugestoes = []; });
-    } finally {
-      setState(() {
-        _isLoadingSugestoes = false;
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
   }
 
-  void _adicionarIngrediente(Ingrediente ingrediente) {
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () async {
+      final termo = _searchController.text;
+      if (termo.length < 2) {
+        setState(() {
+          _sugestoes = [];
+          _isSearching = false;
+        });
+        return;
+      }
+      
+      setState(() { _isSearching = true; });
+      try {
+        final results = await _pantryService.getSuggestions(termo);
+        if (mounted) {
+           setState(() {
+             _sugestoes = results;
+             _isSearching = false;
+           });
+        }
+      } catch (e) {
+         if (mounted) setState(() { _isSearching = false; });
+         print("Erro ao buscar sugestões: $e");
+      }
+    });
+  }
+
+  Future<void> _adicionarIngrediente(Ingrediente ingrediente) async {
     // Chama o provider para adicionar
-    Provider.of<PantryProvider>(context, listen: false).adicionarIngrediente(ingrediente);
+    await context.read<PantryProvider>().adicionarIngrediente(ingrediente);
     
     // Limpa a busca
     _searchController.clear();
@@ -83,180 +78,157 @@ class _PantryScreenState extends State<PantryScreen> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // Carrega os ingredientes da despensa ao iniciar a tela
-    // O provider cuida de não carregar se já tiver os dados
-    Provider.of<PantryProvider>(context, listen: false).fetchIngredientes();
+  Future<void> _removerIngrediente(Ingrediente ingrediente) async {
+    // Confirmação
+    final bool? confirmar = await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Remover Ingrediente'),
+        content: Text('Tem certeza que deseja remover ${ingrediente.nome}?'),
+        actions: [
+          TextButton(
+            child: const Text('Cancelar'),
+            onPressed: () => Navigator.of(ctx).pop(false),
+          ),
+          TextButton(
+            child: const Text('Remover'),
+            onPressed: () => Navigator.of(ctx).pop(true),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar == true) {
+      // Chama o provider para remover
+      await context.read<PantryProvider>().removerIngrediente(ingrediente);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Consome o provider para obter a lista de ingredientes
-    final pantryProvider = context.watch<PantryProvider>();
-
     return Scaffold(
-      // A AppBar substitui o título <h4> e o botão de fechar "×"
-      appBar: AppBar(
-        title: Text("Sua Despensa"),
-        backgroundColor: Colors.white, // Adapte às suas cores
-        elevation: 1,
-        foregroundColor: Colors.black,
-      ),
-      backgroundColor: Colors.white, // var(--background-color)
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0), // (from .side-panel { padding: 1rem; })
+      // A HomeScreen já fornece um AppBar
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildSearchSection(),
-            if (_sugestoes.isNotEmpty) _buildSuggestionsList(),
+            // 1. Barra de Pesquisa
+            TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Buscar ingrediente...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _isSearching 
+                  ? const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ) 
+                  : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+              ),
+            ),
+            
+            // 2. Lista de Sugestões
+            _buildSugestoesList(),
+
             const SizedBox(height: 16),
-            _buildPantryList(pantryProvider),
+            
+            // 3. Lista da Despensa
+            Expanded(
+              child: _buildPantryList(),
+            ),
           ],
         ),
       ),
     );
   }
 
-  // Constrói a barra de pesquisa
-  Widget _buildSearchSection() {
-    // (from .search-wrapper and .search-bar)
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white, // var(--background-color)
-        borderRadius: BorderRadius.circular(20.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 8.0,
-            offset: Offset(0, 0),
-          ),
-        ],
+  Widget _buildSugestoesList() {
+    if (_sugestoes.isEmpty) return const SizedBox.shrink();
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.25,
       ),
-      child: TextField(
-        controller: _searchController,
-        onChanged: _onSearchChanged,
-        decoration: InputDecoration(
-          hintText: "Buscar ingrediente...",
-          // (from .search-icon)
-          prefixIcon: Icon(Icons.search, color: Color(0xFF595C5F), size: 20),
-          // (from .search-bar)
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20.0),
-            borderSide: BorderSide.none, // border-color: transparent;
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+      child: Card(
+        elevation: 4,
+        margin: const EdgeInsets.only(top: 8),
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: _sugestoes.length,
+          itemBuilder: (context, index) {
+            final sug = _sugestoes[index];
+            return ListTile(
+              leading: const Icon(Icons.add_circle_outline, color: AppTheme.accentColor),
+              title: Text(sug.nome),
+              subtitle: Text(sug.categoria, style: const TextStyle(color: Colors.grey)),
+              onTap: () => _adicionarIngrediente(sug),
+            );
+          },
         ),
       ),
     );
   }
 
-  // Constrói a lista de sugestões
-  Widget _buildSuggestionsList() {
-    // (from .dropdown-menu)
-    return Card(
-      elevation: 4.0, // (from shadow)
-      margin: const EdgeInsets.only(top: 8.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: _sugestoes.map((item) {
-          // (from .dropdown-item)
-          return ListTile(
-            leading: Icon(Icons.add, size: 18), // (from .pi-plus me-2)
-            title: RichText(
-              text: TextSpan(
-                style: TextStyle(fontSize: 14, color: Colors.black),
-                children: [
-                  TextSpan(text: "${item.nome} "),
-                  TextSpan(
-                    text: "(${item.categoria})",
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            dense: true,
-            onTap: () => _adicionarIngrediente(item),
-            // (from .dropdown-item:hover)
-            hoverColor: Colors.grey[200], // var(--transition-color)
-          );
-        }).toList(),
-      ),
-    );
-  }
+  Widget _buildPantryList() {
+    return Consumer<PantryProvider>(
+      builder: (context, provider, child) {
+        if (provider.isLoading && provider.ingredientes.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-  // Constrói a lista de ingredientes da despensa
-  Widget _buildPantryList(PantryProvider pantryProvider) {
-    if (pantryProvider.isLoading && pantryProvider.ingredientes.isEmpty) {
-      return Center(child: CircularProgressIndicator());
-    }
+        if (provider.error.isNotEmpty) {
+          return Center(child: Text(provider.error, style: const TextStyle(color: Colors.red)));
+        }
 
-    final categorias = pantryProvider.categoriasOrdenadas;
-    
-    return ListView.builder(
-      itemCount: categorias.length,
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        final categoria = categorias[index];
-        final items = pantryProvider.agrupadoPorCategoria[categoria]!;
-        final bool comLinha = index != 0; // (from .com-linha)
+        if (provider.ingredientes.isEmpty) {
+          return const Center(child: Text('Sua despensa está vazia.'));
+        }
 
-        // (from .categoria-section)
-        return Container(
-          margin: const EdgeInsets.only(top: 16.0),
-          padding: EdgeInsets.only(top: comLinha ? 8.0 : 0),
-          decoration: BoxDecoration(
-            border: comLinha
-                ? Border(
-                    top: BorderSide(
-                      color: Color(0xFFF07A3B), // var(--primary-color)
-                      width: 1.0,
-                    ),
-                  )
-                : null,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // (from .categoria-section h6)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
-                child: Text(
-                  categoria.toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 14, // 0.85rem
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.02,
-                  ),
-                ),
-              ),
-              // (from ul.list-unstyled)
-              Wrap(
-                spacing: 4.0, // (from margin: 4px)
-                runSpacing: 4.0,
-                children: items.map((item) {
-                  // (from .ingredient-item)
-                  return GestureDetector(
-                    onTap: () => pantryProvider.removerIngrediente(item),
-                    child: Chip(
-                      label: Text(
-                        item.nome,
-                        style: TextStyle(fontSize: 12), // 0.7rem
+        final categorias = provider.categoriasOrdenadas;
+        
+        return RefreshIndicator(
+          onRefresh: () => provider.fetchIngredientes(),
+          child: ListView.builder(
+            itemCount: categorias.length,
+            itemBuilder: (context, index) {
+              final categoria = categorias[index];
+              final items = provider.agrupadoPorCategoria[categoria]!;
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Título da Categoria
+                    Text(
+                      categoria.toUpperCase(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.primaryColor,
+                        fontSize: 16,
                       ),
-                      backgroundColor: Color(0xFFE0E0E0),
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      shape: StadiumBorder(), // (from border-radius: 20px)
                     ),
-                  );
-                }).toList(),
-              ),
-            ],
+                    const Divider(),
+                    // Itens da Categoria
+                    ...items.map((item) {
+                      return ListTile(
+                        title: Text(item.nome),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.remove_circle_outline, color: Colors.redAccent),
+                          onPressed: () => _removerIngrediente(item),
+                        ),
+                        onTap: () => _removerIngrediente(item), // Permite clicar no item todo
+                      );
+                    }),
+                  ],
+                ),
+              );
+            },
           ),
         );
       },
