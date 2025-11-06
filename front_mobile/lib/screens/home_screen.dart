@@ -3,11 +3,11 @@ import 'package:front_mobile/theme/app_theme.dart';
 import 'package:front_mobile/utils/bottom_nav_bar.dart';
 import 'package:provider/provider.dart'; 
 import 'package:front_mobile/providers/auth_provider.dart'; 
+import 'package:front_mobile/screens/search/search_screen.dart';
 import 'package:front_mobile/screens/user/profile_screen.dart';
 
 // Páginas de exemplo para cada aba da navegação
 const Center pageFeed = Center(child: Text('Página de Início (Feed)'));
-const Center pageSearch = Center(child: Text('Página de Busca'));
 const Center pageAddRecipe =
     Center(child: Text('Página para Adicionar Receita'));
 const Center pagePantry = Center(child: Text('Página da Despensa'));
@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static const List<Widget> _pages = <Widget>[
     pageFeed,
-    pageSearch,
+    SearchScreen(),
     pageAddRecipe,
     pagePantry,
     MyProfileTab(), 
