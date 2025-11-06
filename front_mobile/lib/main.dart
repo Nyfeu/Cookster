@@ -9,11 +9,15 @@ import 'screens/home_screen.dart'; // Import da HomeScreen
 import 'theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
+import 'services/recipe_service.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AuthProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        Provider(create: (_) => RecipeService()), 
+      ],
       child: const MyApp(),
     ),
   );
