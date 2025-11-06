@@ -134,26 +134,43 @@ class _PantryScreenState extends State<PantryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 1. Barra de Pesquisa
+            // 1. Barra de Pesquisa (MODIFICADA)
             TextField(
               controller: _searchController,
+              
+              // --- INÍCIO DA ATUALIZAÇÃO ---
+              // Aplicando o mesmo InputDecoration da SearchScreen
               decoration: InputDecoration(
-                hintText: 'Buscar ingrediente...',
+                // Usando o hintText da imagem de exemplo
+                hintText: 'Buscar ingredientes...',
                 prefixIcon: const Icon(Icons.search),
-                suffixIcon: _isSearching
-                    ? const Padding(
-                        padding: EdgeInsets.all(12.0), // Ajuste no padding
-                        child: SizedBox( // Tamanho definido
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      )
-                    : null,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                
+                // Trocando o "CircularProgressIndicator" pelo "IconButton"
+                // para igualar o estilo.
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.arrow_forward),
+                  // A busca na despensa é automática (debounce),
+                  // então o botão é apenas visual.
+                  onPressed: () {},
                 ),
+                
+                // Adicionando preenchimento branco
+                filled: true,
+                fillColor: Colors.white,
+                
+                // Adicionando borda arredondada e sem linha
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0), // Raio de 30.0
+                  borderSide: BorderSide.none, // Sem linha de borda
+                ),
+                
+                // Ajustando o padding interno
+                contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
               ),
+              // Adicionando onSubmitted para consistência
+              onSubmitted: (_) {}, // Ação é automática, então deixamos vazio
+              // --- FIM DA ATUALIZAÇÃO ---
+            
             ),
 
             // 2. Lista de Sugestões

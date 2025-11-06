@@ -116,8 +116,8 @@ class _SearchScreenState extends State<SearchScreen> {
               hintText: _searchType == SearchType.porNome
                   ? 'Buscar por nome da receita...'
                   : _searchType == SearchType.porAutor
-                      ? 'Buscar por ID do autor...'
-                      : 'Buscar por nome de usuário...',
+                      ? 'Buscar receita por autor...'
+                      : 'Buscar usuário por nome...',
               prefixIcon: const Icon(Icons.search),
               suffixIcon: IconButton(
                 icon: const Icon(Icons.arrow_forward),
