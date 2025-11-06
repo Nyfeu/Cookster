@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../theme/app_theme.dart';
-import '../../services/auth_service.dart'; // <-- 1. Importar o serviço
+import '../../services/auth_service.dart'; 
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart'; // Ajuste o caminho se necessário
-import '../../screens/user/profile_screen.dart';
+import '../../providers/auth_provider.dart'; 
+import '../../screens/home_screen.dart';
 
 
 class AuthScreen extends StatefulWidget {
@@ -119,14 +119,12 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     });
 
     try {
-      // [MUDANÇA] Chamar o provider em vez do serviço direto
       await Provider.of<AuthProvider>(context, listen: false).register(
         _nameController.text,
         _emailController.text,
         _passwordController.text,
       );
 
-      // [MUDANÇA] Checagem de segurança
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -158,28 +156,19 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     });
 
     try {
-          // [MUDANÇA] Chamar o provider para salvar o estado de login
+
           final authProvider = Provider.of<AuthProvider>(context, listen: false);
           await authProvider.login(
             _emailController.text,
             _passwordController.text,
           );
 
-      // TODO: Implementar navegação para a tela principal
-      // Ex: Navigator.pushReplacementNamed(context, '/home');
-
-      // [MUDANÇA] Pegar o ID do usuário que acabou de logar
       final loggedInUserId = authProvider.userId;
 
-      // [MUDANÇA] Checagem de segurança
       if (!mounted) return;
 
-      // [MUDANÇA] NAVEGAR PARA A TELA DE PERFIL!
-      // Usamos 'pushReplacementNamed' para que o usuário não possa
-      // apertar "Voltar" e retornar para a tela de login.
       Navigator.of(context).pushReplacementNamed(
-        ProfileScreen.routeName,
-        arguments: loggedInUserId, // Passa o ID do usuário para a rota
+        HomeScreen.routeName, 
       );
 
     } catch (e) {
@@ -209,7 +198,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
         height: size.height,
         child: Stack(
           children: [
-            // Formulário de CADASTRO
             AnimatedOpacity(
               duration: const Duration(milliseconds: 300),
               opacity: _isSignUpView ? 1.0 : 0.0,
@@ -340,18 +328,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             ),
             const SizedBox(height: 30),
             
-            // // --- 6. Exibir Mensagem de Erro --- //
-            // if (_errorMessage.isNotEmpty)
-            //   Padding(
-            //     padding: const EdgeInsets.symmetric(vertical: 10.0),
-            //     child: Text(
-            //       _errorMessage,
-            //       style: GoogleFonts.poppins(color: Colors.red, fontSize: 14),
-            //       textAlign: TextAlign.center,
-            //     ),
-            //   ),
-            
-            // const SizedBox(height: 10),
             _buildActionButton(isSignUp ? 'Criar' : 'Acessar'),
           ],
         ),

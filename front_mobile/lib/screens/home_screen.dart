@@ -1,13 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:front_mobile/theme/app_theme.dart';
-import 'package:front_mobile/utils/bottom_nav_bar.dart'; 
+import 'package:front_mobile/utils/bottom_nav_bar.dart';
+import 'package:provider/provider.dart'; 
+import 'package:front_mobile/providers/auth_provider.dart'; 
+import 'package:front_mobile/screens/user/profile_screen.dart';
 
 // Páginas de exemplo para cada aba da navegação
 const Center pageFeed = Center(child: Text('Página de Início (Feed)'));
 const Center pageSearch = Center(child: Text('Página de Busca'));
-const Center pageAddRecipe = Center(child: Text('Página para Adicionar Receita'));
+const Center pageAddRecipe =
+    Center(child: Text('Página para Adicionar Receita'));
 const Center pagePantry = Center(child: Text('Página da Despensa'));
-const Center pageProfile = Center(child: Text('Página de Perfil'));
+
+class MyProfileTab extends StatelessWidget {
+  const MyProfileTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+
+    final userId = Provider.of<AuthProvider>(context, listen: false).userId;
+
+    if (userId == null) {
+      return const Center(child: Text('Erro: ID do usuário não encontrado.'));
+    }
+
+    return ProfileScreen(
+      userId: userId,
+      showScaffold: false, 
+    );
+  }
+}
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/home';
@@ -25,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
     pageSearch,
     pageAddRecipe,
     pagePantry,
-    pageProfile,
+    MyProfileTab(), 
   ];
 
   void _onItemTapped(int index) {
@@ -37,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar( 
+      appBar: AppBar(
         backgroundColor: AppTheme.primaryColor,
         title: Text(
           'Cookster',
@@ -46,9 +68,12 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        automaticallyImplyLeading: false, 
+        automaticallyImplyLeading: false,
       ),
-      body: _pages.elementAt(_selectedIndex),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -56,4 +81,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
