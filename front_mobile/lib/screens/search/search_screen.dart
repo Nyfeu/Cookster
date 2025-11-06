@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:front_mobile/models/recipe_model.dart';
+import 'package:front_mobile/models/user_profile.dart'; // IMPORTAR MODELO DE PERFIL
 import 'package:front_mobile/providers/auth_provider.dart';
+import 'package:front_mobile/services/profile_service.dart'; // IMPORTAR SERVIÇO DE PERFIL
 import 'package:front_mobile/services/recipe_service.dart';
 import 'package:front_mobile/theme/app_theme.dart';
 import 'package:front_mobile/widgets/search/recipe_list_item.dart';
 import 'package:provider/provider.dart';
 
 // Enum para controlar o tipo de busca
-enum SearchType { porNome, porAutor }
+enum SearchType { porNome, porAutor, porUsuario } // ADICIONADO 'porUsuario'
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -19,8 +21,9 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final _searchController = TextEditingController();
   final _recipeService = RecipeService();
+  final _profileService = ProfileService(); // INSTANCIAR SERVIÇO DE PERFIL
 
-  List<Recipe> _results = [];
+  List<dynamic> _results = []; // MUDADO PARA List<dynamic>
   bool _isLoading = false;
   String? _error;
   SearchType _searchType = SearchType.porNome;
@@ -45,21 +48,29 @@ class _SearchScreenState extends State<SearchScreen> {
         throw Exception('Usuário não autenticado.');
       }
 
-      List<Recipe> recipes;
+      // A lista agora pode conter Receitas ou Perfis
+      List<dynamic> searchData;
+
       if (_searchType == SearchType.porNome) {
-        recipes = await _recipeService.searchRecipes(
+        searchData = await _recipeService.searchRecipes(
           token: token,
           name: _searchController.text,
         );
-      } else {
-        recipes = await _recipeService.searchRecipes(
+      } else if (_searchType == SearchType.porAutor) {
+        searchData = await _recipeService.searchRecipes(
           token: token,
           authorId: _searchController.text,
+        );
+      } else {
+        // NOVO CASO DE BUSCA
+        searchData = await _profileService.searchProfiles(
+          token: token,
+          name: _searchController.text,
         );
       }
 
       setState(() {
-        _results = recipes;
+        _results = searchData;
       });
     } catch (e) {
       setState(() {
@@ -76,10 +87,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Usamos um Scaffold aqui para que a AppBar não seja duplicada
-      // quando esta tela for usada dentro da HomeScreen.
-      // O `appBar` da HomeScreen será o principal.
-      // Se quiser testar esta tela individualmente, adicione um AppBar aqui.
       backgroundColor: AppTheme.backgroundColor,
       body: Column(
         children: [
@@ -105,9 +112,12 @@ class _SearchScreenState extends State<SearchScreen> {
           TextField(
             controller: _searchController,
             decoration: InputDecoration(
+              // HINT TEXT ATUALIZADO
               hintText: _searchType == SearchType.porNome
                   ? 'Buscar por nome da receita...'
-                  : 'Buscar por ID do autor...',
+                  : _searchType == SearchType.porAutor
+                      ? 'Buscar por ID do autor...'
+                      : 'Buscar por nome de usuário...',
               prefixIcon: const Icon(Icons.search),
               suffixIcon: IconButton(
                 icon: const Icon(Icons.arrow_forward),
@@ -126,15 +136,21 @@ class _SearchScreenState extends State<SearchScreen> {
           const SizedBox(height: 16),
           // Seletor de tipo de busca
           SegmentedButton<SearchType>(
+            // SEGMENTOS ATUALIZADOS
             segments: const [
               ButtonSegment(
                 value: SearchType.porNome,
-                label: Text('Por Nome'),
+                label: Text('Receitas'),
                 icon: Icon(Icons.fastfood),
               ),
               ButtonSegment(
                 value: SearchType.porAutor,
                 label: Text('Por Autor'),
+                icon: Icon(Icons.person_search),
+              ),
+              ButtonSegment(
+                value: SearchType.porUsuario,
+                label: Text('Usuários'),
                 icon: Icon(Icons.person),
               ),
             ],
@@ -159,6 +175,36 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  // Widget de placeholder para exibir um item de usuário na lista
+  // (Idealmente, isso se tornaria seu próprio widget: UserListItem)
+  Widget _buildUserListItem(UserProfile user) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: Colors.grey[200],
+        // TODO: Adicionar lógica para carregar a user.fotoPerfil
+        // backgroundImage: user.fotoPerfil != null ? NetworkImage(user.fotoPerfil!) : null,
+        child: const Icon(Icons.person_outline, color: Colors.grey),
+      ),
+      title: Text(user.name ?? 'Usuário'),
+      subtitle: Text(
+        user.bio ?? 'Sem bio',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      onTap: () {
+        // TODO: Implementar navegação para a tela de perfil do usuário
+        /*
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(userId: user.userId), // Exemplo
+          ),
+        );
+        */
+      },
+    );
+  }
+
   Widget _buildResultsList() {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -178,35 +224,57 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     if (_results.isEmpty) {
+      // MENSAGEM DE "VAZIO" ATUALIZADA
+      String emptyMessage;
+      if (_searchType == SearchType.porUsuario) {
+        emptyMessage = 'Nenhum usuário encontrado.\nFaça uma busca!';
+      } else {
+        emptyMessage = 'Nenhuma receita encontrada.\nFaça uma busca!';
+      }
+
       return Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-        Image.asset(
-          'assets/images/reg.png', 
-          height: 160,
-        ),
-        const SizedBox(height: 24),
-        const Text(
-          'Nenhuma receita encontrada.\nFaça uma busca!',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-          textAlign: TextAlign.center,
-        )
-          ]
-        ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/reg.png',
+                height: 160,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                emptyMessage,
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
+                textAlign: TextAlign.center,
+              )
+            ]),
       );
     }
 
     // Lista de resultados
     return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: ListView.builder(
-        itemCount: _results.length,
-        itemBuilder: (context, index) {
-          final recipe = _results[index];
-          return RecipeListItem(recipe: recipe);
-        },
-      )
-    );
+        padding: const EdgeInsets.only(top: 16.0),
+        child: ListView.builder(
+          itemCount: _results.length,
+          itemBuilder: (context, index) {
+            final item = _results[index];
+
+            // LÓGICA DE RENDERIZAÇÃO ATUALIZADA
+            // Verifica o tipo de item (e o tipo de busca) para decidir
+            // qual widget de lista renderizar.
+
+            if (_searchType == SearchType.porUsuario) {
+              if (item is UserProfile) {
+                return _buildUserListItem(item); // Renderiza o item de usuário
+              }
+            } else {
+              if (item is Recipe) {
+                return RecipeListItem(recipe: item); // Renderiza o item de receita
+              }
+            }
+            
+            // Fallback caso o tipo não corresponda (não deve acontecer)
+            return const SizedBox.shrink();
+          },
+        ));
   }
 }
