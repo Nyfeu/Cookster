@@ -5,10 +5,12 @@ import 'screens/auth/auth_screen.dart';
 import 'screens/user/profile_screen.dart';
 import 'screens/user/edit_screen.dart';
 import 'screens/recipe/recipe_screen.dart';
+import 'screens/pantry/pantry_screen.dart';
 import 'screens/home_screen.dart'; 
 import 'theme/app_theme.dart';
 import 'package:provider/provider.dart'; // [NOVO] Importe o provider
 import 'providers/auth_provider.dart';
+import 'providers/pantry_provider.dart';
 
 
 void main() {
@@ -42,6 +44,8 @@ class MyApp extends StatelessWidget {
       routes: {
         OnboardingScreen.routeName: (context) => const OnboardingScreen(),
         AuthScreen.routeName: (context) => const AuthScreen(),
+
+        PantryScreen.routeName: (context) => const PantryScreen(),
 
         ProfileScreen.routeName: (context) {
           // Pega o ID passado como argumento
