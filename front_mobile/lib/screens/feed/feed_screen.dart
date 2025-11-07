@@ -1,4 +1,4 @@
-import 'dart:async'; // 1. Importe o 'dart:async' para usar o Timer
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:front_mobile/models/recipe_model.dart';
 import 'package:front_mobile/providers/auth_provider.dart';
@@ -6,6 +6,7 @@ import 'package:front_mobile/providers/pantry_provider.dart';
 import 'package:front_mobile/services/recipe_service.dart';
 import 'package:front_mobile/widgets/search/recipe_list_item.dart';
 import 'package:provider/provider.dart';
+import 'package:front_mobile/theme/app_theme.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
@@ -22,41 +23,30 @@ class _FeedScreenState extends State<FeedScreen> {
   String _emptyImage = "assets/images/cesta.png";
 
   late final PantryProvider _pantryProvider;
-  Timer? _debounce; // 2. Adicione a variável do Timer
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     _pantryProvider = context.read<PantryProvider>();
-
-    // 3. Em vez de chamar _loadSuggestedRecipes, chame a função de debounce
     _pantryProvider.addListener(_onPantryChanged);
-
-    // Carregamento inicial (pode ser feito direto ou com o debounce)
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadSuggestedRecipes());
   }
 
   @override
   void dispose() {
     _pantryProvider.removeListener(_onPantryChanged);
-    _debounce?.cancel(); // 4. Cancele o timer ao sair da tela
+    _debounce?.cancel();
     super.dispose();
   }
 
-  // 5. Esta é a nova função de "debounce"
   void _onPantryChanged() {
-    // Se já existir um timer ativo, cancele-o
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-
-    // Crie um novo timer. A função _loadSuggestedRecipes só será
-    // chamada após 800ms *sem* novas mudanças na despensa.
     _debounce = Timer(const Duration(milliseconds: 800), () {
       _loadSuggestedRecipes();
     });
   }
 
-  // 6. _loadSuggestedRecipes não precisa de 'async' e 
-  //    só é chamada quando o timer termina
   void _loadSuggestedRecipes() {
     if (!mounted) {
       return;
@@ -75,7 +65,6 @@ class _FeedScreenState extends State<FeedScreen> {
       return;
     }
 
-    // Esta chamada de setState é a que atualiza o FutureBuilder
     setState(() {
       _emptyTitle = "Nenhuma sugestão";
       _emptyMessage = "Adicione itens à sua despensa para ver receitas!";
@@ -84,31 +73,47 @@ class _FeedScreenState extends State<FeedScreen> {
     });
   }
 
+  Widget _buildTitlePanel(BuildContext context) {
+    return Container(
+      width: double.infinity, 
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryColor.withOpacity(0.05), //
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[300]!),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Receitas que você pode fazer',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          Text(
+            'Com base nos itens da sua despensa.',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // O build permanece idêntico, sem o Consumer
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Receitas que você pode fazer',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            Text(
-              'Com base nos itens da sua despensa.',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 16),
-            Expanded(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTitlePanel(context),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
               child: FutureBuilder<List<Recipe>>(
                 future: _suggestedRecipesFuture,
                 builder: (context, snapshot) {
-                  // ... (Todo o resto do seu FutureBuilder permanece igual)
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -185,8 +190,8 @@ class _FeedScreenState extends State<FeedScreen> {
                 },
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
