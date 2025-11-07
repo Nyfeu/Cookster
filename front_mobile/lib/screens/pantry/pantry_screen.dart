@@ -354,7 +354,7 @@ class _PantryScreenState extends State<PantryScreen> {
         iconeData = Icons.water_drop_outlined; // Ícone de gota (óleo)
         break;
       case 'molhos e pastas':
-        iconeData = Icons.egg_alt_outlined; // Ícone de jarra
+        iconeData = Icons.opacity_outlined; // Ícone de jarra
         break;
       case 'aromatizantes':
         iconeData = Icons.flare_outlined;
