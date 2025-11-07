@@ -127,63 +127,62 @@ class _PantryScreenState extends State<PantryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Importamos o AppTheme se ainda não estiver (já estava)
+    // import 'package:front_mobile/theme/app_theme.dart';
+
     return Scaffold(
       // A HomeScreen já fornece um AppBar
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 1. Barra de Pesquisa (MODIFICADA)
-            TextField(
+      body: Column( // 1. Removemos o Padding que estava aqui
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 2. Adicionamos o Container em volta do TextField
+          Container(
+            padding: const EdgeInsets.all(16.0), // Padding que estava no body
+            decoration: BoxDecoration(
+              // Cor de fundo bege claro da search_screen
+              color: AppTheme.primaryColor.withOpacity(0.05), 
+              // Borda inferior da search_screen
+              border: Border(
+                bottom: BorderSide(color: Colors.grey[300]!),
+              ),
+            ),
+            child: TextField(
               controller: _searchController,
-              
-              // --- INÍCIO DA ATUALIZAÇÃO ---
-              // Aplicando o mesmo InputDecoration da SearchScreen
               decoration: InputDecoration(
-                // Usando o hintText da imagem de exemplo
                 hintText: 'Buscar ingredientes...',
                 prefixIcon: const Icon(Icons.search),
-                
-                // Trocando o "CircularProgressIndicator" pelo "IconButton"
-                // para igualar o estilo.
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.arrow_forward),
-                  // A busca na despensa é automática (debounce),
-                  // então o botão é apenas visual.
                   onPressed: () {},
                 ),
-                
-                // Adicionando preenchimento branco
                 filled: true,
                 fillColor: Colors.white,
-                
-                // Adicionando borda arredondada e sem linha
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0), // Raio de 30.0
-                  borderSide: BorderSide.none, // Sem linha de borda
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
                 ),
-                
-                // Ajustando o padding interno
                 contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
               ),
-              // Adicionando onSubmitted para consistência
-              onSubmitted: (_) {}, // Ação é automática, então deixamos vazio
-              // --- FIM DA ATUALIZAÇÃO ---
-            
+              onSubmitted: (_) {},
             ),
+          ),
 
-            // 2. Lista de Sugestões
-            _buildSugestoesList(),
+          // 3. Adicionamos Padding horizontal às sugestões
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: _buildSugestoesList(),
+          ),
 
-            const SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-            // 3. Lista da Despensa
-            Expanded(
+          // 4. Adicionamos Padding horizontal à lista da despensa
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: _buildPantryList(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
