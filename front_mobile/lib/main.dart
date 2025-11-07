@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/onboarding/onboarding_screen.dart';
-import 'screens/auth/auth_screen.dart';
-import 'screens/user/profile_screen.dart';
-import 'screens/user/edit_screen.dart';
-import 'screens/recipe/recipe_screen.dart';
-import 'screens/pantry/pantry_screen.dart';
-import 'screens/home_screen.dart';
-import 'theme/app_theme.dart';
+import 'presentation/screens/onboarding/onboarding_screen.dart';
+import 'presentation/screens/auth/auth_screen.dart';
+import 'presentation/screens/user/profile_screen.dart';
+import 'presentation/screens/user/edit_screen.dart';
+import 'presentation/screens/recipe/recipe_screen.dart';
+import 'presentation/screens/pantry/pantry_screen.dart';
+import 'presentation/screens/home_screen.dart';
+import 'core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
-import 'providers/auth_provider.dart';
-import 'providers/pantry_provider.dart';
-import 'services/recipe_service.dart';
+import 'presentation/providers/auth_provider.dart';
+import 'presentation/providers/pantry_provider.dart';
+import 'data/services/recipe_service.dart';
 
 void main() {
   runApp(
