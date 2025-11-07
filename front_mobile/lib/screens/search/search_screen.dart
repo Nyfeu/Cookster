@@ -102,9 +102,7 @@ class _SearchScreenState extends State<SearchScreen> {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: AppTheme.primaryColor.withOpacity(0.05),
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[300]!),
-        ),
+        border: Border(bottom: BorderSide(color: Colors.grey[300]!)),
       ),
       child: Column(
         children: [
@@ -113,9 +111,10 @@ class _SearchScreenState extends State<SearchScreen> {
             controller: _searchController,
             decoration: InputDecoration(
               // HINT TEXT ATUALIZADO
-              hintText: _searchType == SearchType.porNome
-                  ? 'Buscar por nome da receita...'
-                  : _searchType == SearchType.porAutor
+              hintText:
+                  _searchType == SearchType.porNome
+                      ? 'Buscar por nome da receita...'
+                      : _searchType == SearchType.porAutor
                       ? 'Buscar receita por autor...'
                       : 'Buscar usuário por nome...',
               prefixIcon: const Icon(Icons.search),
@@ -227,54 +226,68 @@ class _SearchScreenState extends State<SearchScreen> {
       // MENSAGEM DE "VAZIO" ATUALIZADA
       String emptyMessage;
       if (_searchType == SearchType.porUsuario) {
-        emptyMessage = 'Nenhum usuário encontrado.\nFaça uma busca!';
+        emptyMessage = 'Nenhum usuário encontrado.';
       } else {
-        emptyMessage = 'Nenhuma receita encontrada.\nFaça uma busca!';
+        emptyMessage = 'Nenhuma receita encontrada.';
       }
 
       return Center(
-        child: Column(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/images/reg.png',
-                height: 160,
-              ),
+              Image.asset('assets/images/reg.png', height: 200),
               const SizedBox(height: 24),
               Text(
                 emptyMessage,
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
-              )
-            ]),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Faça uma busca!",
+                textAlign: TextAlign.center,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
     // Lista de resultados
     return Padding(
-        padding: const EdgeInsets.only(top: 16.0),
-        child: ListView.builder(
-          itemCount: _results.length,
-          itemBuilder: (context, index) {
-            final item = _results[index];
+      padding: const EdgeInsets.only(top: 16.0),
+      child: ListView.builder(
+        itemCount: _results.length,
+        itemBuilder: (context, index) {
+          final item = _results[index];
 
-            // LÓGICA DE RENDERIZAÇÃO ATUALIZADA
-            // Verifica o tipo de item (e o tipo de busca) para decidir
-            // qual widget de lista renderizar.
+          // LÓGICA DE RENDERIZAÇÃO ATUALIZADA
+          // Verifica o tipo de item (e o tipo de busca) para decidir
+          // qual widget de lista renderizar.
 
-            if (_searchType == SearchType.porUsuario) {
-              if (item is UserProfile) {
-                return _buildUserListItem(item); // Renderiza o item de usuário
-              }
-            } else {
-              if (item is Recipe) {
-                return RecipeListItem(recipe: item); // Renderiza o item de receita
-              }
+          if (_searchType == SearchType.porUsuario) {
+            if (item is UserProfile) {
+              return _buildUserListItem(item); // Renderiza o item de usuário
             }
-            
-            // Fallback caso o tipo não corresponda (não deve acontecer)
-            return const SizedBox.shrink();
-          },
-        ));
+          } else {
+            if (item is Recipe) {
+              return RecipeListItem(
+                recipe: item,
+              ); // Renderiza o item de receita
+            }
+          }
+
+          // Fallback caso o tipo não corresponda (não deve acontecer)
+          return const SizedBox.shrink();
+        },
+      ),
+    );
   }
 }
