@@ -37,8 +37,9 @@ class _PantryScreenState extends State<PantryScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content: Text('Erro ao carregar despensa inicial: $e'),
-                backgroundColor: Colors.red),
+              content: Text('Erro ao carregar despensa inicial: $e'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       });
@@ -68,7 +69,10 @@ class _PantryScreenState extends State<PantryScreen> {
         return;
       }
 
-      if (mounted) setState(() { _isSearching = true; });
+      if (mounted)
+        setState(() {
+          _isSearching = true;
+        });
       try {
         final results = await _pantryService.getSuggestions(termo);
         if (mounted) {
@@ -78,7 +82,10 @@ class _PantryScreenState extends State<PantryScreen> {
           });
         }
       } catch (e) {
-        if (mounted) setState(() { _isSearching = false; });
+        if (mounted)
+          setState(() {
+            _isSearching = false;
+          });
         debugPrint("Erro ao buscar sugestões: $e");
       }
     });
@@ -102,20 +109,23 @@ class _PantryScreenState extends State<PantryScreen> {
     // Confirmação
     final bool? confirmar = await showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Remover Ingrediente'),
-        content: Text('Tem certeza que deseja remover ${ingrediente.nome}?'),
-        actions: [
-          TextButton(
-            child: const Text('Cancelar'),
-            onPressed: () => Navigator.of(ctx).pop(false),
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Remover Ingrediente'),
+            content: Text(
+              'Tem certeza que deseja remover ${ingrediente.nome}?',
+            ),
+            actions: [
+              TextButton(
+                child: const Text('Cancelar'),
+                onPressed: () => Navigator.of(ctx).pop(false),
+              ),
+              TextButton(
+                child: const Text('Remover'),
+                onPressed: () => Navigator.of(ctx).pop(true),
+              ),
+            ],
           ),
-          TextButton(
-            child: const Text('Remover'),
-            onPressed: () => Navigator.of(ctx).pop(true),
-          ),
-        ],
-      ),
     );
 
     if (confirmar == true) {
@@ -132,7 +142,8 @@ class _PantryScreenState extends State<PantryScreen> {
 
     return Scaffold(
       // A HomeScreen já fornece um AppBar
-      body: Column( // 1. Removemos o Padding que estava aqui
+      body: Column(
+        // 1. Removemos o Padding que estava aqui
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // 2. Adicionamos o Container em volta do TextField
@@ -140,11 +151,9 @@ class _PantryScreenState extends State<PantryScreen> {
             padding: const EdgeInsets.all(16.0), // Padding que estava no body
             decoration: BoxDecoration(
               // Cor de fundo bege claro da search_screen
-              color: AppTheme.primaryColor.withOpacity(0.05), 
+              color: AppTheme.primaryColor.withOpacity(0.05),
               // Borda inferior da search_screen
-              border: Border(
-                bottom: BorderSide(color: Colors.grey[300]!),
-              ),
+              border: Border(bottom: BorderSide(color: Colors.grey[300]!)),
             ),
             child: TextField(
               controller: _searchController,
@@ -203,11 +212,15 @@ class _PantryScreenState extends State<PantryScreen> {
           itemBuilder: (context, index) {
             final sug = _sugestoes[index];
             return ListTile(
-              leading:
-                  const Icon(Icons.add_circle_outline, color: AppTheme.accentColor),
+              leading: const Icon(
+                Icons.add_circle_outline,
+                color: AppTheme.accentColor,
+              ),
               title: Text(sug.nome),
-              subtitle:
-                  Text(sug.categoria, style: const TextStyle(color: Colors.grey)),
+              subtitle: Text(
+                sug.categoria,
+                style: const TextStyle(color: Colors.grey),
+              ),
               onTap: () => _adicionarIngrediente(sug),
             );
           },
@@ -226,14 +239,66 @@ class _PantryScreenState extends State<PantryScreen> {
 
         if (provider.error.isNotEmpty) {
           return Center(
-              child:
-                  Text(provider.error, style: const TextStyle(color: Colors.red)));
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/images/log.png', height: 160),
+                  const SizedBox(height: 24),
+                  Text(
+                    "Erro ao carregar a despensa",
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    provider.error,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
 
+        // 🧺 --- ESTILO QUANDO A DESPENSA ESTÁ VAZIA ---
         if (provider.ingredientes.isEmpty) {
-          return const Center(child: Text('Sua despensa está vazia.'));
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/images/despensa.png', height: 300),
+                  const SizedBox(height: 24),
+                  Text(
+                    "Sua despensa está vazia",
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Adicione ingredientes para começar a montar suas receitas!",
+                    textAlign: TextAlign.center,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
 
+        // --- DESPENSA COM ITENS ---
         final categorias = provider.categoriasOrdenadas;
 
         return RefreshIndicator(
@@ -251,35 +316,34 @@ class _PantryScreenState extends State<PantryScreen> {
                   children: [
                     // Título da Categoria
                     Row(
-                    children: [
-                      // Ícone
-                      _getIconePorCategoria(categoria),
-                      
-                      const SizedBox(width: 8), // Espaçamento
-                      
-                      // Título
-                      Text(
-                        categoria.toUpperCase(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryColor,
-                          fontSize: 16,
+                      children: [
+                        _getIconePorCategoria(categoria),
+                        const SizedBox(width: 8),
+                        Text(
+                          categoria.toUpperCase(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryColor,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                     const Divider(),
-                    // Itens da Categoria
                     ...items.map((item) {
                       return ListTile(
                         title: Text(item.nome),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                        ),
                         trailing: IconButton(
-                          icon: const Icon(Icons.remove_circle_outline,
-                              color: Colors.redAccent),
+                          icon: const Icon(
+                            Icons.remove_circle_outline,
+                            color: Colors.redAccent,
+                          ),
                           onPressed: () => _removerIngrediente(item),
                         ),
-                        onTap: () => _removerIngrediente(item), // Permite clicar no item todo
+                        onTap: () => _removerIngrediente(item),
                       );
                     }),
                   ],
@@ -291,11 +355,12 @@ class _PantryScreenState extends State<PantryScreen> {
       },
     );
   }
+
   /// Retorna um ícone baseado no nome da categoria.
   Icon _getIconePorCategoria(String categoria) {
     IconData iconeData;
     // Usa a mesma cor do texto do título
-    final Color corIcone = AppTheme.primaryColor; 
+    final Color corIcone = AppTheme.primaryColor;
 
     // Normaliza o nome da categoria para a verificação
     String categoriaNorm = categoria.toLowerCase();
@@ -310,7 +375,7 @@ class _PantryScreenState extends State<PantryScreen> {
       case 'pescados':
         iconeData = Icons.set_meal_outlined; // Ícone de peixe
         break;
-      
+
       // --- GRUPO: LATICÍNIOS E OVOS ---
       case 'laticínios':
       case 'laticínios (alternativas)':
@@ -378,7 +443,7 @@ class _PantryScreenState extends State<PantryScreen> {
       case 'sobremesas':
         iconeData = Icons.cake_outlined;
         break;
-      
+
       // --- GRUPO: NOZES E SEMENTES ---
       case 'oleaginosas':
       case 'sementes':
