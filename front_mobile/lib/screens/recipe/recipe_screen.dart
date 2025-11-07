@@ -1,14 +1,8 @@
-// lib/screens/recipe/recipe_screen.dart (OU lib/pages/recipe_page.dart)
-// [ARQUIVO ATUALIZADO E CORRIGIDO]
-
 import 'package:flutter/material.dart';
 import '../../models/recipe_model.dart';
 import '../../services/recipe_service.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
-
-// Seus imports antigos de widgets (recipe_hero_section, etc.)
-// devem ser removidos se ainda estiverem aqui.
 
 class RecipePage extends StatefulWidget {
   static const String routeName = '/recipe';
@@ -110,7 +104,6 @@ class _RecipePageState extends State<RecipePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Usamos os novos Widgets (definidos abaixo)
                 _RecipeHeroSection(recipe: recipe),
 
                 Padding(
@@ -165,11 +158,7 @@ class _RecipePageState extends State<RecipePage> {
   }
 }
 
-// =========================================================================
-// == NOVOS WIDGETS DE UI (NO MESMO ARQUIVO) ==
-// =========================================================================
 
-// --- WIDGET 1: A SEÇÃO "HERO" (IMAGEM E TÍTULO) ---
 
 class _RecipeHeroSection extends StatelessWidget {
   final Recipe recipe;
@@ -179,13 +168,10 @@ class _RecipeHeroSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    // --- Definindo a imagem de fallback ---
-    // Vamos usar isso em caso de erro ou URL vazia.
     final Widget fallbackImage = Image.asset(
       'assets/images/bolo.png',
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) {
-        // Se até o asset falhar (o que é raro), mostra um ícone
         return Container(
           color: Colors.grey[300],
           child: const Icon(
@@ -196,31 +182,24 @@ class _RecipeHeroSection extends StatelessWidget {
         );
       },
     );
-    // --- Fim do fallback ---
 
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
-        // A Imagem (CORRIGIDA)
-        Container(
+        SizedBox(
           height: 400,
           width: double.infinity,
-          // 1. Verifica se a URL da imagem não está vazia
           child: recipe.imageUrl.isNotEmpty
-              // 2. Se tiver URL, usa Image.network
               ? Image.network(
                   recipe.imageUrl,
                   fit: BoxFit.cover,
-                  // 3. Se o Image.network falhar (ex: 404), usa o fallback
                   errorBuilder: (context, error, stackTrace) {
                     return fallbackImage;
                   },
                 )
-              // 4. Se a URL estiver vazia, usa o fallback direto
               : fallbackImage,
         ),
 
-        // O "Scrim" (degradê para o texto ficar legível)
         Container(
           height: 400,
           decoration: BoxDecoration(
@@ -237,7 +216,6 @@ class _RecipeHeroSection extends StatelessWidget {
           ),
         ),
 
-        // O Conteúdo (Texto e Infos)
         Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
@@ -268,7 +246,7 @@ class _RecipeHeroSection extends StatelessWidget {
                   ),
                   _InfoChip(
                     icon: Icons.star_outline,
-                    label: '4.5 (22)', // TODO: Adicionar rating ao modelo
+                    label: '4.5 (22)',
                   ),
                 ],
               ),
@@ -279,8 +257,6 @@ class _RecipeHeroSection extends StatelessWidget {
     );
   }
 }
-
-// --- WIDGET 2: O CARD DE INSTRUÇÕES ---
 
 class _InstructionsInfo extends StatelessWidget {
   final List<String> steps;
@@ -306,8 +282,6 @@ class _InstructionsInfo extends StatelessWidget {
     );
   }
 }
-
-// --- WIDGET 3: O CARD DE INGREDIENTES ---
 
 class _IngredientsInfo extends StatelessWidget {
   final List<Ingredient> ingredients;
@@ -343,8 +317,6 @@ class _IngredientsInfo extends StatelessWidget {
   }
 }
 
-// --- WIDGET 4: O CARD DE UTENSÍLIOS ---
-
 class _ToolsInfo extends StatelessWidget {
   final List<String> utensils;
   const _ToolsInfo({required this.utensils});
@@ -371,10 +343,6 @@ class _ToolsInfo extends StatelessWidget {
     );
   }
 }
-
-// =========================================================================
-// == WIDGETS DE AJUDA (Helpers) ==
-// =========================================================================
 
 class _StyledCard extends StatelessWidget {
   final String title;

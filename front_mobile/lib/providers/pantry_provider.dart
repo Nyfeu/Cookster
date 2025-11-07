@@ -1,9 +1,7 @@
-// lib/providers/pantry_provider.dart
-
 import 'package:flutter/material.dart';
 import 'package:front_mobile/models/ingredient.dart';
 import 'package:front_mobile/services/pantry_service.dart';
-import 'dart:collection'; // Para o SplayTreeMap
+import 'dart:collection';
 
 class PantryProvider with ChangeNotifier {
   final PantryService _pantryService = PantryService();
@@ -16,7 +14,6 @@ class PantryProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String get error => _error;
 
-  // Getter para agrupar ingredientes, similar ao React
   Map<String, List<Ingrediente>> get agrupadoPorCategoria {
     final map = <String, List<Ingrediente>>{};
     for (var item in _ingredientes) {
@@ -27,7 +24,6 @@ class PantryProvider with ChangeNotifier {
       map[cat]!.add(item);
     }
     
-    // Ordena os itens dentro de cada categoria
     map.forEach((categoria, lista) {
       lista.sort((a, b) => a.nome.compareTo(b.nome));
     });
@@ -35,10 +31,7 @@ class PantryProvider with ChangeNotifier {
     return map;
   }
 
-  // Getter para ordenar as categorias, similar ao React
   List<String> get categoriasOrdenadas {
-    // Usamos SplayTreeMap para ordenar as chaves (categorias) automaticamente
-    // e depois movemos "Outros" para o final.
     final sortedMap = SplayTreeMap<String, List<Ingrediente>>.from(
       agrupadoPorCategoria,
       (a, b) => a.compareTo(b),
@@ -68,32 +61,27 @@ class PantryProvider with ChangeNotifier {
   Future<void> adicionarIngrediente(Ingrediente ingrediente) async {
     _error = '';
     try {
-      // O backend retorna a lista atualizada
       _ingredientes = await _pantryService.addIngredient(ingrediente);
     } catch (e) {
       _error = "Falha ao adicionar ingrediente: $e";
-      // Se falhar, recarregamos a lista original para garantir consistência
       await fetchIngredientes(); 
     }
-    notifyListeners(); // Notifica a FeedScreen e a PantryScreen
+    notifyListeners();
   }
 
   Future<void> removerIngrediente(Ingrediente ingrediente) async {
     _error = '';
     
-    // Remosão otimista (atualiza a UI primeiro)
     final int index = _ingredientes.indexOf(ingrediente);
-    if (index == -1) return; // Não encontrou
+    if (index == -1) return;
     
     _ingredientes.removeAt(index);
-    notifyListeners(); // Notifica a FeedScreen e a PantryScreen
+    notifyListeners();
 
     try {
-      // Tenta remover no backend
       await _pantryService.removeIngredient(ingrediente);
     } catch (e) {
       _error = "Falha ao remover ingrediente: $e";
-      // Se falhar, adiciona de volta na UI
       _ingredientes.insert(index, ingrediente);
       notifyListeners();
     }

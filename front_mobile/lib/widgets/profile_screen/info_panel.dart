@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/user_profile.dart'; // Ajuste o caminho
+import '../../models/user_profile.dart';
 import '../../screens/user/edit_screen.dart';
 
 class InfoPanel extends StatelessWidget {
@@ -20,16 +20,14 @@ class InfoPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    // O Stack é necessário para posicionar o avatar 'flutuando'
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.center,
       children: [
-        // O card de conteúdo (começa 60px abaixo do topo)
         Container(
           width: double.infinity,
           margin: const EdgeInsets.only(top: 60),
-          padding: const EdgeInsets.all(16.0), // Padding aplicado a tudo
+          padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(8),
@@ -41,24 +39,17 @@ class InfoPanel extends StatelessWidget {
               ),
            ],
           ),
-          // [MUDANÇA] Usamos um Stack para posicionar os botões
           child: Stack(
             children: [
-              // 1. O conteúdo original (Column)
               Column(
                 children: [
-                 // Espaço vazio para a metade de baixo do avatar
                   const SizedBox(height: 60),
-
-                  // Informações
                   Text(profile.name, style: textTheme.headlineSmall),
                   const SizedBox(height: 4),
                   Text(profile.bio, style: textTheme.bodySmall),
                   const SizedBox(height: 4),
                   Text(profile.email, style: textTheme.bodySmall),
                   const SizedBox(height: 20),
-
-                  // Estatísticas (ul.about)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -71,33 +62,29 @@ class InfoPanel extends StatelessWidget {
                   const Divider(),
                   const SizedBox(height: 10),
 
-                  // Descrição (div.content)
                   Text(
                     profile.descricao,
                     textAlign: TextAlign.justify,
                     style: textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF1D1D1D), // Cor específica do CSS
-                     height: 1.8, // line-height
+                      color: const Color(0xFF1D1D1D),
+                     height: 1.8,
                     ),
                   ),
                 ],
               ),
 
-              // 2. [MUDANÇA] Os botões posicionados no canto superior direito
-             // O padding do Container pai (16.0) fá-los-á
-              // ficar corretamente espaçados.
               Positioned(
                 top: 0,
                 right: 0,
                 child: profile.isOwner
                   ? IconButton(
-                      icon: const Icon(Icons.settings), // Ícone de engrenagem
+                      icon: const Icon(Icons.settings),
                       onPressed: () {
-                        print(profile.id);                                               
+                        
                         Navigator.pushNamed(
                           context,
                           EditProfileScreen.routeName,
-                          arguments: profile.id, // Passa o ID da receita clicada
+                          arguments: profile.id, 
                         );
                      },
                     )
@@ -112,7 +99,6 @@ class InfoPanel extends StatelessWidget {
           ),
         ),
 
-        // O Avatar (position: absolute, top: -60px)
        Positioned(
           top: 0,
           child: _buildAvatar(context),
@@ -121,7 +107,6 @@ class InfoPanel extends StatelessWidget {
     );
   }
 
-  // Avatar com funcionalidade de zoom ao clicar
   Widget _buildAvatar(BuildContext context) {
     final imageProvider = const AssetImage('assets/images/default-profile.jpeg');
 
@@ -130,7 +115,7 @@ class InfoPanel extends StatelessWidget {
         showDialog(
           context: context,
           builder: (ctx) => Dialog(
-            child: InteractiveViewer( // Permite zoom com os dedos
+            child: InteractiveViewer(
               child: Image(image: imageProvider),
             ),
           ),
@@ -144,7 +129,6 @@ class InfoPanel extends StatelessWidget {
     );
   }
 
-  // Helper para criar as colunas de estatísticas
   Widget _buildStatColumn(String label, int count) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -153,7 +137,7 @@ class InfoPanel extends StatelessWidget {
           count.toString(),
           style: const TextStyle(
              fontWeight: FontWeight.w600,
-              color: Color(0xFF4D6B5B), // text-color
+              color: Color(0xFF4D6B5B),
               fontSize: 16,
             ),
         ),

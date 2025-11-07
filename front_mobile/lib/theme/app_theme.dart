@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Cores baseadas no arquivo theme.css do app web React.js
 class AppTheme {
   static const Color primaryColor = Color(0xFF38302E);
   static const Color secondaryColor = Color(0xFFE89841);

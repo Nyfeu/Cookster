@@ -1,11 +1,9 @@
-// [NOVO] Importe a tela de receita para ter acesso ao 'routeName'
 import 'package:flutter/material.dart';
-import '../../screens/recipe/recipe_screen.dart'; 
+import '../../screens/recipe/recipe_screen.dart';
 
 class RecipesGrid extends StatelessWidget {
   const RecipesGrid({super.key});
 
-  // Lista de receitas (hardcoded como no seu exemplo)
   final List<Map<String, String>> recipes = const [
     {'id': '68418757ea0cf6733b142a67', 'image': 'assets/images/Prato_1.webp'},
     {'id': '68418757ea0cf6733b142a68', 'image': 'assets/images/Prato_2.jpg'},
@@ -17,40 +15,33 @@ class RecipesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // GridView substitui o 'display: grid'
     return GridView.builder(
-      // Importante: Desativa o scroll do GridView,
-      // pois a tela principal (SingleChildScrollView) já faz o scroll.
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
 
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // 2 colunas no mobile
+        crossAxisCount: 2, 
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 1.2, // Proporção da imagem (largura / altura)
+        childAspectRatio: 1.2, 
       ),
       itemCount: recipes.length,
       itemBuilder: (context, index) {
         final recipe = recipes[index];
         
-        // [REMOVIDO] O GestureDetector não é necessário,
-        // pois o InkWell já cuida do toque e da animação.
         return ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: Material(
-            color: Colors.transparent, // Necessário para o InkWell funcionar
+            color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                // [NOVO] Lógica de navegação para a tela da receita
                 Navigator.pushNamed(
                   context,
                   RecipePage.routeName,
-                  arguments: recipe['id']!, // Passa o ID da receita clicada
+                  arguments: recipe['id']!,
                 );
               },
               child: GridTile(
-                // O restante do seu código permanece igual
                 footer: GridTileBar(
                   backgroundColor: Colors.black.withOpacity(0.6),
                   title: const Text(

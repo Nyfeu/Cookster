@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:front_mobile/models/recipe_model.dart';
-import 'package:front_mobile/models/user_profile.dart'; // IMPORTAR MODELO DE PERFIL
+import 'package:front_mobile/models/user_profile.dart';
 import 'package:front_mobile/providers/auth_provider.dart';
-import 'package:front_mobile/services/profile_service.dart'; // IMPORTAR SERVIÇO DE PERFIL
+import 'package:front_mobile/services/profile_service.dart';
 import 'package:front_mobile/services/recipe_service.dart';
 import 'package:front_mobile/theme/app_theme.dart';
 import 'package:front_mobile/widgets/search/recipe_list_item.dart';
 import 'package:provider/provider.dart';
 
-// Enum para controlar o tipo de busca
-enum SearchType { porNome, porAutor, porUsuario } // ADICIONADO 'porUsuario'
+enum SearchType { porNome, porAutor, porUsuario }
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -21,9 +20,9 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final _searchController = TextEditingController();
   final _recipeService = RecipeService();
-  final _profileService = ProfileService(); // INSTANCIAR SERVIÇO DE PERFIL
+  final _profileService = ProfileService();
 
-  List<dynamic> _results = []; // MUDADO PARA List<dynamic>
+  List<dynamic> _results = [];
   bool _isLoading = false;
   String? _error;
   SearchType _searchType = SearchType.porNome;
@@ -48,7 +47,6 @@ class _SearchScreenState extends State<SearchScreen> {
         throw Exception('Usuário não autenticado.');
       }
 
-      // A lista agora pode conter Receitas ou Perfis
       List<dynamic> searchData;
 
       if (_searchType == SearchType.porNome) {
@@ -62,7 +60,6 @@ class _SearchScreenState extends State<SearchScreen> {
           authorId: _searchController.text,
         );
       } else {
-        // NOVO CASO DE BUSCA
         searchData = await _profileService.searchProfiles(
           token: token,
           name: _searchController.text,
@@ -106,11 +103,9 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       child: Column(
         children: [
-          // Campo de busca
           TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              // HINT TEXT ATUALIZADO
               hintText:
                   _searchType == SearchType.porNome
                       ? 'Buscar por nome da receita...'
@@ -174,24 +169,15 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  // Widget de placeholder para exibir um item de usuário na lista
-  // (Idealmente, isso se tornaria seu próprio widget: UserListItem)
   Widget _buildUserListItem(UserProfile user) {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Colors.grey[200],
-        // TODO: Adicionar lógica para carregar a user.fotoPerfil
-        // backgroundImage: user.fotoPerfil != null ? NetworkImage(user.fotoPerfil!) : null,
         child: const Icon(Icons.person_outline, color: Colors.grey),
       ),
-      title: Text(user.name ?? 'Usuário'),
-      subtitle: Text(
-        user.bio ?? 'Sem bio',
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
+      title: Text(user.name),
+      subtitle: Text(user.bio, maxLines: 1, overflow: TextOverflow.ellipsis),
       onTap: () {
-        // TODO: Implementar navegação para a tela de perfil do usuário
         /*
         Navigator.push(
           context,
@@ -223,7 +209,6 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     if (_results.isEmpty) {
-      // MENSAGEM DE "VAZIO" ATUALIZADA
       String emptyMessage;
       if (_searchType == SearchType.porUsuario) {
         emptyMessage = 'Nenhum usuário encontrado.';
@@ -268,19 +253,13 @@ class _SearchScreenState extends State<SearchScreen> {
         itemBuilder: (context, index) {
           final item = _results[index];
 
-          // LÓGICA DE RENDERIZAÇÃO ATUALIZADA
-          // Verifica o tipo de item (e o tipo de busca) para decidir
-          // qual widget de lista renderizar.
-
           if (_searchType == SearchType.porUsuario) {
             if (item is UserProfile) {
-              return _buildUserListItem(item); // Renderiza o item de usuário
+              return _buildUserListItem(item);
             }
           } else {
             if (item is Recipe) {
-              return RecipeListItem(
-                recipe: item,
-              ); // Renderiza o item de receita
+              return RecipeListItem(recipe: item);
             }
           }
 

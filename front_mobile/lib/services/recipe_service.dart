@@ -1,4 +1,3 @@
-// lib/services/recipe_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../models/recipe_model.dart';
@@ -48,7 +47,7 @@ class RecipeService {
     final uri =
         Uri.parse('$_baseUrl/recipes').replace(queryParameters: queryParams);
 
-    print('[RecipeService] Buscando receitas em: $uri');
+
 
     try {
       final response = await http.get(
@@ -60,10 +59,7 @@ class RecipeService {
       );
 
       if (response.statusCode == 200) {
-        // A API retorna uma LISTA de receitas
         final List<dynamic> body = json.decode(response.body);
-        
-        // Mapeia a lista de JSON para uma lista de Objetos Recipe
         return body.map((dynamic item) => Recipe.fromJson(item)).toList();
       } else {
         final errorBody = json.decode(response.body);
@@ -80,7 +76,7 @@ class RecipeService {
   }) async {
     final uri = Uri.parse('$_baseUrl/suggest');
 
-    print('[RecipeService] Buscando sugestões em: $uri');
+
 
     try {
       final response = await http.get(
@@ -102,7 +98,6 @@ class RecipeService {
 
         if (message.toString().contains('Nenhum ingrediente') ||
             message.toString().contains('vazia')) {
-          print('[RecipeService] Nenhum ingrediente na despensa do usuário.');
           return []; 
         }
       }

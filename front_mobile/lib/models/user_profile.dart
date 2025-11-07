@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class UserProfile {
   final String id;
   final String name;
@@ -9,9 +7,6 @@ class UserProfile {
   final String fotoPerfil;
   final String descricao;
   final bool isOwner;
-  // Adicione seguidores, seguindo, etc., se eles vierem da API
-  // final int seguidores;
-  // final int seguindo;
 
   UserProfile({
     required this.id,
@@ -25,10 +20,9 @@ class UserProfile {
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
-    // A API do código React retorna um objeto { data: { ... } }
-    final data = json['data']; 
+    final data = json['data'];
     return UserProfile(
-      id: data['userId'], // Supondo que o ID venha como _id
+      id: data['userId'],
       name: data['name'] ?? 'Nome de usuário',
       bio: data['bio'] ?? 'Sem bio',
       profissao: data['profissao'] ?? 'Sem profissão',

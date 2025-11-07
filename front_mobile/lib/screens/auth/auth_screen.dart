@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../theme/app_theme.dart';
-import '../../services/auth_service.dart'; 
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart'; 
 import '../../screens/home_screen.dart';
@@ -22,16 +21,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
   late AnimationController _imageController;
 
-  // --- 2. Variáveis de Estado e Controladores --- //
-  final AuthService _authService = AuthService();
-  
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
-  String _errorMessage = '';
-  // --------------------------------------------- //
 
   @override
   void initState() {
@@ -57,11 +51,9 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   void _toggleView() {
     setState(() {
       _isSignUpView = !_isSignUpView;
-      _errorMessage = ''; // Limpa erros ao trocar
-      _isLoading = false; // Cancela loading
+      _isLoading = false;
     });
     
-    // Limpa campos de texto
     _nameController.clear();
     _emailController.clear();
     _passwordController.clear();
@@ -72,50 +64,32 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     });
   }
 
-  // --- ADICIONE ESTA NOVA FUNÇÃO --- //
   void _showErrorSnackBar(String message) {
-    // Esconde qualquer SnackBar que já esteja visível
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-    // Cria o SnackBar customizado
     final snackBar = SnackBar(
-      // Conteúdo principal: o texto do erro
       content: Text(
         message,
         style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w500),
       ),
-      // Cor de fundo vermelha
       backgroundColor: Colors.red[600],
-      // Faz o SnackBar "flutuar" acima do conteúdo
       behavior: SnackBarBehavior.floating,
-      // Margens para o efeito flutuante
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      // Bordas arredondadas
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      // O seu botão "X"
       action: SnackBarAction(
         label: 'X',
         textColor: Colors.white,
-        onPressed: () {
-          // Ação para fechar o SnackBar
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        },
+        onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
       ),
-      // Duração
       duration: const Duration(seconds: 5),
     );
 
-    // Mostra o SnackBar
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-  // ---------------------------------- //
   
-// --- 3. Lógica de API (Handle Sign Up) --- //
   Future<void> _handleSignUp() async {
-    print('[DEBUG] Botão REGISTRAR pressionado!');
     setState(() {
       _isLoading = true;
-      _errorMessage = '';
     });
 
     try {
@@ -127,7 +101,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
       if (!mounted) return;
 
-      // SnackBar de SUCESSO. Certifique-se de que este é o único SnackBar que você quer ver
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Usuário cadastrado com sucesso! Faça o login.'),
@@ -135,15 +108,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
         ),
       );
       
-      _toggleView(); // Troca para a tela de login
+      _toggleView();
 
     } catch (e) {
-      print('[DEBUG] ERRO NO REGISTRO: $e');
-      // **MUDANÇA AQUI:** Usa um operador 'null-aware' para garantir que não é null
-      // e usa 'toString()' para lidar com exceções de forma segura.
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
-
-      // Verifica se a mensagem resultante não é vazia ou nula antes de mostrar o SnackBar
+      
       if (errorMessage.isNotEmpty) {
           _showErrorSnackBar(errorMessage);
       } else {
@@ -157,23 +126,17 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     }
   }
 
-  // --- 4. Lógica de API (Handle Sign In) --- //
   Future<void> _handleSignIn() async {
-    print('[DEBUG] Botão ACESSAR pressionado!');
     setState(() {
       _isLoading = true;
-      _errorMessage = '';
     });
 
     try {
-
-          final authProvider = Provider.of<AuthProvider>(context, listen: false);
-          await authProvider.login(
-            _emailController.text,
-            _passwordController.text,
-          );
-
-      final loggedInUserId = authProvider.userId;
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.login(
+        _emailController.text,
+        _passwordController.text,
+      );
 
       if (!mounted) return;
 
@@ -182,7 +145,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       );
 
     } catch (e) {
-      print('[DEBUG] ERRO NO LOGIN: $e');
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
       _showErrorSnackBar(errorMessage);
     } finally {
@@ -191,7 +153,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       });
     }
   }
-  // ------------------------------------------ //
 
 
   @override
@@ -199,7 +160,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     final size = MediaQuery.of(context).size;
     final double panelHeight = _isSignUpView ? size.height * 0.4 : size.height * 0.48;
     
-    print('[DEBUG] O WIDGET AUTH_SCREEN FOI (RE)CONSTRUÍDO');
+
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
@@ -275,7 +236,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                       text: 'Crie uma conta agora mesmo e aproveite as vantagens.',
                       buttonText: 'Registre-se',
                       imagePath: 'assets/images/log.png',
-                      onPressed: _isLoading ? null : _toggleView, // Desabilita no load
+                      onPressed: _isLoading ? null : _toggleView,
                       isPanelAtBottom: false,
                     ),
                   ],
@@ -315,8 +276,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             ),
             const SizedBox(height: 15),
             
-            // --- 5. Conectar campos aos controladores --- //
-            if (isSignUp) ...[
+                      if (isSignUp) ...[
               _buildTextField(
                 controller: _nameController,
                 icon: Icons.person_outline, 
@@ -345,14 +305,13 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
-  // Painel _buildPanelContent (sem alterações)
   Widget _buildPanelContent({
     required bool isVisible,
     required String title,
     required String text,
     required String buttonText,
     required String imagePath,
-    required VoidCallback? onPressed, // Alterado para aceitar null
+    required VoidCallback? onPressed,
     required bool isPanelAtBottom,
   }) {
     return AnimatedOpacity(
@@ -364,7 +323,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           clipBehavior: Clip.none,
           alignment: Alignment.center,
           children: [
-            // --- IMAGEM COM ANIMAÇÃO POP-UP --- //
             Positioned(
               top: isPanelAtBottom ? -90 : null,
               bottom: !isPanelAtBottom ? -70 : null,
@@ -382,8 +340,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                 ),
               ),
             ),
-
-            // --- CONTEÚDO DO PAINEL --- //
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 25),
               child: Column(
@@ -430,11 +386,8 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
-  // --- 7. Atualizar o Botão de Ação --- //
   Widget _buildActionButton(String text) {
     return ElevatedButton(
-      // Conecta a ação correta (Login ou Registro)
-      // Desabilita o botão se _isLoading for true
       onPressed: _isLoading 
           ? null 
           : (_isSignUpView ? _handleSignUp : _handleSignIn),
@@ -470,7 +423,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
-  // Ícones Sociais (sem alterações)
   Widget _buildSocialButton(IconData icon) {
     return CircleAvatar(
       radius: 22,
@@ -479,14 +431,13 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
-  // --- 8. Atualizar o _buildTextField --- //
   Widget _buildTextField(
     {required TextEditingController controller,
     required IconData icon, 
     required String hintText, 
     bool isPassword = false}) {
     return TextField(
-      controller: controller, // Conecta o controlador
+      controller: controller,
       obscureText: isPassword,
       decoration: InputDecoration(
         hintText: hintText,

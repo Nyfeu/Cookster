@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../services/profile_service.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/user_profile.dart';
-import '../../screens/user/profile_screen.dart';
 import '../../services/auth_service.dart';
 import '../../screens/auth/auth_screen.dart';
 
@@ -23,13 +22,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _descricaoController = TextEditingController();
 
   final ProfileService _profileService = ProfileService();
-  final AuthService _authService =
-      AuthService(); // <-- Instância do AuthService
+  final AuthService _authService = AuthService(); 
 
   String? token = '';
   late Future<UserProfile> _profileFuture;
   bool _isSaving = false;
-  String? _error;
 
   @override
   void initState() {
@@ -53,7 +50,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<UserProfile> _loadProfile() async {
-    setState(() => _error = null);
     try {
       final profileData = await _profileService.fetchUserProfile(
         widget.userId,
@@ -72,7 +68,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<bool> _handleSaveChanges() async {
     setState(() {
       _isSaving = true;
-      _error = null;
     });
 
     final Map<String, dynamic> formData = {
@@ -96,16 +91,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Navigator.of(context).pop();
   }
 
-  // [NOVO MÉTODO] — Logout limpo
   Future<void> _handleLogout() async {
     try {
       await _authService.logout();
-      // Atualiza provider (se houver)
       Provider.of<AuthProvider>(context, listen: false).logout();
 
       if (!mounted) return;
 
-      // Redireciona para a tela de autenticação e remove todas as rotas anteriores
       Navigator.of(
         context,
       ).pushNamedAndRemoveUntil(AuthScreen.routeName, (route) => false);
@@ -159,7 +151,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
           return Column(
             children: [
-              // conteúdo principal rola
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
@@ -173,7 +164,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // --- Avatar + Ações ---
                           Container(
                             padding: const EdgeInsets.all(16.0),
                             color: Colors.white,
@@ -240,7 +230,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                           ),
 
-                          // --- Botões de Ação dentro do card ---
                           Container(
                             color: Colors.white,
                             padding: const EdgeInsets.all(16.0),
@@ -259,9 +248,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       _isSaving
                                           ? null
                                           : () async {
-                                            final navigator = Navigator.of(
-                                              context,
-                                            );
+
                                             final scaffoldMessenger =
                                                 ScaffoldMessenger.of(context);
                                             FocusScope.of(context).unfocus();
@@ -289,11 +276,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                   backgroundColor: Colors.green,
                                                 ),
                                               );
-                                              navigator.pushNamedAndRemoveUntil(
-                                                ProfileScreen.routeName,
-                                                (route) => false,
-                                                arguments: widget.userId,
-                                              );
+                                              Navigator.pop(context);
                                             } else if (errorMessage != null) {
                                               scaffoldMessenger.showSnackBar(
                                                 SnackBar(
@@ -327,7 +310,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
 
-              // --- [NOVO] Botão fixo fora do card ---
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: SafeArea(

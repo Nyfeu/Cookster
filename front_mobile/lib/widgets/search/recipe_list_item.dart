@@ -17,7 +17,6 @@ class RecipeListItem extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          // Navega para a tela de detalhes da receita
           Navigator.pushNamed(
             context,
             RecipePage.routeName,
@@ -33,7 +32,7 @@ class RecipeListItem extends StatelessWidget {
               child: Image.network(
                 recipe.imageUrl.isNotEmpty
                     ? recipe.imageUrl
-                    : 'assets/images/bolo.png', // Imagem padrão
+                    : 'assets/images/bolo.png', 
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) =>
                     Image.asset('assets/images/bolo.png', fit: BoxFit.cover),
@@ -58,7 +57,7 @@ class RecipeListItem extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "Por: ${recipe.userId}", // Exibe o ID do autor
+                      "Por: ${recipe.userId}", 
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],

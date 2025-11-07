@@ -5,7 +5,6 @@ import '../../theme/app_theme.dart';
 import '../auth/auth_screen.dart'; 
 
 class OnboardingScreen extends StatelessWidget {
-  // Adicionamos um nome de rota para esta tela
   static const String routeName = '/onboarding';
 
   const OnboardingScreen({super.key});
@@ -55,7 +54,6 @@ class OnboardingScreen extends StatelessWidget {
           decoration: pageDecoration,
         ),
       ],
-      // CORREÇÃO: Usando a rota nomeada correta para navegar
       onDone: () {
         Navigator.pushReplacementNamed(context, AuthScreen.routeName);
       },

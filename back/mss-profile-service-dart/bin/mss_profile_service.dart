@@ -21,7 +21,6 @@ void main(List<String> args) async {
   final dbUser = env['DB_USER'];
   final dbPassword = env['DB_PASS'];
   
-  // Adicionando um check para logar o erro caso a variável não seja carregada
   if (dbUser == null || dbPassword == null) {
       print('❌ Erro de Configuração: DB_USER ou DB_PASS não foram carregados do ambiente.');
       return;
@@ -190,9 +189,8 @@ void main(List<String> args) async {
 
       final requesterId = req.headers['user-id'];
 
-      // Se não houver ID de requisitante ou se ele for diferente do ID do perfil
       if (requesterId == null || requesterId != userId) {
-        return Response(403, // 403 Forbidden (Acesso Negado)
+        return Response(403,
             body: jsonEncode({'message': 'Acesso negado. Você só pode editar o seu próprio perfil.'}),
             headers: {'Content-Type': 'application/json'});
       }
@@ -251,7 +249,7 @@ void main(List<String> args) async {
   });
 
 
-  final server = await io.serve(handler, '0.0.0.0', int.parse(appPort));
+  await io.serve(handler, '0.0.0.0', int.parse(appPort));
   print('🟢 MSS-PROFILE-SERVICE rodando na porta $appPort');
 
   try {

@@ -1,7 +1,5 @@
-// lib/models/recipe_model.dart
 import 'dart:convert';
 
-// Funções para facilitar a decodificação
 Recipe recipeFromJson(String str) => Recipe.fromJson(json.decode(str));
 
 class Recipe {
@@ -34,25 +32,26 @@ class Recipe {
   });
 
   factory Recipe.fromJson(Map<String, dynamic> json) => Recipe(
-        id: json["_id"] ?? '',
-        userId: json["user_id"] ?? 'Usuário',
-        name: json["name"] ?? 'Sem nome',
-        description: json["description"] ?? '',
-        prepTime: (json["prep_time"] ?? 'N/A').toString(),
-        cookTime: (json["cook_time"] ?? 'N/A').toString(),
-        servings: json["servings"] ?? 0,
-        imageUrl: json["image_url"] ?? '',
-        tags: List<String>.from(json["tags"] ?? []),
-        steps: List<String>.from(json["steps"] ?? []),
-        ingredients: List<Ingredient>.from(
-            (json["ingredients"] ?? []).map((x) => Ingredient.fromJson(x))),
-        utensils: List<String>.from(json["utensils"] ?? []),
-      );
+    id: json["_id"] ?? '',
+    userId: json["user_id"] ?? 'Usuário',
+    name: json["name"] ?? 'Sem nome',
+    description: json["description"] ?? '',
+    prepTime: (json["prep_time"] ?? 'N/A').toString(),
+    cookTime: (json["cook_time"] ?? 'N/A').toString(),
+    servings: json["servings"] ?? 0,
+    imageUrl: json["image_url"] ?? '',
+    tags: List<String>.from(json["tags"] ?? []),
+    steps: List<String>.from(json["steps"] ?? []),
+    ingredients: List<Ingredient>.from(
+      (json["ingredients"] ?? []).map((x) => Ingredient.fromJson(x)),
+    ),
+    utensils: List<String>.from(json["utensils"] ?? []),
+  );
 }
 
 class Ingredient {
   final String name;
-  final dynamic quantity; // Pode ser String ou num
+  final dynamic quantity;
   final String unit;
   final String? note;
 
@@ -64,9 +63,9 @@ class Ingredient {
   });
 
   factory Ingredient.fromJson(Map<String, dynamic> json) => Ingredient(
-        name: json["name"] ?? 'Ingrediente',
-        quantity: json["quantity"] ?? 0,
-        unit: json["unit"] ?? '',
-        note: json["note"],
-      );
+    name: json["name"] ?? 'Ingrediente',
+    quantity: json["quantity"] ?? 0,
+    unit: json["unit"] ?? '',
+    note: json["note"],
+  );
 }
