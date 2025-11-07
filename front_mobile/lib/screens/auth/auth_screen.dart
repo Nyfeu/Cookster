@@ -127,6 +127,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
       if (!mounted) return;
 
+      // SnackBar de SUCESSO. Certifique-se de que este é o único SnackBar que você quer ver
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Usuário cadastrado com sucesso! Faça o login.'),
@@ -138,8 +139,17 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
     } catch (e) {
       print('[DEBUG] ERRO NO REGISTRO: $e');
+      // **MUDANÇA AQUI:** Usa um operador 'null-aware' para garantir que não é null
+      // e usa 'toString()' para lidar com exceções de forma segura.
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      _showErrorSnackBar(errorMessage);
+
+      // Verifica se a mensagem resultante não é vazia ou nula antes de mostrar o SnackBar
+      if (errorMessage.isNotEmpty) {
+          _showErrorSnackBar(errorMessage);
+      } else {
+          _showErrorSnackBar("Ocorreu um erro desconhecido durante o registro.");
+      }
+      
     } finally {
       setState(() {
         _isLoading = false;

@@ -61,15 +61,13 @@ class AuthProvider with ChangeNotifier {
   // Função de Registro
   Future<void> register(String name, String email, String password) async {
     try {
-      // Chama o serviço de registro
+      // Chama o serviço de registro (o serviço deve fazer a chamada HTTP e lançar erro se o status for 4xx/5xx)
       await _authService.register(name, email, password);
       
-      // (Opcional) Você pode fazer o login automático após o registro
-      // await login(email, password);
-
     } catch (e) {
+      // Se houver um erro de API, ele CAI AQUI.
       print('Erro no AuthProvider: $e');
-      rethrow; 
+      rethrow; // <-- ESSENCIAL: Re-lança o erro para o AuthScreen pegar.
     }
   }
 
