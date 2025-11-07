@@ -250,14 +250,24 @@ class _PantryScreenState extends State<PantryScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Título da Categoria
-                    Text(
-                      categoria.toUpperCase(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryColor,
-                        fontSize: 16,
+                    Row(
+                    children: [
+                      // Ícone
+                      _getIconePorCategoria(categoria),
+                      
+                      const SizedBox(width: 8), // Espaçamento
+                      
+                      // Título
+                      Text(
+                        categoria.toUpperCase(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryColor,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
+                    ],
+                  ),
                     const Divider(),
                     // Itens da Categoria
                     ...items.map((item) {
@@ -280,5 +290,119 @@ class _PantryScreenState extends State<PantryScreen> {
         );
       },
     );
+  }
+  /// Retorna um ícone baseado no nome da categoria.
+  Icon _getIconePorCategoria(String categoria) {
+    IconData iconeData;
+    // Usa a mesma cor do texto do título
+    final Color corIcone = AppTheme.primaryColor; 
+
+    // Normaliza o nome da categoria para a verificação
+    String categoriaNorm = categoria.toLowerCase();
+
+    // Mapeia o nome da categoria para um IconData
+    switch (categoriaNorm) {
+      // --- GRUPO: CARNES E PESCADOS ---
+      case 'carnes':
+      case 'carnes processadas':
+        iconeData = Icons.kebab_dining_outlined;
+        break;
+      case 'pescados':
+        iconeData = Icons.set_meal_outlined; // Ícone de peixe
+        break;
+      
+      // --- GRUPO: LATICÍNIOS E OVOS ---
+      case 'laticínios':
+      case 'laticínios (alternativas)':
+        iconeData = Icons.icecream_outlined;
+        break;
+      case 'ovos e derivados':
+        iconeData = Icons.egg_outlined;
+        break;
+
+      // --- GRUPO: FRUTAS, LEGUMES E ERVAS ---
+      case 'frutas':
+        iconeData = Icons.apple_outlined;
+        break;
+      case 'legumes':
+      case 'folhas e ervas': // Agrupado com Legumes
+      case 'ervas': // Agrupado com Legumes
+        iconeData = Icons.grass_outlined;
+        break;
+
+      // --- GRUPO: PADARIA, GRÃOS E MASSAS ---
+      case 'pães':
+        iconeData = Icons.bakery_dining_outlined;
+        break;
+      case 'farinhas e fermentos':
+      case 'fermentos':
+        iconeData = Icons.grain_outlined; // Ícone de grão/pó
+        break;
+      case 'grãos':
+        iconeData = Icons.rice_bowl_outlined;
+        break;
+      case 'massas':
+        iconeData = Icons.ramen_dining_outlined;
+        break;
+
+      // --- GRUPO: TEMPEROS, MOLHOS E ÓLEOS ---
+      case 'especiarias':
+      case 'temperos':
+        iconeData = Icons.filter_vintage_outlined;
+        break;
+      case 'óleos e gorduras':
+        iconeData = Icons.water_drop_outlined; // Ícone de gota (óleo)
+        break;
+      case 'molhos e pastas':
+        iconeData = Icons.egg_alt_outlined; // Ícone de jarra
+        break;
+      case 'aromatizantes':
+        iconeData = Icons.flare_outlined;
+        break;
+
+      // --- GRUPO: BEBIDAS ---
+      case 'bebidas':
+        iconeData = Icons.local_bar_outlined;
+        break;
+      case 'bebidas alcoólicas':
+        iconeData = Icons.sports_bar_outlined;
+        break;
+
+      // --- GRUPO: DOCES E SOBREMESAS ---
+      case 'açúcares e adoçantes':
+        iconeData = Icons.takeout_dining_outlined; // Ícone de pacote
+        break;
+      case 'doces':
+        iconeData = Icons.cookie_outlined;
+        break;
+      case 'sobremesas':
+        iconeData = Icons.cake_outlined;
+        break;
+      
+      // --- GRUPO: NOZES E SEMENTES ---
+      case 'oleaginosas':
+      case 'sementes':
+        iconeData = Icons.eco_outlined; // Ícone de folha/noz
+        break;
+
+      // --- GRUPO: INDUSTRIALIZADOS E OUTROS ---
+      case 'conservas':
+        iconeData = Icons.inventory_2_outlined; // Ícone de enlatado/jarra
+        break;
+      case 'salgados': // Snacks
+        iconeData = Icons.fastfood_outlined;
+        break;
+      case 'aditivos':
+        iconeData = Icons.science_outlined;
+        break;
+
+      // --- ÍCONE PADRÃO ---
+      default:
+        // Ícone padrão para categorias não mapeadas
+        iconeData = Icons.label_outline;
+    }
+
+    // Retorna o Widget de Ícone
+    return Icon(iconeData, color: corIcone, size: 20); // Tamanho do ícone
   }
 }
