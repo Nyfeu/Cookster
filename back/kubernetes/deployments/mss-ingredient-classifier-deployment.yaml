@@ -22,7 +22,7 @@ spec:
           claimName: chroma-pvc # Referencia o PVC criado abaixo
       containers:
       - name: mss-ingredient-classifier-container
-        image: nyfeu/mss-ingredient-classifier:latest # Sua imagem Python no Docker Hub
+        image: nyfeu/mss-ingredient-classifier:latest 
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
@@ -38,7 +38,6 @@ spec:
           value: "/app/data/chroma"
         - name: CORS_ORIGINS
           value: "http://localhost"
-        # O CMD do Dockerfile é usado automaticamente (uvicorn script:app...)
 ---
 # Persistent Volume Claim (PVC) para o ChromaDB
 # Ele solicita o Persistent Volume (PV) ao cluster.

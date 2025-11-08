@@ -23,7 +23,6 @@ spec:
         command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o Event Bus..."; sleep 2; done; echo "✅ Event Bus disponível!";']
       containers:
       - name: mss-profile-service-container
-        # 🚨 IMPORTANTE: SUBSTITUA ESTA TAG PELA SUA IMAGEM ENVIADA AO REGISTRY (Docker Hub, GCR, etc.)
         image: nyfeu/mss-profile-service:latest 
         imagePullPolicy: Always
         ports:
