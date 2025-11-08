@@ -1,32 +1,57 @@
-import 'package:flutter/material.dart';
-import '../../../data/models/recipe_model.dart';
-import '../../../data/services/recipe_service.dart';
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
+import 'package:flutter/material.dart';                   // Padrão do Flutter
+import '../../../data/models/recipe_model.dart';          // Modelo de Receita
+import '../../../data/services/recipe_service.dart';      // Serviço de Receita
+import 'package:provider/provider.dart';                  // Pacote Provider
+import '../../providers/auth_provider.dart';              // Provider de Autuenticação
+
+// Tela de detalhamento da receita
+// Permite visualizar os atributos como: descrição,
+// tempo de preparo, passos, utensílios etc.
 
 class RecipePage extends StatefulWidget {
+
+  // Rota nomeada para receita
   static const String routeName = '/recipe';
+
+  // ID da receita na página - informada via ModalRouter (vide 'main.dart')
   final String idReceita;
 
   const RecipePage({super.key, required this.idReceita});
 
   @override
   State<RecipePage> createState() => _RecipePageState();
+
 }
 
 class _RecipePageState extends State<RecipePage> {
+
+  // Usa Future para informações obtidas assíncronamente
+  // pelo API-GATEWAY para a receita
+
   late Future<Recipe> _recipeFuture;
+  
+  // Variável para armazenar o token necessário para acessar as 
+  // rotas protegidas - recuperará através do Provider
+
   String? _token;
+  
+  // Serviço para acesso à camada de dados de receitas
+
   final RecipeService _recipeService = RecipeService();
+
+  // Estado inicial
 
   @override
   void initState() {
     super.initState();
+
+    // Recupera o token via AuthProvider
     _token = Provider.of<AuthProvider>(context, listen: false).token;
 
     if (_token != null) {
       _recipeFuture = _recipeService.fetchRecipe(widget.idReceita, _token!);
     }
+
   }
 
   @override
@@ -80,9 +105,17 @@ class _RecipePageState extends State<RecipePage> {
       body: FutureBuilder<Recipe>(
         future: _recipeFuture,
         builder: (context, snapshot) {
+
+          // 'snapshot' serve para monitorar o estado do Future
+          // e atualizar a UI conforme necessário
+
+          // Mostra indicador de carregamento enquanto espera
+
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+
+          // Mostra mensagem de erro se ocorrer um problema
 
           if (snapshot.hasError) {
             return Center(
@@ -94,9 +127,13 @@ class _RecipePageState extends State<RecipePage> {
             );
           }
 
+          // Mostra mensagem de estado vazio se não houver dados da receita
+
           if (!snapshot.hasData) {
             return const Center(child: Text('Receita não encontrada.'));
           }
+
+          // Armazena os dados da receita a partir da snapshot
 
           final recipe = snapshot.data!;
 
@@ -110,6 +147,11 @@ class _RecipePageState extends State<RecipePage> {
                   padding: const EdgeInsets.all(24.0),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
+
+                      // Verifica o tamanho da tela para responsividade
+                      // No caso, a largura da tela - verificando se
+                      // é ou não Desktop
+
                       bool isDesktop = constraints.maxWidth > 768;
 
                       if (isDesktop) {
@@ -158,7 +200,7 @@ class _RecipePageState extends State<RecipePage> {
   }
 }
 
-
+// Widgets gerais para a página de receita
 
 class _RecipeHeroSection extends StatelessWidget {
   final Recipe recipe;
@@ -303,7 +345,6 @@ class _IngredientsInfo extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    // Usando o 'dynamic quantity' do seu model
                     '${ingredient.quantity} ${ingredient.unit} - ${ingredient.name}',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),

@@ -1,14 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:front_mobile/data/models/recipe_model.dart';
-import 'package:front_mobile/data/models/user_profile.dart';
-import 'package:front_mobile/presentation/providers/auth_provider.dart';
-import 'package:front_mobile/data/services/profile_service.dart';
-import 'package:front_mobile/data/services/recipe_service.dart';
-import 'package:front_mobile/core/theme/app_theme.dart';
-import 'package:front_mobile/presentation/widgets/search/recipe_list_item.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';                                           // Importa o Flutter Material
+import 'package:front_mobile/data/models/recipe_model.dart';                      // Importa o modelo de dados Recipe
+import 'package:front_mobile/presentation/providers/auth_provider.dart';          // Importa o AuthProvider
+import 'package:front_mobile/data/services/recipe_service.dart';                  // Importa o RecipeService
+import 'package:front_mobile/core/theme/app_theme.dart';                          // Importa o tema da aplicação
+import 'package:front_mobile/presentation/widgets/search/recipe_list_item.dart';  // Importa o widget RecipeListItem
+import 'package:provider/provider.dart';                                          // Importa o Provider para gerenciamento de estado
 
-enum SearchType { porNome, porAutor, porUsuario }
+// ENUM para selecionar o tipo de pesquisa
+
+enum SearchType { porNome, porAutor }
+
+// Tela de Pesquisa de Receitas
+// Mostra as receitas pesquisadas por nome ou por autor
+// Utiliza AuthProvider para verificar autenticação e o
+// RecipeService para recuperar os dados das receitas e realizar 
+// a busca.
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -18,13 +24,25 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final _searchController = TextEditingController();
-  final _recipeService = RecipeService();
-  final _profileService = ProfileService();
 
-  List<dynamic> _results = [];
+  // Controlador para o campo de busca, serve para capturar o texto digitado
+  // e reagir a mudanças para buscar as receitas - só pesquisa ao terminar
+  // de digitar.
+
+  final _searchController = TextEditingController();
+  
+  // Serviço de receitas para acesso à camada de dados
+  
+  final _recipeService = RecipeService();
+
+  // Lista de receitas vazia para as receitas encontradas
+
+  List<Recipe> _results = [];
   bool _isLoading = false;
   String? _error;
+
+  // Define o estado inicial de busca
+  
   SearchType _searchType = SearchType.porNome;
 
   Future<void> _performSearch() async {
@@ -47,22 +65,17 @@ class _SearchScreenState extends State<SearchScreen> {
         throw Exception('Usuário não autenticado.');
       }
 
-      List<dynamic> searchData;
+      List<Recipe> searchData;
 
       if (_searchType == SearchType.porNome) {
         searchData = await _recipeService.searchRecipes(
           token: token,
           name: _searchController.text,
         );
-      } else if (_searchType == SearchType.porAutor) {
+      } else {
         searchData = await _recipeService.searchRecipes(
           token: token,
           authorId: _searchController.text,
-        );
-      } else {
-        searchData = await _profileService.searchProfiles(
-          token: token,
-          name: _searchController.text,
         );
       }
 
@@ -142,11 +155,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 label: Text('Por Autor'),
                 icon: Icon(Icons.person_search),
               ),
-              ButtonSegment(
-                value: SearchType.porUsuario,
-                label: Text('Usuários'),
-                icon: Icon(Icons.person),
-              ),
             ],
             selected: {_searchType},
             onSelectionChanged: (Set<SearchType> newSelection) {
@@ -169,27 +177,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildUserListItem(UserProfile user) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.grey[200],
-        child: const Icon(Icons.person_outline, color: Colors.grey),
-      ),
-      title: Text(user.name),
-      subtitle: Text(user.bio, maxLines: 1, overflow: TextOverflow.ellipsis),
-      onTap: () {
-        /*
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfileScreen(userId: user.userId), // Exemplo
-          ),
-        );
-        */
-      },
-    );
-  }
-
   Widget _buildResultsList() {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -209,12 +196,7 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     if (_results.isEmpty) {
-      String emptyMessage;
-      if (_searchType == SearchType.porUsuario) {
-        emptyMessage = 'Nenhum usuário encontrado.';
-      } else {
-        emptyMessage = 'Nenhuma receita encontrada.';
-      }
+      const emptyMessage = 'Nenhuma receita encontrada.';
 
       return Center(
         child: Padding(
@@ -251,20 +233,7 @@ class _SearchScreenState extends State<SearchScreen> {
       child: ListView.builder(
         itemCount: _results.length,
         itemBuilder: (context, index) {
-          final item = _results[index];
-
-          if (_searchType == SearchType.porUsuario) {
-            if (item is UserProfile) {
-              return _buildUserListItem(item);
-            }
-          } else {
-            if (item is Recipe) {
-              return RecipeListItem(recipe: item);
-            }
-          }
-
-          // Fallback caso o tipo não corresponda (não deve acontecer)
-          return const SizedBox.shrink();
+          return RecipeListItem(recipe: _results[index]);
         },
       ),
     );

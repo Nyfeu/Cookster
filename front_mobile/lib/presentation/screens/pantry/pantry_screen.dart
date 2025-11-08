@@ -1,12 +1,19 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:front_mobile/data/models/ingredient.dart';
-import 'package:front_mobile/presentation/providers/pantry_provider.dart';
-import 'package:front_mobile/data/services/pantry_service.dart';
-import 'package:front_mobile/core/theme/app_theme.dart';
-import 'package:provider/provider.dart';
+import 'dart:async';                                                             // Usado para Timer
+import 'package:flutter/material.dart';                                          // Padrão do Flutter
+import 'package:front_mobile/data/models/ingredient.dart';                       // Modelo de Ingrediente
+import 'package:front_mobile/presentation/providers/pantry_provider.dart';       // Provider de Despensa
+import 'package:front_mobile/data/services/pantry_service.dart';                 // Serviço de Despensa
+import 'package:front_mobile/core/theme/app_theme.dart';                         // Tema da Aplicação
+import 'package:provider/provider.dart';                                         // Provider para gerenciamento de estado
+
+// Tela de Despensa do Usuário 
+// Permite buscar, adicionar e remover ingredientes da despensa
+// Utiliza PantryProvider para gerenciar o estado da despensa
+// e PantryService para buscar sugestões de ingredientes.
 
 class PantryScreen extends StatefulWidget {
+
+  // Rota nomeada para navegação
   static const String routeName = '/pantry';
 
   const PantryScreen({super.key});
@@ -16,14 +23,31 @@ class PantryScreen extends StatefulWidget {
 }
 
 class _PantryScreenState extends State<PantryScreen> {
+
+  // Controlador para o campo de busca, serve para capturar o texto digitado
+  // e reagir a mudanças para buscar sugestões de ingredientes
+  
   final TextEditingController _searchController = TextEditingController();
+
+  // Serviço para buscar sugestões de ingredientes da API (api-gateway -> mss-ingredient-classifier)
+
   final PantryService _pantryService = PantryService();
+
+  // Lista de sugestões de ingredientes baseada no texto digitado
+
   List<Ingrediente> _sugestoes = [];
+
+  // Timer para debounce da requisição de sugestão de ingredientes
+
   Timer? _debounce;
+
+  // Estado inicial
 
   @override
   void initState() {
     super.initState();
+
+    // Executa a callback function quando o campo de busca muda
     _searchController.addListener(_onSearchChanged);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -40,6 +64,8 @@ class _PantryScreenState extends State<PantryScreen> {
     });
   }
 
+  // Remove listener e timer
+
   @override
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
@@ -48,10 +74,18 @@ class _PantryScreenState extends State<PantryScreen> {
     super.dispose();
   }
 
+  // Verificações para realizar a pesquisa de ingrediente
+
   void _onSearchChanged() {
+
+    // Realiza o debounce da digitação na barra de pesquisa
+
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 400), () async {
       final termo = _searchController.text;
+    
+      // Se tiver menos que duas letras - não realiza requisição
+      // Configura uma lista vazia
       if (termo.length < 2) {
         if (mounted) {
           setState(() {
@@ -82,6 +116,8 @@ class _PantryScreenState extends State<PantryScreen> {
     });
   }
 
+  // Utiliza o PantryProvider para adicionar ingredientes da despensa do usuário
+
   Future<void> _adicionarIngrediente(Ingrediente ingrediente) async {
 
     await context.read<PantryProvider>().adicionarIngrediente(ingrediente);
@@ -95,9 +131,15 @@ class _PantryScreenState extends State<PantryScreen> {
 
   }
 
+  // Utiliza o PantryProvider para remover ingredientes da despensa do usuário
+
   Future<void> _removerIngrediente(Ingrediente ingrediente) async {
 
+    // Mostra um diálogo para confirmar a remoção do ingrediente da despensa
+    // Conforme: https://api.flutter.dev/flutter/material/AlertDialog-class.html
+
     final bool? confirmar = await showDialog(
+
       context: context,
       builder:
           (ctx) => AlertDialog(
@@ -116,11 +158,17 @@ class _PantryScreenState extends State<PantryScreen> {
               ),
             ],
           ),
+
     );
+
+    // Caso o usuário selecione 'Remover' (confirme), o PantryProvider
+    // é utilizado para remover o ingrediente (comunicando-se com o serviço
+    // na camada subjacente).
 
     if (confirmar == true) {
       await context.read<PantryProvider>().removerIngrediente(ingrediente);
     }
+
   }
 
   @override
@@ -208,7 +256,20 @@ class _PantryScreenState extends State<PantryScreen> {
     );
   }
 
+  //  Constrói a lista da despensa exibida na tela.
+
   Widget _buildPantryList() {
+
+    // Exibe estados diferentes conforme o estado do PantryProvider:
+    // - Indicador de carregamento quando isLoading é true e não há ingredientes.
+    // - Mensagem de erro quando provider.error não está vazia.
+    // - Tela informando que a despensa está vazia quando não há ingredientes.
+    // - Lista agrupada por categorias com RefreshIndicator para atualizar e ações para remover itens.
+
+    // IMPORTANTE: O uso de Consumer<PantryProvider> permite que apenas este subtree seja reconstruído
+    // quando o PantryProvider emitir mudanças (por exemplo carregamento, erro, atualização
+    // ou remoção de ingredientes), evitando rebuilds desnecessários dos widgets-pais.
+
     return Consumer<PantryProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading && provider.ingredientes.isEmpty) {
@@ -277,6 +338,9 @@ class _PantryScreenState extends State<PantryScreen> {
 
         final categorias = provider.categoriasOrdenadas;
 
+        // Componente para indicar o refresh da página
+        // Vide: https://api.flutter.dev/flutter/material/RefreshIndicator-class.html
+
         return RefreshIndicator(
           onRefresh: () => provider.fetchIngredientes(),
           child: ListView.builder(
@@ -330,6 +394,9 @@ class _PantryScreenState extends State<PantryScreen> {
       },
     );
   }
+
+  // Método auxiliar para obtenção do ícone por categoria
+  // Utiliza 'Icons' para cada categoria - conforme material de aula
 
   Icon _getIconePorCategoria(String categoria) {
     IconData iconeData;

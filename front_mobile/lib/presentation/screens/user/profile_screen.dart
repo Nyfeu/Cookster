@@ -1,14 +1,26 @@
-import 'package:flutter/material.dart';
-import '../../../data/models/user_profile.dart';
-import '../../../data/services/profile_service.dart';
-import '../../widgets/profile_screen/info_panel.dart';
-import '../../widgets/profile_screen/recipes_grid.dart';
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
+import 'package:flutter/material.dart';                      // Padrão do Flutter
+import '../../../data/models/user_profile.dart';             // Modelo de Usuário
+import '../../../data/services/profile_service.dart';        // Serviço de Perfil
+import '../../widgets/profile_screen/info_panel.dart';       // Widget auxiliar InfoPanel
+import '../../widgets/profile_screen/recipes_grid.dart';     // Widget auxiliar RecipesGrid
+import 'package:provider/provider.dart';                     // Pacote Provider
+import '../../providers/auth_provider.dart';                 // Provider de Autenticação
+
+// Tela de Dados do Perfil
+// Permite visualizar os dados do perfil do usuário
+// Acessar a tela de edição e as receitas publicadas
 
 class ProfileScreen extends StatefulWidget {
+
+  // Rota da página de perfil
   static const String routeName = '/profile';
+  
+  // ID do usuário na página
   final String userId;
+
+  // Controla se o Scaffold (estrutura básica da tela com AppBar) deve ser exibido
+  // true: exibe o Scaffold completo com AppBar
+  // false: exibe apenas o conteúdo do perfil, útil quando usado como widget filho em outras telas
   final bool showScaffold; 
 
   const ProfileScreen({
@@ -22,8 +34,14 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class ProfileScreenState extends State<ProfileScreen> {
+
+  // O Perfil é recuperado assíncronamente, então é utilizado Future
   late Future<UserProfile> profileFuture;
+
+  // Serviço de Perfil para comunicação com camada subjacente de dados
   final ProfileService profileService = ProfileService();
+
+  // Estado inicial
 
   @override
   void initState() {
@@ -40,11 +58,32 @@ class ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  // Chamado por callbacks filhos quando o perfil foi atualizado
+  void reloadProfile() {
+    
+    // Recupera o token de autenticação via AuthProvider
+    final token = Provider.of<AuthProvider>(context, listen: false).token;
+    
+    if (token != null) {
+      setState(() {
+        profileFuture = profileService.fetchUserProfile(widget.userId, token);
+      });
+    }
+
+  }
+
+  // Constrói a tela de perfil
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserProfile>(
       future: profileFuture,
       builder: (context, snapshot) {
+
+        // 'snapshot' serve para monitorar o estado do Future
+        // e atualizar a UI conforme necessário
+
+        // Mostra indicador de carregamento enquanto espera
 
         if (snapshot.connectionState == ConnectionState.waiting) {
           final loadingWidget = const Center(child: CircularProgressIndicator());
@@ -57,6 +96,8 @@ class ProfileScreenState extends State<ProfileScreen> {
           }
           return loadingWidget;
         }
+
+        // Mostra mensagem de erro se ocorrer um problema
 
         if (snapshot.hasError) {
           final errorWidget = Center(
@@ -74,6 +115,8 @@ class ProfileScreenState extends State<ProfileScreen> {
           }
           return errorWidget;
         }
+
+        // Caso os dados estejam disponíveis
 
         if (snapshot.hasData) {
           final profile = snapshot.data!;
@@ -115,6 +158,9 @@ class ProfileScreenState extends State<ProfileScreen> {
         children: [
 
           Stack(
+
+            // Conforme: https://api.flutter.dev/flutter/widgets/Stack-class.html
+
             clipBehavior: Clip.none,
             children: [
 
@@ -122,6 +168,9 @@ class ProfileScreenState extends State<ProfileScreen> {
                 height: bannerHeight,
                 width: double.infinity,
                 decoration: const BoxDecoration(
+
+                  // Conforme: https://api.flutter.dev/flutter/painting/BoxDecoration-class.html
+
                   image: DecorationImage(
                     image:
                         AssetImage('assets/images/bg.jpg'), 
@@ -140,10 +189,12 @@ class ProfileScreenState extends State<ProfileScreen> {
                       seguidores: 0,
                       seguindo: 0,
                       posts: 0,
+                      onProfileUpdated: reloadProfile,
                     ),
                   ),
                 ],
               ),
+              
             ],
           ),
 

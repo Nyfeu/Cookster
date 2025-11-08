@@ -3,6 +3,9 @@ import 'dart:convert';
 Recipe recipeFromJson(String str) => Recipe.fromJson(json.decode(str));
 
 class Recipe {
+
+  // Atributos principais da receita
+
   final String id;
   final String userId;
   final String name;
@@ -31,6 +34,8 @@ class Recipe {
     required this.utensils,
   });
 
+  // Converte o objeto `Ingrediente` (JSON) para um Map
+
   factory Recipe.fromJson(Map<String, dynamic> json) => Recipe(
     id: json["_id"] ?? '',
     userId: json["user_id"] ?? 'Usuário',
@@ -47,9 +52,13 @@ class Recipe {
     ),
     utensils: List<String>.from(json["utensils"] ?? []),
   );
+
 }
 
 class Ingredient {
+
+  // Atributos principais do ingrediente
+
   final String name;
   final dynamic quantity;
   final String unit;
@@ -62,10 +71,13 @@ class Ingredient {
     this.note,
   });
 
+  // Converte o objeto `Ingrediente` (JSON) para um Map
+
   factory Ingredient.fromJson(Map<String, dynamic> json) => Ingredient(
     name: json["name"] ?? 'Ingrediente',
     quantity: json["quantity"] ?? 0,
     unit: json["unit"] ?? '',
     note: json["note"],
   );
+  
 }

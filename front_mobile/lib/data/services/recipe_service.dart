@@ -1,9 +1,16 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../models/recipe_model.dart';
+import 'dart:convert';                      // Para codificação/decodificação JSON 
+import 'package:http/http.dart' as http;    // Para requisições HTTP
+import '../models/recipe_model.dart';       // Modelo de Receita
 
 class RecipeService {
+
+  // URL base do serviço de receitas
+
   final String _baseUrl = 'http://localhost:2000/recipe';
+
+  // Busca uma receita específica pelo ID
+  // Utiliza token de autenticação para rotas protegidas
+  // Lança exceção em caso de falha na requisição - tratada na camada superior
 
   Future<Recipe> fetchRecipe(String idReceita, String token) async {
     if (idReceita.isEmpty) {
@@ -31,6 +38,10 @@ class RecipeService {
     }
   }
 
+  // Busca receitas por nome ou autor
+  // Utiliza token de autenticação para rotas protegidas
+  // Lança exceção em caso de falha na requisição - tratada na camada superior
+
   Future<List<Recipe>> searchRecipes({
     required String token,
     String? name,
@@ -44,10 +55,7 @@ class RecipeService {
       queryParams['user_id'] = authorId;
     }
 
-    final uri =
-        Uri.parse('$_baseUrl/recipes').replace(queryParameters: queryParams);
-
-
+    final uri = Uri.parse('$_baseUrl/recipes').replace(queryParameters: queryParams);
 
     try {
       final response = await http.get(
@@ -71,12 +79,14 @@ class RecipeService {
     }
   }
 
+  // Busca receitas sugeridas com base nos ingredientes da despensa do usuário
+  // Utiliza token de autenticação para rotas protegidas
+  // Lança exceção em caso de falha na requisição - tratada na camada superior
+
   Future<List<Recipe>> fetchSuggestedRecipes({
     required String token,
   }) async {
     final uri = Uri.parse('$_baseUrl/suggest');
-
-
 
     try {
       final response = await http.get(

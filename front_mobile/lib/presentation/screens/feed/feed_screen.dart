@@ -1,12 +1,18 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:front_mobile/data/models/recipe_model.dart';
-import 'package:front_mobile/presentation/providers/auth_provider.dart';
-import 'package:front_mobile/presentation/providers/pantry_provider.dart';
-import 'package:front_mobile/data/services/recipe_service.dart';
-import 'package:front_mobile/presentation/widgets/search/recipe_list_item.dart';
-import 'package:provider/provider.dart';
-import 'package:front_mobile/core/theme/app_theme.dart';
+import 'dart:async';                                                                 // Permite o uso de Timer
+import 'package:flutter/material.dart';                                              // Importa o Flutter Material
+import 'package:front_mobile/data/models/recipe_model.dart';                         // Importa o modelo de dados Recipe
+import 'package:front_mobile/presentation/providers/auth_provider.dart';             // Importa o AuthProvider
+import 'package:front_mobile/presentation/providers/pantry_provider.dart';           // Importa o PantryProvider
+import 'package:front_mobile/data/services/recipe_service.dart';                     // Importa o RecipeService
+import 'package:front_mobile/presentation/widgets/search/recipe_list_item.dart';     // Importa o widget RecipeListItem
+import 'package:provider/provider.dart';                                             // Importa o Provider para gerenciamento de estado
+import 'package:front_mobile/core/theme/app_theme.dart';                             // Importa o tema da aplicação
+
+// Tela de Feed de Receitas Sugeridas
+// Mostra receitas sugeridas com base nos itens da despensa do usuário
+// Utiliza PantryProvider para monitorar mudanças na despensa
+// e recarregar as sugestões automaticamente
+// Utiliza RecipeService para buscar as receitas sugeridas da API
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
@@ -16,14 +22,29 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
+
+  // Future para carregar receitas sugeridas
+  // Atualizado quando a despensa muda
+  // Usa Future pois a busca é assíncrona e pode demorar
+
   Future<List<Recipe>>? _suggestedRecipesFuture;
+
+  // Mensagens padrão para estado vazio
 
   String _emptyTitle = "Nenhuma sugestão";
   String _emptyMessage = "Adicione itens à sua despensa para ver receitas!";
   String _emptyImage = "assets/images/cesta.png";
 
+  // Referência ao PantryProvider para monitorar mudanças na despensa
+
   late final PantryProvider _pantryProvider;
+
+  // Timer para debounce ao recarregar sugestões (espera a sincronização entre os
+  // microsserviços): mss-pantry e mss-recipe.
+
   Timer? _debounce;
+
+  // Inicialização do estado
 
   @override
   void initState() {
@@ -33,6 +54,8 @@ class _FeedScreenState extends State<FeedScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadSuggestedRecipes());
   }
 
+  // Limpeza dos listeners e timers
+
   @override
   void dispose() {
     _pantryProvider.removeListener(_onPantryChanged);
@@ -40,19 +63,34 @@ class _FeedScreenState extends State<FeedScreen> {
     super.dispose();
   }
 
+  // Chamado quando a despensa muda
+
   void _onPantryChanged() {
+
+    // Usa debounce para evitar múltiplas chamadas rápidas
+    // Espera 800ms após a última mudança para recarregar as sugestões
+    // Isso ajuda a garantir que os dados estejam sincronizados
+
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 800), () {
       _loadSuggestedRecipes();
     });
   }
 
+  // Carrega receitas sugeridas
+
   void _loadSuggestedRecipes() {
     if (!mounted) {
       return;
     }
 
+    // Obtém token e serviço via Provider
+
     final token = context.read<AuthProvider>().token;
+
+    // Usa RecipeService para buscar receitas sugeridas
+    // Atualiza o Future para disparar o rebuild da UI
+
     final recipeService = context.read<RecipeService>();
 
     if (token == null) {
@@ -71,7 +109,10 @@ class _FeedScreenState extends State<FeedScreen> {
       _emptyImage = "assets/images/cesta.png";
       _suggestedRecipesFuture = recipeService.fetchSuggestedRecipes(token: token);
     });
+
   }
+
+  // Constrói o painel de título da tela
 
   Widget _buildTitlePanel(BuildContext context) {
     return Container(
@@ -101,6 +142,8 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
+  // Constrói a UI da tela do Feed
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,11 +155,19 @@ class _FeedScreenState extends State<FeedScreen> {
             child: Padding(
               padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
               child: FutureBuilder<List<Recipe>>(
-                future: _suggestedRecipesFuture,
+                future: _suggestedRecipesFuture,   // Future que carrega as receitas sugeridas
                 builder: (context, snapshot) {
+
+                  // 'snapshot' serve para monitorar o estado do Future
+                  // e atualizar a UI conforme necessário
+
+                  // Mostra indicador de carregamento enquanto espera
+
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
+
+                  // Mostra mensagem de erro se ocorrer um problema
 
                   if (snapshot.hasError) {
                     return Center(
@@ -149,6 +200,8 @@ class _FeedScreenState extends State<FeedScreen> {
                     );
                   }
 
+                  // Mostra mensagem de estado vazio se não houver sugestões
+
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(
                       child: Padding(
@@ -180,19 +233,36 @@ class _FeedScreenState extends State<FeedScreen> {
                     );
                   }
 
+                  // Mostra a lista de receitas sugeridas
+
                   final recipes = snapshot.data!;
+
+                  // ListView.builder é usado para listas grandes e dinâmicas
+                  // Constrói apenas os itens visíveis para melhor performance
+                  // Cada item é um RecipeListItem (retorna um Card) que mostra os detalhes da receita
+                  // Conforme: https://api.flutter.dev/flutter/widgets/ListView-class.html
+
                   return ListView.builder(
                     itemCount: recipes.length,
                     itemBuilder: (context, index) {
                       return RecipeListItem(recipe: recipes[index]);
                     },
                   );
+
                 },
+
               ),
+
             ),
+
           ),
+
         ],
+
       ),
+
     );
+
   }
+  
 }

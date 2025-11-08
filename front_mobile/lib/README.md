@@ -2,8 +2,6 @@
 
 Este documento descreve a estrutura e as decisões arquiteturais do projeto, com base em princípios de **Clean Architecture** e **práticas do ecossistema Flutter**.  
 
-
-
 ## 📁 Estrutura de Pastas
 
 ```
@@ -51,9 +49,8 @@ Responsável pela **obtenção e manipulação dos dados**, seja por meio de API
 - Centralizar acesso a fontes de dados (`services/`)
 
 **Observação:**  
-O projeto utiliza o termo **`service`** (em vez de `repository`) para simplificar a camada de dados, já que o app é de pequeno porte.  
+O projeto utiliza o termo **`service`** para simplificar a camada de dados, já que o app é de pequeno porte.  
 Cada *service* representa uma interface direta com uma fonte de dados (por exemplo, API de receitas, autenticação ou perfil de usuário).
-
 
 
 ### 3. `presentation/` — Camada de apresentação
@@ -88,8 +85,7 @@ O projeto utiliza o pacote [`provider`](https://pub.dev/packages/provider), por 
 - Mantém a separação clara entre UI e lógica
 - Evita sobrecarga desnecessária (como com o padrão BLoC)
 - Facilita testes unitários e legibilidade do código
-
-
+- A utilização de BLoC causaria excesso de *boilerplate* e complexidade desnecessária (*overkill*)
 
 ## 🧭 Princípios seguidos
 
@@ -98,11 +94,8 @@ O projeto utiliza o pacote [`provider`](https://pub.dev/packages/provider), por 
 - **Alta coesão:** arquivos e classes tratam de um único propósito.  
 - **Escalabilidade:** permite evoluir o app sem comprometer a estrutura existente.  
 
-
-
 ## ✅ Conclusão
 
 A arquitetura foi planejada para ser **simples, modular e escalável**, aplicando princípios da Clean Architecture.  
-
 
 ---

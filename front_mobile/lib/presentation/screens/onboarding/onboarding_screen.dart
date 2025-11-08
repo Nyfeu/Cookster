@@ -1,16 +1,27 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:introduction_screen/introduction_screen.dart';
-import '../../../core/theme/app_theme.dart';
-import '../auth/auth_screen.dart'; 
+import 'package:flutter/material.dart';                          // Padrão do Flutter
+import 'package:google_fonts/google_fonts.dart';                 // Fontes do Google
+import 'package:introduction_screen/introduction_screen.dart';   // Pacote para telas de onboarding
+import '../../../core/theme/app_theme.dart';                     // Tema da aplicação
+import '../auth/auth_screen.dart';                               // Tela de autenticação
+
+// Tela de onboarding com introdução ao app
+// Utiliza o pacote 'introduction_screen' (https://pub.dev/packages/introduction_screen) para criar uma experiência
+// de onboarding interativa e personalizável com múltiplas páginas, navegação, botões e indicadores.
+// Cada página apresenta um recurso chave do app com título, descrição e imagem ilustrativa.
 
 class OnboardingScreen extends StatelessWidget {
+
+  // Rota nomeada para navegação
   static const String routeName = '/onboarding';
 
   const OnboardingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    // Configuração padrão para cada página do onboarding
+    // Conforme a documentação do pacote 'introduction_screen'
+
     final pageDecoration = PageDecoration(
       titleTextStyle: GoogleFonts.poppins(
         fontSize: 28.0,
@@ -28,6 +39,9 @@ class OnboardingScreen extends StatelessWidget {
       imageFlex: 2,
       bodyFlex: 2,
     );
+
+    // Constrói o widget IntroductionScreen com as páginas definidas
+    // e configurações de navegação, botões e indicadores
 
     return IntroductionScreen(
       globalBackgroundColor: AppTheme.backgroundColor,
@@ -54,12 +68,21 @@ class OnboardingScreen extends StatelessWidget {
           decoration: pageDecoration,
         ),
       ],
+
+      // Callback para quando o onboarding é concluído (botão "Começar")
+      // Navega para a tela de autenticação (AuthScreen) usando rota nomeada
+
       onDone: () {
         Navigator.pushReplacementNamed(context, AuthScreen.routeName);
       },
+
+      // Callback para quando o usuário pula o onboarding (botão "Pular")
+      // Navega para a tela de autenticação (AuthScreen) usando rota nomeada
+
       onSkip: () {
         Navigator.pushReplacementNamed(context, AuthScreen.routeName);
       },
+      
       showSkipButton: true,
       skip: Text(
         'Pular',

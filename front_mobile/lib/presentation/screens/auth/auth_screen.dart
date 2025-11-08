@@ -1,31 +1,50 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../../core/theme/app_theme.dart';
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart'; 
-import '../home_screen.dart';
+import 'package:flutter/material.dart';                             // Flutter padrão
+import 'package:google_fonts/google_fonts.dart';                    // Fonte personalizada
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';    // Ícones do FontAwesome
+import '../../../core/theme/app_theme.dart';                        // Tema da aplicação
+import 'package:provider/provider.dart';                            // Gerenciamento de estado
+import '../../providers/auth_provider.dart';                        // Provider de autenticação
+import '../home_screen.dart';                                       // Tela inicial após login
 
+// Tela de autenticação (login e registro)
+// Implementa animações e transições suaves entre as views de login e registro
+// Utiliza Provider para gerenciar o estado de autenticação
+// e exibir mensagens de erro via SnackBar.
+// Inclui validação básica de formulários e feedback visual ao usuário.
 
 class AuthScreen extends StatefulWidget {
+
+  // Rota nomeada para navegação
   static const String routeName = '/auth';
 
   const AuthScreen({super.key});
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
+
 }
 
 class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateMixin {
+
+  // Controla se está na view de registro (sign up) ou login (sign in)
   bool _isSignUpView = true;
 
+  // Controlador de animação para a imagem do painel
+  // De acordo com: https://docs.flutter.dev/ui/animations/tutorial
+
   late AnimationController _imageController;
+
+  // Controladores de texto para os campos do formulário
 
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  // Indica se uma operação de autenticação está em andamento
+
   bool _isLoading = false;
+
+  // Estado inicial
 
   @override
   void initState() {
@@ -39,6 +58,8 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     if (_isSignUpView) _imageController.forward();
   }
 
+  // Limpeza dos controladores
+
   @override
   void dispose() {
     _imageController.dispose();
@@ -47,6 +68,8 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     _passwordController.dispose();
     super.dispose();
   }
+
+  // Alterna entre as views de login e registro
 
   void _toggleView() {
     setState(() {
@@ -63,6 +86,9 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       if (mounted) _imageController.forward();
     });
   }
+
+  // Exibe uma SnackBar de erro personalizada
+  // Conforme: https://docs.flutter.dev/cookbook/design/snackbars
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -86,6 +112,9 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
+
+  // Handle Sign Up (Registro)
+  // Valida os campos e chama o provider de autenticação
   
   Future<void> _handleSignUp() async {
     setState(() {
@@ -126,6 +155,9 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     }
   }
 
+  // Handle Sign In (Login)
+  // Valida os campos e chama o provider de autenticação
+
   Future<void> _handleSignIn() async {
     setState(() {
       _isLoading = true;
@@ -154,14 +186,16 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     }
   }
 
+  // Construção da UI da tela de autenticação
 
   @override
   Widget build(BuildContext context) {
+
+    // Tamanho da tela para cálculos de layout responsivo
     final size = MediaQuery.of(context).size;
     final double panelHeight = _isSignUpView ? size.height * 0.4 : size.height * 0.48;
     
-
-
+    // Scaffold principal da tela de autenticação
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: SizedBox(
@@ -169,9 +203,15 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
         height: size.height,
         child: Stack(
           children: [
+
+            // Animação de opacidade para o formulário de REGISTRO (fade-in/out)
             AnimatedOpacity(
+
+              // Duração da animação
               duration: const Duration(milliseconds: 300),
               opacity: _isSignUpView ? 1.0 : 0.0,
+
+              // Ignora interações quando não está visível
               child: IgnorePointer(
                 ignoring: !_isSignUpView,
                 child: Align(
@@ -187,10 +227,14 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               ),
             ),
 
-            // Formulário de LOGIN
+            // Animação de opacidade para o formulário de LOGIN (fade-in/out)
             AnimatedOpacity(
+
+              // Duração da animação
               duration: const Duration(milliseconds: 300),
               opacity: _isSignUpView ? 0.0 : 1.0,
+
+              // Ignora interações quando não está visível
               child: IgnorePointer(
                 ignoring: _isSignUpView,
                 child: Align(
@@ -203,12 +247,21 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               ),
             ),
 
-            // Painel animado (sem alterações)
+            // Painel animado com imagem e botões para alternar entre views
             AnimatedPositioned(
+
+              // Move-se verticalmente conforme a view atual
+              // Se estiver na view de registro, fica na parte inferior
+              // Se estiver na view de login, sobe para revelar o formulário
+
               duration: const Duration(milliseconds: 700),
               curve: Curves.fastOutSlowIn,
               top: _isSignUpView ? size.height - panelHeight + 60 : -60,
               child: AnimatedContainer(
+
+                // Permite a animação do container vide: 
+                // https://api.flutter.dev/flutter/widgets/AnimatedContainer-class.html
+
                 duration: const Duration(milliseconds: 700),
                 curve: Curves.fastOutSlowIn,
                 width: size.width,
@@ -217,6 +270,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                   color: AppTheme.accentColor,
                   borderRadius: BorderRadius.circular(60),
                 ),
+
+                // Conteúdo do painel com imagem e botões
+                // Usa Stack para sobrepor os dois painéis (login e registro)
+                // Conforme: https://api.flutter.dev/flutter/widgets/Stack-class.html
+
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -236,7 +294,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                       text: 'Crie uma conta agora mesmo e aproveite as vantagens.',
                       buttonText: 'Registre-se',
                       imagePath: 'assets/images/log.png',
-                      onPressed: _isLoading ? null : _toggleView,
+                      onPressed: _isLoading ? null : _toggleView, // Desabilita no load
                       isPanelAtBottom: false,
                     ),
                   ],
@@ -249,7 +307,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
+  // Constrói o conteúdo do formulário de autenticação
+  // Inclui campos de texto e botões de ação
+
   Widget _buildFormContent({required bool isSignUp}) {
+    
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 40),

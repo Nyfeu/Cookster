@@ -4,6 +4,8 @@ import '../../screens/recipe/recipe_screen.dart';
 class RecipesGrid extends StatelessWidget {
   const RecipesGrid({super.key});
 
+  // Dados mockados das receitas do usuário autenticado
+
   final List<Map<String, String>> recipes = const [
     {'id': '68418757ea0cf6733b142a67', 'image': 'assets/images/Prato_1.webp'},
     {'id': '68418757ea0cf6733b142a68', 'image': 'assets/images/Prato_2.jpg'},
@@ -16,15 +18,27 @@ class RecipesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+
+      // Um array 2D de widgets com scroll (desabilitamos)
+      // Conforme: https://api.flutter.dev/flutter/widgets/GridView-class.html
+
       shrinkWrap: true,
+
+      // Desabilita o scroll
       physics: const NeverScrollableScrollPhysics(),
 
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+
+        // Mantém a estrutura do grid - fixa uma quantidade na linha ou na coluna
+        // Conforme: https://api.flutter.dev/flutter/rendering/SliverGridDelegateWithFixedCrossAxisCount-class.html
+
         crossAxisCount: 2, 
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         childAspectRatio: 1.2, 
+
       ),
+
       itemCount: recipes.length,
       itemBuilder: (context, index) {
         final recipe = recipes[index];

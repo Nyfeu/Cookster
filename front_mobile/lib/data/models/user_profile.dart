@@ -1,4 +1,7 @@
 class UserProfile {
+
+  // Atributos principais do perfil do usuário
+
   final String id;
   final String name;
   final String bio;
@@ -19,6 +22,8 @@ class UserProfile {
     required this.isOwner,
   });
 
+  // Factory constructor para criar uma instância de UserProfile a partir de um JSON
+
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
     return UserProfile(
@@ -32,4 +37,5 @@ class UserProfile {
       isOwner: data['isOwner'] ?? false,
     );
   }
+  
 }

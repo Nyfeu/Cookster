@@ -1,12 +1,16 @@
-import 'package:flutter/material.dart';
-import '../../../data/models/user_profile.dart';
-import '../../screens/user/edit_screen.dart';
+import 'package:flutter/material.dart';            // Flutter Padrão
+import '../../../data/models/user_profile.dart';   // Modelo de Usuário
+import '../../screens/user/edit_screen.dart';      // Tela de Edição do Perfil do Usuário 
 
 class InfoPanel extends StatelessWidget {
+
+  // Variáveis para informações dos dados de usuário
+
   final UserProfile profile;
   final int seguidores;
   final int seguindo;
   final int posts;
+  final VoidCallback? onProfileUpdated;
 
   const InfoPanel({
     super.key,
@@ -14,13 +18,21 @@ class InfoPanel extends StatelessWidget {
     required this.seguidores,
     required this.seguindo,
     required this.posts,
+    this.onProfileUpdated,
   });
 
   @override
   Widget build(BuildContext context) {
+
+    // Recupera o tema do aplicativo
     final textTheme = Theme.of(context).textTheme;
 
     return Stack(
+
+      // Stack é usado para permitir que widgets sejam desenhados um sobre o outro (empilhados), 
+      // em vez de apenas em sequência vertical/horizontal. Principais motivos para usar 
+      // Stack aqui. Conforme: https://api.flutter.dev/flutter/widgets/Stack-class.html
+
       clipBehavior: Clip.none,
       alignment: Alignment.center,
       children: [
@@ -79,13 +91,15 @@ class InfoPanel extends StatelessWidget {
                 child: profile.isOwner
                   ? IconButton(
                       icon: const Icon(Icons.settings),
-                      onPressed: () {
-                        
-                        Navigator.pushNamed(
+                      onPressed: () async {
+                        final result = await Navigator.pushNamed(
                           context,
                           EditProfileScreen.routeName,
-                          arguments: profile.id, 
+                          arguments: profile.id,
                         );
+                        if (result == true) {
+                          onProfileUpdated?.call();
+                        }
                      },
                     )
                   : ElevatedButton(
@@ -109,6 +123,21 @@ class InfoPanel extends StatelessWidget {
 
   Widget _buildAvatar(BuildContext context) {
     final imageProvider = const AssetImage('assets/images/default-profile.jpeg');
+
+    // Usamos GestureDetector para capturar gestos (ex: onTap, onLongPress) sobre esta área.
+    // Motivos principais:
+    //
+    // 1) Precisamos reagir a toques em uma região que não é, obrigatoriamente, um botão padrão
+    //    — por exemplo, para fechar o painel, ocultar o teclado (FocusScope.of(context).unfocus())
+    //    ou abrir/fechar seções via toque.
+    //
+    // 2) GestureDetector não exige um ancestor Material, ao contrário de InkWell/InkResponse,
+    //    então funciona mesmo quando não há um widget Material na hierarquia.
+    //
+    // 3) Ele fornece apenas eventos de gesto sem feedback visual automático (sem ripple),
+    //    útil quando não se quer alterar a aparência. Se precisar de feedback visual, use InkWell
+    //    dentro de um Material.
+    //
 
     return GestureDetector(
       onTap: () {
