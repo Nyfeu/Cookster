@@ -1,6 +1,6 @@
 # Cookster 👨🏻‍🍳
 
-**Cookster** é um aplicativo web que ajuda os usuários a gerenciarem suas despensas de ingredientes e compartilharem receitas, tudo isso promovendo o consumo consciente e o combate ao desperdício de alimentos.
+**Cookster** é um aplicativo web e mobile que ajuda os usuários a gerenciarem suas despensas de ingredientes e compartilharem receitas, tudo isso promovendo o consumo consciente e o combate ao desperdício de alimentos.
 
 ## 👨🏻‍👩🏻‍👦🏻‍👦🏻 Integrantes do Grupo
 
