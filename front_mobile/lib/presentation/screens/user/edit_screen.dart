@@ -1,13 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../data/services/profile_service.dart';
-import '../../providers/auth_provider.dart';
-import '../../../data/models/user_profile.dart';
-import '../../../data/services/auth_service.dart';
-import '../auth/auth_screen.dart';
+import 'package:flutter/material.dart';                 // Padrão do Flutter
+import 'package:provider/provider.dart';                // Pacote Provider
+import '../../../data/services/profile_service.dart';   // Serviço de Perfil
+import '../../providers/auth_provider.dart';            // Provider da Autenticação
+import '../../../data/models/user_profile.dart';        // Modelo do Usuário
+import '../../../data/services/auth_service.dart';      // Serviço de Autenticação
+import '../auth/auth_screen.dart';                      // Tela de autenticação
+
+// Tela de Edição do Perfil
+// Permite fazer as alterações nos dados do usuário autenticado
+// Utitliza AuthProvider e AuthService para manipular os dados do usuário
 
 class EditProfileScreen extends StatefulWidget {
+
+  // Rota da página de edição de perfil
   static const String routeName = '/settings';
+
   final String userId;
   const EditProfileScreen({super.key, required this.userId});
 
@@ -16,21 +23,36 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+
+  // Controladores de texto para os campos do formulário
+
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _bioController = TextEditingController();
   final _descricaoController = TextEditingController();
 
+  // Serviço para manipular os dados de perfil
+
   final ProfileService _profileService = ProfileService();
+
+  // Serviço para verificar autenticação
+
   final AuthService _authService = AuthService(); 
 
   String? token = '';
+
+  // O perfil a ser buscado é processado assíncronamente
+  // então, utiliza-se Future para sua definição.
+
   late Future<UserProfile> _profileFuture;
+
   bool _isSaving = false;
 
   @override
   void initState() {
     super.initState();
+  
+    // Recupera o token de autenticação via AuthProvider
     token = Provider.of<AuthProvider>(context, listen: false).token;
 
     if (token != null) {
@@ -40,6 +62,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  // Remove os controladores dos campos do formulário
+
   @override
   void dispose() {
     _usernameController.dispose();
@@ -48,6 +72,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _descricaoController.dispose();
     super.dispose();
   }
+
+  // Carrega os dados do perfil nos campos do formulário
 
   Future<UserProfile> _loadProfile() async {
     try {
@@ -64,6 +90,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       throw Exception('Erro ao carregar o perfil: ${err.toString()}');
     }
   }
+
+  // Faz o update dos dados através da camada de dados (serviço)
 
   Future<bool> _handleSaveChanges() async {
     setState(() {
@@ -87,12 +115,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  // Volta para a página anterior
+
   void _cancel() {
     Navigator.of(context).pop();
   }
 
+  // Lida com a lógica de logout - voltando para a tela de autenticação
+
   Future<void> _handleLogout() async {
     try {
+
       await _authService.logout();
       Provider.of<AuthProvider>(context, listen: false).logout();
 
@@ -101,6 +134,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       Navigator.of(
         context,
       ).pushNamedAndRemoveUntil(AuthScreen.routeName, (route) => false);
+    
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -110,6 +144,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       );
     }
+
   }
 
   @override
@@ -133,9 +168,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: FutureBuilder<UserProfile>(
         future: _profileFuture,
         builder: (context, snapshot) {
+
+          // 'snapshot' serve para monitorar o estado do Future
+          // e atualizar a UI conforme necessário
+
+          // Mostra indicador de carregamento enquanto espera
+
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+
+          // Mostra mensagem de erro se ocorrer um problema
+
           if (snapshot.hasError) {
             return Center(
               child: Padding(
@@ -276,7 +320,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                   backgroundColor: Colors.green,
                                                 ),
                                               );
-                                              Navigator.pop(context);
+                                              Navigator.of(context).pop(true);
                                             } else if (errorMessage != null) {
                                               scaffoldMessenger.showSnackBar(
                                                 SnackBar(
