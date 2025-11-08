@@ -1,23 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/onboarding/onboarding_screen.dart'; 
-import 'screens/auth/auth_screen.dart'; 
-import 'screens/user/profile_screen.dart';
-import 'screens/user/edit_screen.dart';
-import 'screens/recipe/recipe_screen.dart';
-import 'screens/home_screen.dart'; 
-import 'theme/app_theme.dart';
-import 'package:provider/provider.dart'; // [NOVO] Importe o provider
-import 'providers/auth_provider.dart';
-
+import 'presentation/screens/onboarding/onboarding_screen.dart';
+import 'presentation/screens/auth/auth_screen.dart';
+import 'presentation/screens/user/profile_screen.dart';
+import 'presentation/screens/user/edit_screen.dart';
+import 'presentation/screens/recipe/recipe_screen.dart';
+import 'presentation/screens/pantry/pantry_screen.dart';
+import 'presentation/screens/home_screen.dart';
+import 'core/theme/app_theme.dart';
+import 'package:provider/provider.dart';
+import 'presentation/providers/auth_provider.dart';
+import 'presentation/providers/pantry_provider.dart';
+import 'data/services/recipe_service.dart';
 
 void main() {
+
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AuthProvider(),
+
+    // Utilizamos o pacote provider (https://pub.dev/packages/provider) [Flutter Favorite] para 
+    // gerenciar o estado da aplicação de forma simples e prática - ao invés de BLoC, MobX etc.
+
+    // O MultiProvider no topo da árvore de widgets permite injetar múltiplos providers
+    // que estarão disponíveis para toda a aplicação. 
+
+    MultiProvider(
+
+      providers: [
+
+        // ChangeNotifierProvider cria e gerencia o ciclo de vida dos providers que estendem ChangeNotifier
+        // (como AuthProvider e PantryProvider), permitindo notificar os listeners sobre mudanças de estado.
+
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => PantryProvider()),
+
+        // Provider simples para RecipeService, que não precisa notificar mudanças de estado, 
+        // apenas fornece métodos para buscar dados da API.  
+        
+        Provider(create: (_) => RecipeService()), 
+      
+      ],
+
       child: const MyApp(),
+
     ),
+
   );
+
 }
 
 class MyApp extends StatelessWidget {
@@ -25,7 +53,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
+
+      // Configurações gerais da aplicação
+
       title: 'Cookster',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: AppTheme.secondaryColor),
@@ -36,38 +68,43 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      // A rota inicial continua sendo a de onboarding
+      
+      // Rota inicial da aplicação é a tela de onboarding (usando o pacote 'introduction_screen')
+      
       initialRoute: OnboardingScreen.routeName,
-      // Definimos as rotas nomeadas para a navegação
+
       routes: {
+
+        // Definição das rotas nomeadas da aplicação
+        // Cada rota mapeia um nome para um widget de tela específico
+        // Isso facilita a navegação entre telas usando nomes em vez de instanciar widgets diretamente
+
         OnboardingScreen.routeName: (context) => const OnboardingScreen(),
         AuthScreen.routeName: (context) => const AuthScreen(),
+        HomeScreen.routeName: (context) => const HomeScreen(),
+        PantryScreen.routeName: (context) => const PantryScreen(),
+
+        // Rotas com argumentos extraem os parâmetros usando ModalRoute
+        // Exemplo: ProfileScreen e EditProfileScreen recebem IDs de usuário como argumentos
+        // Isso é necessário para instanciação correta dos widgets com os dados necessários
 
         ProfileScreen.routeName: (context) {
-          // Pega o ID passado como argumento
           final userId = ModalRoute.of(context)!.settings.arguments as String?;
-
           return ProfileScreen(userId: userId ?? 'ID_PADRAO_OU_ERRO');
         },
-
-        EditProfileScreen.routeName: (context){
-
+        EditProfileScreen.routeName: (context) {
           final profileId = ModalRoute.of(context)!.settings.arguments as String?;
-
           return EditProfileScreen(userId: profileId ?? 'ID_PADRAO_OU_ERRO');
         },
-
-        // [NOVO] Adicionando a rota da página de receita
         RecipePage.routeName: (context) {
-          // Ela funciona exatamente como a ProfileScreen: precisa de um argumento
           final recipeId = ModalRoute.of(context)!.settings.arguments as String?;
-          // Passamos o ID para o construtor da RecipeScreen (que adaptamos)
-          // (Estou assumindo que o widget que adaptamos se chama 'RecipeScreen'
-          // e que o nome do parâmetro é 'idReceita')
           return RecipePage(idReceita: recipeId ?? 'ID_RECEITA_PADRAO_OU_ERRO');
-      },
-    },
-    );
-  }
-}
+        },
 
+      },
+
+    );
+
+  }
+
+}

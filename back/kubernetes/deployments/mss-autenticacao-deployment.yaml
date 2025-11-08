@@ -6,7 +6,7 @@ metadata:
   labels:
     app: mss-autenticacao
 spec:
-  replicas: 1 # Começamos com uma réplica; ajuste conforme a necessidade de escalabilidade
+  replicas: 1 
   selector:
     matchLabels:
       app: mss-autenticacao
@@ -21,7 +21,7 @@ spec:
         command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o Event Bus..."; sleep 2; done; echo "✅ Event Bus disponível!";']
       containers:
       - name: mss-autenticacao-container
-        image: lucaspaga/mss-autenticacao:latest # TROCAR PELA SUA IMAGEM
+        image: nyfeu/mss-autenticacao:latest 
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
@@ -70,5 +70,3 @@ spec:
           value: "3000"
         - name: SERVICE_URL
           value: "http://mss-autenticacao-service" # Nome do Service interno
-        
-        # O Kubernetes garante o restart do contêiner se ele falhar, similar ao restart: always do Docker Compose.

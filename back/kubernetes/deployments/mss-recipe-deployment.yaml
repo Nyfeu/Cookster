@@ -21,7 +21,7 @@ spec:
         command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o Event Bus..."; sleep 2; done; echo "✅ Event Bus disponível!";']
       containers:
       - name: mss-recipe-container
-        image: lucaspaga/mss-recipe:latest # Sua imagem no Docker Hub
+        image: nyfeu/mss-recipe:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 9000
@@ -44,4 +44,3 @@ spec:
           value: "9000"
         - name: SERVICE_URL
           value: "http://mss-recipe-service"
-        # O CMD do Dockerfile é usado automaticamente (node index.js)

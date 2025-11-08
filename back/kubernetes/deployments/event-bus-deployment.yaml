@@ -17,14 +17,13 @@ spec:
     spec:
       containers:
       - name: event-bus-container
-        image: lucaspaga/event-bus:latest
+        image: nyfeu/event-bus:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 4000
-        # --- Adicione esta sonda de inicialização ---
         startupProbe:
           httpGet:
-            path: /health # O endpoint de saúde do seu event-bus
+            path: /health # O endpoint de saúde do event-bus
             port: 4000
           failureThreshold: 30
           periodSeconds: 10
