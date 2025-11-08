@@ -53,7 +53,7 @@ O Cookster contribui diretamente com o ODS 12 (Consumo e Produção Responsávei
 
 ## 🏗️ Estrutura do Projeto
 
-- back/: Contém todos os microsserviços do backend (Node.js, Python).
+- back/: Contém todos os microsserviços do backend (Node.js, Python, Dart).
 - front/: Contém a aplicação web (React.js).
 - front_mobile/: Contém a aplicação móvel (Flutter).
 - back/kubernetes/: Contém os ficheiros de configuração para deployment no Kubernetes.
