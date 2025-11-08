@@ -21,7 +21,7 @@
 #         command: ['sh', '-c', 'until nc -z event-bus-service 4000; do echo "⏳ Aguardando o Event Bus..."; sleep 2; done; echo "✅ Event Bus disponível!";']
 #       containers:
 #       - name: mss-profile-service-container
-#         image: nyfeu/mss-profile-service:latest # Sua imagem no Docker Hub
+#         image: nyfeu/mss-profile-service:latest 
 #         imagePullPolicy: Always
 #         ports:
 #         - containerPort: 3001
@@ -44,4 +44,4 @@
 #           value: "3001"
 #         - name: SERVICE_URL
 #           value: "http://mss-profile-service-service" # Ajustado para o nome do Service interno
-#         # O CMD do Dockerfile é usado automaticamente (node server.js)
+#         

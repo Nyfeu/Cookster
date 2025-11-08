@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: api-gateway-container
-        image: nyfeu/api-gateway:latest # Sua imagem no Docker Hub
+        image: nyfeu/api-gateway:latest 
         imagePullPolicy: Always
         ports:
         - containerPort: 2000
@@ -39,4 +39,4 @@ spec:
           value: "http://mss-pantry-service:3001"
         - name: RECIPE_SERVICE_URL
           value: "http://mss-recipe-service:9000"
-        # O CMD do Dockerfile é usado automaticamente (node index.js)
+        

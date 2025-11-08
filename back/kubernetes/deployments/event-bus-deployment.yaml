@@ -23,7 +23,7 @@ spec:
         - containerPort: 4000
         startupProbe:
           httpGet:
-            path: /health # O endpoint de saúde do seu event-bus
+            path: /health # O endpoint de saúde do event-bus
             port: 4000
           failureThreshold: 30
           periodSeconds: 10
