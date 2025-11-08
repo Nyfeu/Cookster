@@ -44,12 +44,20 @@ O Cookster contribui diretamente com o ODS 12 (Consumo e Produção Responsávei
 
 ## 🚀 Funcionalidades Principais
 
-- 📦 **Gestão de Despensa**: adição, edição e exclusão de ingredientes.
+- 📦 **Gestão de Despensa**: adição e exclusão de ingredientes.
 - 🔪 **Receitas Inteligentes**: sugestões baseadas no que você já tem.
-- ⏰ **Validade e Prioridade**: sugestões com base na urgência de uso dos ingredientes.
+- ⏰ **Validade e Prioridade**: sugestões com base na urgência de uso dos ingredientes. (futuramente)
 - 📲 **Rede Social de Receitas**: explore, publique, curta e comente receitas.
-- 🔍 **Filtros Poderosos**: por nome, autor, ingredientes disponíveis, tags e mais.
+- 🔍 **Filtros Poderosos**: por nome, autor, ingredientes disponíveis, tags e mais. (futuramente)
 - ✅ **Sustentabilidade**: foco em consumo consciente e combate ao desperdício.
+
+## 🏗️ Estrutura do Projeto
+
+- back/: Contém todos os microsserviços do backend (Node.js, Python).
+- front/: Contém a aplicação web (React.js).
+- front_mobile/: Contém a aplicação móvel (Flutter).
+- back/kubernetes/: Contém os ficheiros de configuração para deployment no Kubernetes.
+- docker-compose.yml: Orquestra os serviços de backend para desenvolvimento local.
 
 ## ⚙️ Tecnologias
 
@@ -57,11 +65,22 @@ O Cookster contribui diretamente com o ODS 12 (Consumo e Produção Responsávei
 - React.js
 - Axios
 
+📱 **Frontend (Mobile):**
+
+- Flutter
+- Dart
+
 🌐 **Backend (Arquitetura de Microsserviços):**
 - Node.js
 - FastAPI
 - Python
 - Express.js
+- Shelf
+
+🐳 **DevOps:**
+
+- Docker & Docker Compose
+- Kubernetes
 
 ## ▶️ Como Executar o Projeto
 
@@ -112,7 +131,7 @@ DB_PASS=seu_db_password
 
 Caso se opte por utilizar containers Docker, um único arquivo `.env` é necessário na raíz.
 
-### 3. Inicializar Servidor Front-end
+### 3. Inicializar Servidor Front-end (Web)
 
 ```bash 
 cd front
@@ -120,7 +139,15 @@ npm install
 npm run dev
 ```
 
-### 4. Docker-Compose (Alternativamente)
+### 4. Inicializar Servidor Front-end (Mobile)
+
+```bash
+cd front_mobile
+flutter pub get
+flutter run
+```
+
+### 5. Docker-Compose (Alternativamente)
 
 Para evitar ter que inicializar cada serviço individualmente, criou-se um arquivo `docker-compose.yml` na raiz do projeto, que realiza o deploy de todos os serviços - exceto o front-end. 
 
@@ -148,4 +175,16 @@ DB_USER=seu_db_user
 DB_PASS=seu_db_password
 ```
 
+### 6. Kubernetes (Alternativa de Deploy)
+
+O projeto também inclui arquivos de configuração para deploy no Kubernetes, localizados em back/kubernetes/.
+
+Para aplicar as configurações (após ter um cluster Kubernetes configurado e o kubectl apontando para ele):
+
+```bash
+cd /back/kubernetes/
+kubectl apply -f .
+kubectl apply -f .\deployments\
+kubectl apply -f .\services\
+```
 ---
